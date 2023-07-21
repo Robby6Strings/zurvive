@@ -1,0 +1,28 @@
+{
+  "name": "cinnabun-ssr-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "node .cb/build",
+    "dev": "pnpm build --debug",
+    "prod": "pnpm build --prod && node dist/server",
+    "test": "echo \"Error: no test specified\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/compress": "^6.4.0",
+    "@fastify/static": "^6.10.2",
+    "@fastify/websocket": "^8.2.0",
+    "cinnabun": "^0.1.46",
+    "esbuild": "^0.17.19",
+    "fastify": "^4.20.0",
+    "tree-kill": "^1.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.19"
+  }
+}
