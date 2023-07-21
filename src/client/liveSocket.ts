@@ -63,7 +63,7 @@ export class LiveSocket {
         console.log("GOT GAMESTATE", this.gameState.value)
         break
       case MessageType.action:
-        this.gameState.value?.handleAction(message.action as GameAction<T>)
+        this.gameState.value!.handleAction(message.action as GameAction<T>)
         break
       default:
         return

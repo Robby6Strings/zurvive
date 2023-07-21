@@ -16,7 +16,9 @@ export class Mover extends Component {
 
     if (obj.center.equals(this.targetPos)) return
     const dir = this.targetPos.sub(obj.center).normalize()
-    obj.center = obj.center.add(dir.scale(this.speed))
+    const dist = obj.center.distance(this.targetPos)
+
+    obj.center = obj.center.add(dir.scale(Math.min(this.speed, dist)))
   }
   setTarget(target: IVec2 | GameObject<any>) {
     if (target instanceof GameObject) {

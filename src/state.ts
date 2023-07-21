@@ -9,3 +9,12 @@ type HtmlElements = {
   ctx: CanvasRenderingContext2D
 }
 export const HtmlElements = createSignal<HtmlElements | null>(null)
+
+if (Cinnabun.isClient) {
+  window.addEventListener("resize", () => {
+    const canvas = HtmlElements.value?.canvas
+    if (!canvas) return
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+  })
+}

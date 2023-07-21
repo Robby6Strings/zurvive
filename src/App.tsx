@@ -13,6 +13,8 @@ if (cb.isClient) {
 export const App = () => {
   const onCanvasMounted = (self: Cinnabun.Component) => {
     const canvas = self.element as HTMLCanvasElement
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D
     HtmlElements.value = { canvas, ctx }
   }
@@ -34,10 +36,10 @@ export const App = () => {
       <div
         id="main-menu"
         className="fullscreen"
-        watch={loading}
+        watch={[loading, clientGameState ?? createSignal(false)]}
         bind:visible={() => {
           if (loading.value) return false
-          if (cb.isClient) return !clientGameState?.value
+          if (cb.isClient) return !clientGameState!.value
           return true
         }}
       >

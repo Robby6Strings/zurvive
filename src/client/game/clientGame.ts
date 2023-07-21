@@ -3,10 +3,13 @@ import { GameObjectStore } from "../../shared/gameObjectStore"
 import { GameObjectType } from "../../shared/gameObject"
 import { GameActionType, GameAction } from "../../shared/gameAction"
 import { Mover } from "../../shared/components/mover"
+import { Renderer } from "./renderer"
 
 export class ClientGame extends BaseGame {
   playerStore: GameObjectStore<GameObjectType.Player>
   enemyStore: GameObjectStore<GameObjectType.Enemy>
+  renderer: Renderer
+  intervalRef: number
   constructor(serializedGameState: string) {
     super()
     const { id, players, enemies } = JSON.parse(serializedGameState)
@@ -15,6 +18,11 @@ export class ClientGame extends BaseGame {
     this.playerStore.deserialize(players)
     this.enemyStore = new GameObjectStore(GameObjectType.Enemy)
     this.enemyStore.deserialize(enemies)
+    this.renderer = new Renderer(this)
+    this.intervalRef = window.setInterval(() => {
+      this.update()
+      this.renderer.render()
+    }, this.frameDuration)
   }
 
   onUpdated(): void {}

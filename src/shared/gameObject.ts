@@ -59,7 +59,7 @@ export abstract class GameObject<T extends GameObjectType> {
   public deserialize(data: any): void {
     this.id = data.id
     this.type = data.type
-    this.center = data.center
+    this.center = Vec2.fromObject(data.center)
     this.rotation = data.rotation
     this.components = data.components.map((c: any) => {
       const parsed = JSON.parse(c)

@@ -3,6 +3,7 @@ import { GameActionType, GameAction } from "./gameAction"
 import { GameObjectType } from "./gameObject"
 
 export abstract class BaseGame {
+  frameDuration: number = 1000 / 60
   id: string = Math.random().toString(36).substring(7)
   playerStore: GameObjectStore<GameObjectType.Player> = new GameObjectStore(
     GameObjectType.Player
