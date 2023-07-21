@@ -2,9 +2,11 @@ import { Signal, createSignal } from "cinnabun"
 import { ClientGame } from "./game/clientGame"
 import { MessageType, TypedMessage } from "../shared/message"
 import { GameAction, GameActionType } from "../shared/gameAction"
+import { Player } from "../shared/gameObjects"
 
 export class LiveSocket {
   socket: any
+  authId: string = ""
   _connected: Signal<boolean> = createSignal<boolean>(false)
   get connected() {
     return this._connected.value
@@ -48,7 +50,7 @@ export class LiveSocket {
     //this.state.value = res.data
   }
 
-  public send<T extends GameActionType>(action: GameAction<T>) {
+  public sendGameAction<T extends GameActionType>(action: GameAction<T>) {
     this.socket.send(JSON.stringify({ type: MessageType.action, action }))
   }
 
@@ -56,14 +58,37 @@ export class LiveSocket {
     this.socket.send(JSON.stringify({ type: MessageType.newGame }))
   }
 
+  public joinGame(gameId: string) {
+    this.socket.send(JSON.stringify({ type: MessageType.joinGame, gameId }))
+  }
+
   private handleMessage<T extends GameActionType>(message: TypedMessage<T>) {
     switch (message.type) {
+      case MessageType.auth:
+        this.authId = message.playerId ?? ""
+        if (this.authId && this.gameState.value) {
+          this.gameState.value.playerId = this.authId
+          this.gameState.notify()
+        }
+        break
       case MessageType.gameState:
-        this.gameState.value = new ClientGame(message.gameState as any)
-        console.log("GOT GAMESTATE", this.gameState.value)
+        this.gameState.value = new ClientGame(message.gameState as any, this)
+        if (this.authId) {
+          this.gameState.value.playerId = this.authId
+          this.gameState.notify()
+        }
         break
       case MessageType.action:
-        this.gameState.value!.handleAction(message.action as GameAction<T>)
+        this.gameState.value?.handleAction(message.action as GameAction<T>)
+        break
+      case MessageType.playerJoined:
+        const parsed = JSON.parse(message.player)
+        const newPlayer = new Player()
+        newPlayer.deserialize(parsed)
+        this.gameState.value?.addPlayer(newPlayer)
+        break
+      case MessageType.error:
+        console.error(message.error)
         break
       default:
         return

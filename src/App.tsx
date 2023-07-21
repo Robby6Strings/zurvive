@@ -23,6 +23,8 @@ export const App = () => {
     : null
   const clientGameState = cb.isClient ? liveSocket!.gameState : null
 
+  const gameId = createSignal("")
+
   return (
     <>
       <canvas id="game" onMounted={onCanvasMounted} />
@@ -45,12 +47,30 @@ export const App = () => {
       >
         <h1 className="main-menu__title">Zurvive</h1>
         <div className="main-menu__buttons">
-          <button
-            className="main-menu__button"
-            onclick={() => liveSocket?.newGame()}
-          >
-            New Game
-          </button>
+          <div>
+            <button
+              className="main-menu__button"
+              onclick={() => liveSocket?.newGame()}
+            >
+              New Game
+            </button>
+          </div>
+          <div>
+            <input
+              watch={gameId}
+              bind:value={() => gameId.value}
+              oninput={(e: Event) => {
+                const target = e.target as HTMLInputElement
+                gameId.value = target.value
+              }}
+            />
+            <button
+              className="main-menu__button"
+              onclick={() => liveSocket?.joinGame(gameId.value)}
+            >
+              Join Game
+            </button>
+          </div>
         </div>
       </div>
     </>

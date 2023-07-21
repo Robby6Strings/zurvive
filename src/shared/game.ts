@@ -1,6 +1,6 @@
 import { GameObjectStore } from "./gameObjectStore"
 import { GameActionType, GameAction } from "./gameAction"
-import { GameObjectType } from "./gameObject"
+import { GameObject, GameObjectType } from "./gameObject"
 
 export abstract class BaseGame {
   frameDuration: number = 1000 / 60
@@ -19,6 +19,10 @@ export abstract class BaseGame {
     this.playerStore.update()
     this.enemyStore.update()
     this.onUpdated()
+  }
+
+  addPlayer(player: GameObject<GameObjectType.Player>) {
+    this.playerStore.add(player)
   }
 
   protected getObjectPool<T extends GameObjectType>(

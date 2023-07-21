@@ -7,6 +7,7 @@ export class GameObjectStore<T extends GameObjectType> {
     public objects: GameObject<T>[] = []
   ) {}
   add(object: GameObject<T>) {
+    if (this.objects.find((o) => o.id === object.id)) return
     this.objects.push(object)
   }
   remove(object: GameObject<T>) {

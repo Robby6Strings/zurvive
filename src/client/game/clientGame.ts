@@ -5,17 +5,29 @@ import { GameActionType, GameAction } from "../../shared/gameAction"
 import { Mover } from "../../shared/components/mover"
 import { Renderer } from "./renderer"
 import { Camera } from "./camera"
+import { Vec2 } from "../../shared/vec2"
+import { LiveSocket } from "../liveSocket"
 
 export class ClientGame extends BaseGame {
+  playerId: string = ""
+  liveSocket: LiveSocket
   playerStore: GameObjectStore<GameObjectType.Player>
   enemyStore: GameObjectStore<GameObjectType.Enemy>
   camera: Camera
   renderer: Renderer
   intervalRef: number
-  constructor(serializedGameState: string) {
+  mousePos: Vec2 = new Vec2(0, 0)
+  lastMousePos: Vec2 = new Vec2(0, 0)
+  mouseDown: boolean = false
+  keys: {
+    [key: string]: boolean
+  } = {}
+  constructor(serializedGameState: string, liveSocket: LiveSocket) {
     super()
+    this.liveSocket = liveSocket
     const { id, players, enemies } = JSON.parse(serializedGameState)
     this.id = id
+    console.log("game id", this.id)
     this.playerStore = new GameObjectStore(GameObjectType.Player)
     this.playerStore.deserialize(players)
     this.enemyStore = new GameObjectStore(GameObjectType.Enemy)
@@ -26,6 +38,48 @@ export class ClientGame extends BaseGame {
       this.update()
       this.renderer.render()
     }, this.frameDuration)
+    this.attachListeners()
+  }
+
+  attachListeners(): void {
+    window.addEventListener("keydown", this.handleKeyDown.bind(this))
+    window.addEventListener("keyup", this.handleKeyUp.bind(this))
+    window.addEventListener("mousemove", this.handleMouseMove.bind(this))
+    window.addEventListener("mousedown", this.handleMouseDown.bind(this))
+    window.addEventListener("mouseup", this.handleMouseUp.bind(this))
+  }
+
+  handleKeyDown(e: KeyboardEvent): void {
+    this.keys[e.key] = true
+  }
+  handleKeyUp(e: KeyboardEvent): void {
+    this.keys[e.key] = false
+  }
+  handleMouseMove(e: MouseEvent): void {
+    this.mousePos = new Vec2(e.clientX, e.clientY)
+  }
+  handleMouseDown(): void {
+    this.mouseDown = true
+  }
+  handleMouseUp(): void {
+    this.mouseDown = false
+  }
+
+  update(): void {
+    if (this.mouseDown && !this.mousePos.equals(this.lastMousePos)) {
+      const coords = this.mousePos.sub(this.camera.offset)
+      this.liveSocket.sendGameAction({
+        type: GameActionType.setTargetPos,
+        payload: {
+          objectType: GameObjectType.Player,
+          objectId: this.playerId,
+          data: coords,
+        },
+      })
+      this.lastMousePos = this.mousePos
+      //this.playerStore.objects[0].getComponent(Mover)?.setTarget(coords)
+    }
+    this.playerStore.update()
   }
 
   onUpdated(): void {}
@@ -42,8 +96,8 @@ export class ClientGame extends BaseGame {
     switch (action.type) {
       case GameActionType.setTargetPos:
         obj
-          .getComponent(Mover)
-          ?.setTarget(
+          .getComponent(Mover)!
+          .setTarget(
             (action as GameAction<GameActionType.setTargetPos>).payload.data
           )
         break
