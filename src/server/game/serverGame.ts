@@ -12,8 +12,8 @@ export class ServerGame extends BaseGame {
   enemyStore: GameObjectStore<GameObjectType.Enemy>
   constructor(players: Player[] = [], enemies: Enemy[] = []) {
     super()
-    this.playerStore = new GameObjectStore(players)
-    this.enemyStore = new GameObjectStore(enemies)
+    this.playerStore = new GameObjectStore(GameObjectType.Player, players)
+    this.enemyStore = new GameObjectStore(GameObjectType.Enemy, enemies)
   }
 
   update(): void {

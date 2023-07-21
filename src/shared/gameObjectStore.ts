@@ -1,7 +1,11 @@
 import { GameObject, GameObjectType } from "./gameObject"
+import { Enemy, Player } from "./gameObjects"
 
 export class GameObjectStore<T extends GameObjectType> {
-  constructor(public objects: GameObject<T>[] = []) {}
+  constructor(
+    public objectType: GameObjectType,
+    public objects: GameObject<T>[] = []
+  ) {}
   add(object: GameObject<T>) {
     this.objects.push(object)
   }
@@ -23,5 +27,31 @@ export class GameObjectStore<T extends GameObjectType> {
   }
   get(id: string) {
     return this.objects.find((o) => o.id === id)
+  }
+
+  serialize() {
+    return JSON.stringify({
+      objectType: this.objectType,
+      objects: this.objects.map((o) => o.serialize()),
+    })
+  }
+  deserialize(data: string) {
+    const parsed = JSON.parse(data)
+    this.objectType = parsed.objectType
+    this.objects = parsed.objects.map((d: any) => {
+      const parsed = JSON.parse(d)
+      switch (parsed.type) {
+        case GameObjectType.Player:
+          const obj = new Player()
+          obj.deserialize(parsed)
+          return obj
+        case GameObjectType.Enemy:
+          const obj2 = new Enemy()
+          obj2.deserialize(parsed)
+          return obj2
+        default:
+          throw new Error(`Unknown object type ${parsed.type}`)
+      }
+    })
   }
 }

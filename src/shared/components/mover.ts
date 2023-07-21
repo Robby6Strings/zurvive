@@ -27,4 +27,18 @@ export class Mover extends Component {
     this.targetObj = null
     this.targetPos = Vec2.fromObject(target)
   }
+
+  serialize(): string {
+    return JSON.stringify({
+      type: this.type,
+      enabled: this.enabled,
+      speed: this.speed,
+      targetPos: this.targetPos,
+    })
+  }
+  deserialize(data: any): void {
+    this.enabled = data.enabled
+    this.speed = data.speed
+    this.targetPos = Vec2.fromObject(data.targetPos)
+  }
 }

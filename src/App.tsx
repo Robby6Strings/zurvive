@@ -1,5 +1,14 @@
 import * as Cinnabun from "cinnabun"
+import { Cinnabun as cb, createSignal } from "cinnabun"
 import { HtmlElements } from "./state"
+import { LiveSocket } from "./client/liveSocket"
+
+const loading = createSignal(true)
+if (cb.isClient) {
+  setTimeout(() => {
+    loading.value = false
+  }, 1000)
+}
 
 export const App = () => {
   const onCanvasMounted = (self: Cinnabun.Component) => {
@@ -7,9 +16,41 @@ export const App = () => {
     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D
     HtmlElements.value = { canvas, ctx }
   }
+  const liveSocket = cb.isClient
+    ? (cb.getRuntimeService(LiveSocket) as LiveSocket)
+    : null
+  const clientGameState = cb.isClient ? liveSocket!.gameState : null
+
   return (
     <>
-      <canvas onMounted={onCanvasMounted} />
+      <canvas id="game" onMounted={onCanvasMounted} />
+      <div
+        className="loader-wrapper fullscreen"
+        watch={loading}
+        bind:visible={() => loading.value}
+      >
+        <div className="loader" />
+      </div>
+      <div
+        id="main-menu"
+        className="fullscreen"
+        watch={loading}
+        bind:visible={() => {
+          if (loading.value) return false
+          if (cb.isClient) return !clientGameState?.value
+          return true
+        }}
+      >
+        <h1 className="main-menu__title">Zurvive</h1>
+        <div className="main-menu__buttons">
+          <button
+            className="main-menu__button"
+            onclick={() => liveSocket?.newGame()}
+          >
+            New Game
+          </button>
+        </div>
+      </div>
     </>
   )
 }

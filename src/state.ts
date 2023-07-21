@@ -5,10 +5,7 @@ export const pathStore = createSignal(
 )
 
 type HtmlElements = {
-  canvas?: HTMLCanvasElement
-  ctx?: CanvasRenderingContext2D
+  canvas: HTMLCanvasElement
+  ctx: CanvasRenderingContext2D
 }
-export const HtmlElements = createSignal<HtmlElements>({
-  canvas: undefined,
-  ctx: undefined,
-})
+export const HtmlElements = createSignal<HtmlElements | null>(null)

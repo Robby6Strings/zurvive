@@ -3,8 +3,13 @@ import { GameActionType, GameAction } from "./gameAction"
 import { GameObjectType } from "./gameObject"
 
 export abstract class BaseGame {
-  playerStore: GameObjectStore<GameObjectType.Player> = new GameObjectStore()
-  enemyStore: GameObjectStore<GameObjectType.Enemy> = new GameObjectStore()
+  id: string = Math.random().toString(36).substring(7)
+  playerStore: GameObjectStore<GameObjectType.Player> = new GameObjectStore(
+    GameObjectType.Player
+  )
+  enemyStore: GameObjectStore<GameObjectType.Enemy> = new GameObjectStore(
+    GameObjectType.Player
+  )
 
   abstract handleAction<T extends GameActionType>(action: GameAction<T>): void
   abstract onUpdated(): void
@@ -26,5 +31,13 @@ export abstract class BaseGame {
       default:
         throw new Error(`Unknown object type ${type}`)
     }
+  }
+
+  serialize(): string {
+    return JSON.stringify({
+      id: this.id,
+      players: this.playerStore.serialize(),
+      enemies: this.enemyStore.serialize(),
+    })
   }
 }

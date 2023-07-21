@@ -1,17 +1,20 @@
 import { BaseGame } from "../../shared/game"
 import { GameObjectStore } from "../../shared/gameObjectStore"
 import { GameObjectType } from "../../shared/gameObject"
-import { Enemy, Player } from "../../shared/gameObjects"
 import { GameActionType, GameAction } from "../../shared/gameAction"
 import { Mover } from "../../shared/components/mover"
 
 export class ClientGame extends BaseGame {
   playerStore: GameObjectStore<GameObjectType.Player>
   enemyStore: GameObjectStore<GameObjectType.Enemy>
-  constructor(players: Player[] = [], enemies: Enemy[] = []) {
+  constructor(serializedGameState: string) {
     super()
-    this.playerStore = new GameObjectStore(players)
-    this.enemyStore = new GameObjectStore(enemies)
+    const { id, players, enemies } = JSON.parse(serializedGameState)
+    this.id = id
+    this.playerStore = new GameObjectStore(GameObjectType.Player)
+    this.playerStore.deserialize(players)
+    this.enemyStore = new GameObjectStore(GameObjectType.Enemy)
+    this.enemyStore.deserialize(enemies)
   }
 
   onUpdated(): void {}

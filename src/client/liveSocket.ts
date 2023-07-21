@@ -35,7 +35,7 @@ export class LiveSocket {
           return
         }
         this.connected = true
-        this.socket.send(JSON.stringify({ type: "ping" }))
+        this.socket.send(JSON.stringify({ type: MessageType.ping }))
       }, 1000)
     }
 
@@ -48,9 +48,25 @@ export class LiveSocket {
     //this.state.value = res.data
   }
 
-  private handleMessage<T extends GameActionType>(message: TypedMessage<T>) {
-    if (message.type === MessageType.ping) return
+  public send<T extends GameActionType>(action: GameAction<T>) {
+    this.socket.send(JSON.stringify({ type: MessageType.action, action }))
+  }
 
-    this.gameState.value?.handleAction(message.action as GameAction<T>)
+  public newGame() {
+    this.socket.send(JSON.stringify({ type: MessageType.newGame }))
+  }
+
+  private handleMessage<T extends GameActionType>(message: TypedMessage<T>) {
+    switch (message.type) {
+      case MessageType.gameState:
+        this.gameState.value = new ClientGame(message.gameState as any)
+        console.log("GOT GAMESTATE", this.gameState.value)
+        break
+      case MessageType.action:
+        this.gameState.value?.handleAction(message.action as GameAction<T>)
+        break
+      default:
+        return
+    }
   }
 }

@@ -20,7 +20,7 @@ export class Collider extends Component {
   static: boolean = false
 
   constructor() {
-    super(ComponentType.Mover, true)
+    super(ComponentType.Collider, true)
   }
 
   getPoints(): Vec2[] {
@@ -256,5 +256,24 @@ export class Collider extends Component {
     y3: number
   ): number {
     return (x1 - x3) * (y2 - y3) - (x2 - x3) * (y1 - y3)
+  }
+
+  deserialize(data: any): void {
+    this.radius = data.radius
+    this.width = data.width
+    this.height = data.height
+    this.shape = data.shape
+    this.static = data.static
+  }
+  serialize(): string {
+    return JSON.stringify({
+      type: this.type,
+      enabled: this.enabled,
+      radius: this.radius,
+      width: this.width,
+      height: this.height,
+      shape: this.shape,
+      static: this.static,
+    })
   }
 }

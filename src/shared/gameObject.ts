@@ -1,5 +1,10 @@
-import { Component, IComponent } from "./component"
+import { ClassConstructor } from "cinnabun/src/types"
+import { Component, ComponentType, IComponent } from "./component"
+import { Fighter } from "./components/fighter"
+import { Mover } from "./components/mover"
 import { Vec2 } from "./vec2"
+import { Health } from "./components/health"
+import { Collider } from "./components/collider"
 
 export enum GameObjectType {
   Unset = "unset",
@@ -39,6 +44,46 @@ export abstract class GameObject<T extends GameObjectType> {
     for (const component of this.components) {
       component.update(this)
     }
+  }
+
+  public serialize(): string {
+    return JSON.stringify({
+      id: this.id,
+      type: this.type,
+      center: this.center,
+      rotation: this.rotation,
+      components: this.components.map((c) => c.serialize()),
+    })
+  }
+
+  public deserialize(data: any): void {
+    this.id = data.id
+    this.type = data.type
+    this.center = data.center
+    this.rotation = data.rotation
+    this.components = data.components.map((c: any) => {
+      const parsed = JSON.parse(c)
+      let classType: ClassConstructor<Component> | undefined
+      switch (parsed.type as ComponentType) {
+        case ComponentType.Mover:
+          classType = Mover
+          break
+        case ComponentType.Health:
+          classType = Health
+          break
+        case ComponentType.Fighter:
+          classType = Fighter
+          break
+        case ComponentType.Collider:
+          classType = Collider
+          break
+        default:
+          throw new Error(`Unknown component type ${c.type}`)
+      }
+      const component = new classType()
+      component.deserialize(parsed)
+      return component
+    })
   }
 
   public draw(): void {}

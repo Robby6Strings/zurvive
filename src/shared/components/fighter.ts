@@ -8,7 +8,7 @@ export class Fighter extends Component {
   critMultiplier: number = 2
 
   constructor() {
-    super(ComponentType.Health, true)
+    super(ComponentType.Fighter, true)
   }
 
   update(_obj: GameObject<any>): void {}
@@ -16,5 +16,20 @@ export class Fighter extends Component {
   attack(target: Health): void {
     const isCrit = Math.random() < this.critChance
     target.takeDamage(isCrit ? this.damage * this.critMultiplier : this.damage)
+  }
+
+  deserialize(data: any): void {
+    this.damage = data.damage
+    this.critChance = data.critChance
+    this.critMultiplier = data.critMultiplier
+  }
+  serialize(): string {
+    return JSON.stringify({
+      type: this.type,
+      enabled: this.enabled,
+      damage: this.damage,
+      critChance: this.critChance,
+      critMultiplier: this.critMultiplier,
+    })
   }
 }
