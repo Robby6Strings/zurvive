@@ -5,6 +5,7 @@ import { Mover } from "./components/mover"
 import { Vec2 } from "./vec2"
 import { Health } from "./components/health"
 import { Collider } from "./components/collider"
+import { ShapeType } from "./types"
 
 export enum GameObjectType {
   Unset = "unset",
@@ -26,6 +27,20 @@ export abstract class GameObject<T extends GameObjectType> {
   components: IComponent<any>[]
   center: Vec2 = new Vec2(0, 0)
   rotation: number = 0
+  renderSettings: {
+    shapeType: ShapeType
+    color: string
+    lineWidth: number
+    fill: boolean
+    radius?: number
+    width?: number
+    height?: number
+  } = {
+    shapeType: ShapeType.Circle,
+    color: "#FFF",
+    lineWidth: 1,
+    fill: true,
+  }
 
   constructor(public type: T) {
     this.id = Math.random().toString(36).substring(2, 9)
@@ -85,6 +100,4 @@ export abstract class GameObject<T extends GameObjectType> {
       return component
     })
   }
-
-  public draw(): void {}
 }

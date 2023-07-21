@@ -7,13 +7,13 @@ import { Vec2 } from "../vec2"
 export class Player extends GameObject<GameObjectType.Player> {
   constructor() {
     super(GameObjectType.Player)
-    this.center = new Vec2(50, 50)
+    this.center = new Vec2(0, 0)
     this.components.push(
       new Mover(),
       new Fighter(),
       Collider.circleCollider(25)
     )
 
-    this.getComponent(Mover)!.setTarget(new Vec2(50, 50))
+    this.getComponent(Mover)!.setTarget(new Vec2(0, 0))
   }
 }

@@ -4,10 +4,12 @@ import { GameObjectType } from "../../shared/gameObject"
 import { GameActionType, GameAction } from "../../shared/gameAction"
 import { Mover } from "../../shared/components/mover"
 import { Renderer } from "./renderer"
+import { Camera } from "./camera"
 
 export class ClientGame extends BaseGame {
   playerStore: GameObjectStore<GameObjectType.Player>
   enemyStore: GameObjectStore<GameObjectType.Enemy>
+  camera: Camera
   renderer: Renderer
   intervalRef: number
   constructor(serializedGameState: string) {
@@ -18,6 +20,7 @@ export class ClientGame extends BaseGame {
     this.playerStore.deserialize(players)
     this.enemyStore = new GameObjectStore(GameObjectType.Enemy)
     this.enemyStore.deserialize(enemies)
+    this.camera = new Camera()
     this.renderer = new Renderer(this)
     this.intervalRef = window.setInterval(() => {
       this.update()
