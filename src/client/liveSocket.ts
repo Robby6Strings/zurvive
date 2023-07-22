@@ -2,7 +2,8 @@ import { Signal, createSignal } from "cinnabun"
 import { ClientGame } from "./game/clientGame"
 import { MessageType, TypedMessage } from "../shared/message"
 import { GameAction, GameActionType } from "../shared/gameAction"
-import { Player } from "../shared/gameObjects"
+import { Enemy, Player, Spawner } from "../shared/gameObjects"
+import { GameObject, GameObjectType } from "../shared/gameObject"
 
 export class LiveSocket {
   socket: any
@@ -71,6 +72,7 @@ export class LiveSocket {
           this.gameState.notify()
         }
         break
+
       case MessageType.gameState:
         this.gameState.value = new ClientGame(message.gameState as any, this)
         if (this.authId) {
@@ -78,20 +80,66 @@ export class LiveSocket {
           this.gameState.notify()
         }
         break
+
       case MessageType.action:
         this.gameState.value?.handleAction(message.action as GameAction<T>)
         break
-      case MessageType.playerJoined:
-        const parsed = JSON.parse(message.player)
-        const newPlayer = new Player()
-        newPlayer.deserialize(parsed)
-        this.gameState.value?.addPlayer(newPlayer)
+
+      case MessageType.newObject:
+        this.handleCreateObject(message.object)
         break
+
+      case MessageType.update:
+        const changes = message.changes as TypedMessage<
+          GameActionType | undefined
+        >[]
+        for (const change of changes) {
+          switch (change.type) {
+            case MessageType.newObject:
+              this.handleCreateObject(change.object)
+              break
+            case MessageType.removeObject:
+              console.log("removing", change.object)
+              this.gameState.value?.removeObject(change.object)
+              break
+            case MessageType.action:
+              this.gameState.value?.handleAction(change.action as GameAction<T>)
+              break
+            case MessageType.updateObject:
+              this.gameState.value?.updateObject(change.object)
+              break
+            default:
+              throw new Error(`Unknown update type ${change.type}`)
+          }
+        }
+        break
+
       case MessageType.error:
         console.error(message.error)
         break
       default:
         return
     }
+  }
+
+  handleCreateObject(object: any) {
+    const parsed = JSON.parse(object)
+    console.log("new object", parsed)
+    let newObject: GameObject<GameObjectType>
+    switch (parsed.type) {
+      case GameObjectType.Player:
+        newObject = new Player()
+        break
+      case GameObjectType.Enemy:
+        newObject = new Enemy()
+        break
+      case GameObjectType.EnemySpawner:
+        newObject = new Spawner()
+        break
+      default:
+        throw new Error(`Unknown object type ${parsed.type}`)
+    }
+    newObject.deserialize(parsed)
+    this.gameState.value?.addObject(newObject)
   }
 }

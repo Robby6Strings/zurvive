@@ -19,13 +19,16 @@ export enum GameObjectType {
   Chest = "chest",
   Door = "door",
   Floor = "floor",
+  EnemySpawner = "enemy-spawner",
 }
 
 export abstract class GameObject<T extends GameObjectType> {
   id: string
   remove: boolean
+  new: boolean = true
   components: IComponent<any>[]
-  center: Vec2 = new Vec2(0, 0)
+  _pos: Vec2 = new Vec2(0, 0)
+  posChanged: boolean = false
   rotation: number = 0
   renderSettings: {
     shapeType: ShapeType
@@ -40,6 +43,14 @@ export abstract class GameObject<T extends GameObjectType> {
     color: "#FFF",
     lineWidth: 1,
     fill: true,
+  }
+
+  get pos(): Vec2 {
+    return this._pos
+  }
+  set pos(value: Vec2) {
+    this.posChanged = !this._pos.equals(value)
+    this._pos = value
   }
 
   constructor(public type: T) {
@@ -65,7 +76,7 @@ export abstract class GameObject<T extends GameObjectType> {
     return JSON.stringify({
       id: this.id,
       type: this.type,
-      center: Vec2.serialize(this.center),
+      pos: Vec2.serialize(this.pos),
       rotation: this.rotation,
       components: this.components.map((c) => c.serialize()),
     })
@@ -74,11 +85,7 @@ export abstract class GameObject<T extends GameObjectType> {
   public deserialize(data: any): void {
     this.id = data.id
     this.type = data.type
-    try {
-      this.center = Vec2.fromObject(data.center)
-    } catch (error) {
-      console.error(error, data)
-    }
+    this.pos = data.pos ? Vec2.fromObject(JSON.parse(data.pos)) : Vec2.zero()
     this.rotation = data.rotation
     this.components = data.components.map((c: any) => {
       const parsed = JSON.parse(c)

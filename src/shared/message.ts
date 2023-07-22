@@ -12,13 +12,17 @@ export enum MessageType {
   action = "action",
   gameState = "game-state",
   error = "error",
-  playerJoined = "player-joined",
+  newObject = "new-object",
+  removeObject = "remove-object",
+  update = "update",
+  updateObject = "update-object",
 }
 export type TypedMessage<T extends GameActionType | undefined> = {
   type: MessageType
   action?: GameAction<T extends GameActionType ? T : GameActionType.unset>
   gameState?: string
   error?: ErrorMessage
-  player?: any
+  object?: any
   playerId?: string
+  changes?: TypedMessage<GameActionType>[]
 }

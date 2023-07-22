@@ -4,12 +4,12 @@ import { ShapeType } from "../types"
 import { IVec2, Vec2 } from "../vec2"
 
 type CollisionCheckResult = {
-  objA?: GameObject<any>
-  objB?: GameObject<any>
-  aStatic?: boolean
-  bStatic?: boolean
-  dir?: Vec2
-  overlap?: number
+  objA: GameObject<any>
+  objB: GameObject<any>
+  aStatic: boolean
+  bStatic: boolean
+  dir: Vec2
+  overlap: number
 }
 
 export class Collider extends Component {
@@ -111,12 +111,12 @@ export class Collider extends Component {
     const collider2 = obj2.getComponent(Collider)
     if (!collider1 || !collider2) return
 
-    const dist = obj1.center.distance(obj2.center)
+    const dist = obj1.pos.distance(obj2.pos)
     const collided = dist < collider1.radius + collider2.radius
     if (!collided) return
 
     const overlap = collider1.radius + collider2.radius - dist
-    const dir = obj1.center.sub(obj2.center).normalize()
+    const dir = obj1.pos.sub(obj2.pos).normalize()
 
     return {
       dir,
@@ -137,9 +137,9 @@ export class Collider extends Component {
     if (!circleCollider || !rectCollider) return
 
     const rectRotation = rectObj.rotation
-    const rectCenter = rectObj.center
+    const rectCenter = rectObj.pos
 
-    const circleCenter = circleObj.center
+    const circleCenter = circleObj.pos
     const circleRadius = circleCollider.radius
 
     const rectPoints = rectCollider.getPoints()
@@ -183,10 +183,10 @@ export class Collider extends Component {
     if (!collider1 || !collider2) return
 
     const rect1Rotation = obj1.rotation
-    const rect1Center = obj1.center
+    const rect1Center = obj1.pos
 
     const rect2Rotation = obj2.rotation
-    const rect2Center = obj2.center
+    const rect2Center = obj2.pos
 
     const rect1Points = collider1.getPoints()
     const rect2Points = collider2.getPoints()
@@ -212,7 +212,7 @@ export class Collider extends Component {
       },
       { dist: Infinity, point: new Vec2(0, 0) }
     )
-    const dir = obj1.center.sub(obj2.center).normalize()
+    const dir = obj1.pos.sub(obj2.pos).normalize()
 
     return {
       dir,
@@ -259,6 +259,7 @@ export class Collider extends Component {
   }
 
   deserialize(data: any): void {
+    this.enabled = data.enabled
     this.radius = data.radius
     this.width = data.width
     this.height = data.height

@@ -12,7 +12,7 @@ export enum GameActionType {
 
 type GameActionData<T extends GameActionType> =
   T extends GameActionType.setTargetPos
-    ? IVec2
+    ? IVec2 | null
     : T extends GameActionType.setTargetObj
     ? string
     : T extends GameActionType.attack

@@ -11,28 +11,50 @@ export abstract class BaseGame {
   enemyStore: GameObjectStore<GameObjectType.Enemy> = new GameObjectStore(
     GameObjectType.Player
   )
+  enemySpawnerStore: GameObjectStore<GameObjectType.EnemySpawner> =
+    new GameObjectStore(GameObjectType.EnemySpawner)
+
+  get objectStores() {
+    return [this.playerStore, this.enemyStore, this.enemySpawnerStore]
+  }
 
   abstract handleAction<T extends GameActionType>(action: GameAction<T>): void
-  abstract onUpdated(): void
+  public onUpdated(): void {
+    for (const store of this.objectStores) {
+      store.removeFlagged()
+    }
+  }
 
   update(): void {
-    this.playerStore.update()
-    this.enemyStore.update()
+    for (const store of this.objectStores) {
+      store.update()
+    }
     this.onUpdated()
   }
 
-  addPlayer(player: GameObject<GameObjectType.Player>) {
-    this.playerStore.add(player)
+  addObject<T extends GameObjectType>(object: GameObject<T>) {
+    this.getObjectPool(object.type).add(object)
   }
 
-  protected getObjectPool<T extends GameObjectType>(
+  removeObject<T extends GameObjectType>({
+    id,
+    type,
+  }: {
+    id: string
     type: T
-  ): GameObjectStore<T> {
+  }) {
+    console.log("removing", id, type)
+    this.getObjectPool(type).removeById(id)
+  }
+
+  getObjectPool<T extends GameObjectType>(type: T): GameObjectStore<T> {
     switch (type) {
       case GameObjectType.Player:
         return this.playerStore as GameObjectStore<T>
       case GameObjectType.Enemy:
         return this.enemyStore as GameObjectStore<T>
+      case GameObjectType.EnemySpawner:
+        return this.enemySpawnerStore as GameObjectStore<T>
       default:
         throw new Error(`Unknown object type ${type}`)
     }

@@ -4,8 +4,16 @@ import { IVec2, Vec2 } from "../vec2"
 
 export class Mover extends Component {
   speed: number = 5
-  targetPos: Vec2 = new Vec2(0, 0)
-  targetObj: GameObject<any> | null = null
+  _targetPos: Vec2 | null = null
+  targetPosChanged: boolean = false
+
+  get targetPos(): Vec2 | null {
+    return this._targetPos
+  }
+  set targetPos(value: Vec2 | null) {
+    this.targetPosChanged = value !== this._targetPos
+    this._targetPos = value
+  }
 
   constructor() {
     super(ComponentType.Mover, true)
@@ -13,34 +21,30 @@ export class Mover extends Component {
 
   update(obj: GameObject<any>): void {
     if (!this.enabled) return
+    if (!this.targetPos) return
+    if (obj.pos.equals(this.targetPos)) return
 
-    if (obj.center.equals(this.targetPos)) return
-    const dir = this.targetPos.sub(obj.center).normalize()
-    const dist = obj.center.distance(this.targetPos)
+    const dir = this.targetPos.sub(obj.pos).normalize()
+    const dist = obj.pos.distance(this.targetPos)
 
-    obj.center = obj.center.add(dir.scale(Math.min(this.speed, dist)))
-  }
-  setTarget(target: IVec2 | GameObject<any>) {
-    if (target instanceof GameObject) {
-      this.targetObj = target
-      this.targetPos = target.center.clone()
-      return
-    }
-    this.targetObj = null
-    this.targetPos = Vec2.fromObject(target)
+    obj.pos = obj.pos.add(dir.scale(Math.min(this.speed, dist)))
   }
 
+  setTargetPos(target: IVec2 | null) {
+    this.targetPos = target ? Vec2.fromObject(target) : null
+  }
+
+  deserialize(data: any): void {
+    this.enabled = data.enabled
+    this.speed = data.speed
+    this.targetPos = data.targetPos ? Vec2.fromObject(data.targetPos) : null
+  }
   serialize(): string {
     return JSON.stringify({
       type: this.type,
       enabled: this.enabled,
       speed: this.speed,
-      targetPos: this.targetPos,
+      targetPos: this.targetPos ? Vec2.serialize(this.targetPos) : null,
     })
-  }
-  deserialize(data: any): void {
-    this.enabled = data.enabled
-    this.speed = data.speed
-    this.targetPos = Vec2.fromObject(data.targetPos)
   }
 }

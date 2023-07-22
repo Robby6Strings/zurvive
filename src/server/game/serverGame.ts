@@ -1,42 +1,75 @@
 import { BaseGame } from "../../shared/game"
 import { GameObjectStore } from "../../shared/gameObjectStore"
 import { GameObjectType } from "../../shared/gameObject"
-import { Enemy } from "../../shared/gameObjects"
+import { Enemy, Spawner } from "../../shared/gameObjects"
 import { GameActionType, GameAction } from "../../shared/gameAction"
-import { Collider } from "../../shared/components/collider"
-import { Health } from "../../shared/components/health"
 import { Fighter } from "../../shared/components/fighter"
 import { Mover } from "../../shared/components/mover"
 import { ServerPlayer } from "./serverPlayer"
-import { MessageType } from "../../shared/message"
+import { MessageType, TypedMessage } from "../../shared/message"
+import { Vec2 } from "../../shared/vec2"
 
 export class ServerGame extends BaseGame {
-  playerStore: GameObjectStore<GameObjectType.Player>
-  enemyStore: GameObjectStore<GameObjectType.Enemy>
+  intervalRef: NodeJS.Timer
   constructor(players: ServerPlayer[] = [], enemies: Enemy[] = []) {
     super()
     this.playerStore = new GameObjectStore(GameObjectType.Player, players)
     this.enemyStore = new GameObjectStore(GameObjectType.Enemy, enemies)
+    const enemySpawner = new Spawner<GameObjectType.Enemy>()
+    enemySpawner.configure(() => {
+      return { pos: new Vec2(-200, -200) }
+    }, Enemy)
+    this.enemyStore.add(enemySpawner.spawn())
+
+    this.enemySpawnerStore = new GameObjectStore(GameObjectType.EnemySpawner, [
+      enemySpawner,
+    ])
+    this.intervalRef = setInterval(() => {
+      this.update()
+    }, this.frameDuration)
   }
 
   update(): void {
-    this.playerStore.objects.forEach((player) => {
-      const collisionResults = Collider.checkCollisions(
-        player,
-        this.enemyStore.objects
-      )
-      const playerHealth = player.getComponent(Health)!
-      for (const result of collisionResults) {
-        const enemy = result.objA === player ? result.objB! : result.objA!
-        const enemyFighter = enemy.getComponent(Fighter)!
-        enemyFighter.attack(playerHealth)
+    // this.enemySpawnerStore.objects.forEach((spawner) => {
+    //   const _spawner: Spawner<GameObjectType.Enemy> =
+    //     spawner as Spawner<GameObjectType.Enemy>
+    //   if (performance.now() - _spawner.lastSpawnTime < 10_000) return
+    //   console.log("spawning enemy")
+    //   const randomPlayer =
+    //     this.playerStore.objects[
+    //       Math.floor(Math.random() * this.playerStore.objects.length)
+    //     ]
+    //   const enemy = _spawner.spawn()
+    //   enemy.getComponent(Fighter)!.setTarget(randomPlayer)
+    //   this.enemyStore.add(enemy)
+    // })
+
+    this.enemyStore.objects.forEach((enemy) => {
+      const fighter = enemy.getComponent(Fighter)!
+      if (!fighter.target) {
+        fighter.target = fighter.getTargetWithinFollowRange(
+          enemy,
+          this.playerStore.objects
+        )
       }
     })
 
     super.update()
   }
 
-  onUpdated(): void {}
+  onUpdated(): void {
+    let changes: TypedMessage<GameActionType | undefined>[] = []
+    for (const store of this.objectStores) {
+      changes = changes.concat(store.getChanges())
+    }
+    if (changes.length > 0) {
+      this.broadcast(
+        { type: MessageType.update, changes },
+        this.playerStore.objects as ServerPlayer[]
+      )
+    }
+    super.onUpdated()
+  }
 
   private broadcast(data: any, players: ServerPlayer[]) {
     for (const player of players) {
@@ -52,7 +85,7 @@ export class ServerGame extends BaseGame {
   }
   broadcastPlayer(player: ServerPlayer) {
     this.broadcast(
-      { type: MessageType.playerJoined, player: player.serialize() },
+      { type: MessageType.newObject, object: player.serialize() },
       this.playerStore.objects as ServerPlayer[]
     )
   }
@@ -69,7 +102,7 @@ export class ServerGame extends BaseGame {
       case GameActionType.setTargetPos:
         obj
           .getComponent(Mover)!
-          .setTarget(
+          .setTargetPos(
             (action as GameAction<GameActionType.setTargetPos>).payload.data
           )
         break

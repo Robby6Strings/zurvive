@@ -1,3 +1,4 @@
+import { GameObject, GameObjectType } from "../../shared/gameObject"
 import { ShapeType } from "../../shared/types"
 import { HtmlElements } from "../../state"
 import { ClientGame } from "./clientGame"
@@ -12,38 +13,39 @@ export class Renderer {
   }
   public render() {
     if (!this.canvas || !this.ctx) return
-    const { x, y } = this.game.camera.offset
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
-    for (const obj of this.game.playerStore.objects) {
-      this.ctx.save()
-      this.ctx.beginPath()
-      if (obj.renderSettings.shapeType === ShapeType.Circle) {
-        this.ctx.arc(
-          obj.center.x + x,
-          obj.center.y + y,
-          obj.renderSettings.radius ?? 30,
-          0,
-          2 * Math.PI
-        )
-      } else {
-        this.ctx.rect(
-          obj.center.x + x,
-          obj.center.y + y,
-          obj.renderSettings.width ?? 30,
-          obj.renderSettings.height ?? 30
-        )
-      }
-      if (obj.renderSettings.fill) {
-        this.ctx.fillStyle = obj.renderSettings.color
-        this.ctx.fill()
-      }
-      if (obj.renderSettings.lineWidth > 0) {
-        this.ctx.lineWidth = obj.renderSettings.lineWidth
-        this.ctx.strokeStyle = obj.renderSettings.color
-        this.ctx.stroke()
-      }
-      this.ctx.closePath()
+    for (const player of this.game.playerStore.objects) {
+      this.renderObject(player)
     }
+    for (const enemy of this.game.enemyStore.objects) {
+      this.renderObject(enemy)
+    }
+  }
+
+  private renderObject<T extends GameObjectType>(obj: GameObject<T>) {
+    if (!this.ctx) return
+    const { ctx } = this
+    const { x, y } = this.game.camera.offset
+    const { shapeType, radius, width, height, lineWidth, fill, color } =
+      obj.renderSettings
+
+    ctx.save()
+    ctx.beginPath()
+    if (shapeType === ShapeType.Circle) {
+      ctx.arc(obj.pos.x + x, obj.pos.y + y, radius ?? 30, 0, 2 * Math.PI)
+    } else {
+      ctx.rect(obj.pos.x + x, obj.pos.y + y, width ?? 30, height ?? 30)
+    }
+    if (fill) {
+      ctx.fillStyle = color
+      ctx.fill()
+    }
+    if (obj.renderSettings.lineWidth > 0) {
+      ctx.lineWidth = lineWidth
+      ctx.strokeStyle = color
+      ctx.stroke()
+    }
+    ctx.closePath()
   }
 }

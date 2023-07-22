@@ -1,6 +1,6 @@
 import { BaseGame } from "../../shared/game"
 import { GameObjectStore } from "../../shared/gameObjectStore"
-import { GameObjectType } from "../../shared/gameObject"
+import { GameObject, GameObjectType } from "../../shared/gameObject"
 import { GameActionType, GameAction } from "../../shared/gameAction"
 import { Mover } from "../../shared/components/mover"
 import { Renderer } from "./renderer"
@@ -11,8 +11,6 @@ import { LiveSocket } from "../liveSocket"
 export class ClientGame extends BaseGame {
   playerId: string = ""
   liveSocket: LiveSocket
-  playerStore: GameObjectStore<GameObjectType.Player>
-  enemyStore: GameObjectStore<GameObjectType.Enemy>
   camera: Camera
   renderer: Renderer
   intervalRef: number
@@ -80,26 +78,55 @@ export class ClientGame extends BaseGame {
       //this.playerStore.objects[0].getComponent(Mover)?.setTarget(coords)
     }
     this.playerStore.update()
+    this.enemyStore.update()
+    // for (const player of this.playerStore.objects) {
+    //   console.log(player.id, player.pos)
+    // }
   }
 
   onUpdated(): void {}
+
+  updateObject<T extends GameObjectType>(object: {
+    id: string
+    type: T
+    properties: Partial<GameObject<T>>
+  }) {
+    const pool = this.getObjectPool(object.type)
+    const obj = pool.get(object.id)
+    if (!obj) {
+      return
+    }
+    for (const key in object.properties) {
+      if (key in ["id", "type"]) {
+        continue
+      }
+      if (key in ["pos"] && object.properties.pos) {
+        const newPos =
+          typeof object.properties.pos === "string"
+            ? JSON.parse(object.properties.pos)
+            : object.properties.pos
+
+        obj.pos = Vec2.fromObject(newPos)
+        continue
+      }
+    }
+  }
 
   handleAction<T extends GameActionType>(action: GameAction<T>): void {
     const pool = this.getObjectPool(action.payload.objectType)
     const obj = pool.get(action.payload.objectId)
     if (!obj) {
-      throw new Error(
-        `Object ${action.payload.objectId} not found in pool ${action.payload.objectType}`
-      )
+      return
     }
 
     switch (action.type) {
       case GameActionType.setTargetPos:
-        obj
-          .getComponent(Mover)!
-          .setTarget(
-            (action as GameAction<GameActionType.setTargetPos>).payload.data
-          )
+        let targetPos = (action as GameAction<GameActionType.setTargetPos>)
+          .payload.data
+        if (typeof targetPos === "string")
+          targetPos = Vec2.fromObject(JSON.parse(targetPos))
+
+        obj.getComponent(Mover)!.setTargetPos(targetPos)
         break
       case GameActionType.attack:
         break

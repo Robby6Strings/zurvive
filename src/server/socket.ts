@@ -5,11 +5,14 @@ import { ErrorMessage, MessageType } from "../shared/message"
 import { GameService } from "./services/gameService"
 import { PlayerService } from "./services/playerService"
 import { ServerGame } from "./game/serverGame"
+import { Mover } from "../shared/components/mover"
 
 export const socketHandler = (conn: SocketStream, _req: FastifyRequest) => {
   conn.setEncoding("utf8")
   let game: ServerGame | undefined = undefined
   const player = PlayerService.newPlayer(conn)
+  player.pos = player.pos.add({ x: 100, y: 100 })
+  player.getComponent(Mover)!.setTargetPos(player.pos)
   conn.socket.send(
     JSON.stringify({ type: MessageType.auth, playerId: player.id })
   )
@@ -24,13 +27,14 @@ export const socketHandler = (conn: SocketStream, _req: FastifyRequest) => {
 
       case MessageType.newGame:
         game = GameService.newGame()
-        game.addPlayer(player)
         conn.socket.send(
           JSON.stringify({
             type: MessageType.gameState,
             gameState: game.serialize(),
           })
         )
+        game.addObject(player)
+
         break
 
       case MessageType.joinGame:
@@ -45,21 +49,25 @@ export const socketHandler = (conn: SocketStream, _req: FastifyRequest) => {
           )
           return
         }
-        game.addPlayer(player)
+        game.addObject(player)
         conn.socket.send(
           JSON.stringify({
             type: MessageType.gameState,
             gameState: game.serialize(),
           })
         )
-        game.broadcastPlayer(player)
         break
 
       case MessageType.action:
         game?.handleAction(data.action)
-        game?.broadcastAction(data.action)
+        break
+
       default:
         break
     }
+  })
+  conn.on("end", () => {
+    console.log("ending connection")
+    player.remove = true
   })
 }
