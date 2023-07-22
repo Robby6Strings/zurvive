@@ -11,11 +11,12 @@ export abstract class BaseGame {
   enemyStore: GameObjectStore<GameObjectType.Enemy> = new GameObjectStore(
     GameObjectType.Player
   )
-  enemySpawnerStore: GameObjectStore<GameObjectType.EnemySpawner> =
-    new GameObjectStore(GameObjectType.EnemySpawner)
+  spawnerStore: GameObjectStore<GameObjectType.Spawner> = new GameObjectStore(
+    GameObjectType.Spawner
+  )
 
   get objectStores() {
-    return [this.playerStore, this.enemyStore, this.enemySpawnerStore]
+    return [this.playerStore, this.enemyStore, this.spawnerStore]
   }
 
   abstract handleAction<T extends GameActionType>(action: GameAction<T>): void
@@ -53,8 +54,8 @@ export abstract class BaseGame {
         return this.playerStore as GameObjectStore<T>
       case GameObjectType.Enemy:
         return this.enemyStore as GameObjectStore<T>
-      case GameObjectType.EnemySpawner:
-        return this.enemySpawnerStore as GameObjectStore<T>
+      case GameObjectType.Spawner:
+        return this.spawnerStore as GameObjectStore<T>
       default:
         throw new Error(`Unknown object type ${type}`)
     }

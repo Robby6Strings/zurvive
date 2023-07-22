@@ -92,7 +92,7 @@ export class ClientGame extends BaseGame {
     properties: Partial<GameObject<T>>
   }) {
     const pool = this.getObjectPool(object.type)
-    const obj = pool.get(object.id)
+    const obj = pool.find(object.id)
     if (!obj) {
       return
     }
@@ -109,7 +109,7 @@ export class ClientGame extends BaseGame {
 
   handleAction<T extends GameActionType>(action: GameAction<T>): void {
     const pool = this.getObjectPool(action.payload.objectType)
-    const obj = pool.get(action.payload.objectId)
+    const obj = pool.find(action.payload.objectId)
     if (!obj) {
       return
     }

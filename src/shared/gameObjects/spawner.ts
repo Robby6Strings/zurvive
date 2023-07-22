@@ -5,12 +5,12 @@ type GameObjectConstructor<T extends GameObjectType> = { new (): GameObject<T> }
 
 export class Spawner<
   T extends GameObjectType
-> extends GameObject<GameObjectType.EnemySpawner> {
+> extends GameObject<GameObjectType.Spawner> {
   spawnOpts: { (): Partial<GameObject<T>> } | undefined
   classRef: GameObjectConstructor<T> | undefined
   lastSpawnTime: number = performance.now()
   constructor() {
-    super(GameObjectType.EnemySpawner)
+    super(GameObjectType.Spawner)
     this.pos = new Vec2(0, 0)
   }
   configure(

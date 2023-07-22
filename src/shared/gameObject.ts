@@ -20,7 +20,7 @@ export enum GameObjectType {
   Chest = "chest",
   Door = "door",
   Floor = "floor",
-  EnemySpawner = "enemy-spawner",
+  Spawner = "spawner",
 }
 
 export abstract class GameObject<T extends GameObjectType>

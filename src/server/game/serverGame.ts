@@ -1,5 +1,4 @@
 import { BaseGame } from "../../shared/game"
-import { GameObjectStore } from "../../shared/gameObjectStore"
 import { GameObjectType } from "../../shared/gameObject"
 import { Enemy, Spawner } from "../../shared/gameObjects"
 import { GameActionType, GameAction } from "../../shared/gameAction"
@@ -12,40 +11,26 @@ import { Vec2 } from "../../shared/vec2"
 
 export class ServerGame extends BaseGame {
   intervalRef: NodeJS.Timer
-  constructor(players: ServerPlayer[] = [], enemies: Enemy[] = []) {
+  constructor() {
     super()
-    this.playerStore = new GameObjectStore(GameObjectType.Player, players)
-    this.enemyStore = new GameObjectStore(GameObjectType.Enemy, enemies)
     const enemySpawner = new Spawner<GameObjectType.Enemy>()
+    this.spawnerStore.add(enemySpawner)
     enemySpawner.configure(() => {
       return { pos: new Vec2(0, 0) }
     }, Enemy)
     this.enemyStore.add(enemySpawner.spawn())
 
-    this.enemySpawnerStore = new GameObjectStore(GameObjectType.EnemySpawner, [
-      enemySpawner,
-    ])
     this.intervalRef = setInterval(() => {
       this.update()
     }, this.frameDuration)
   }
 
   update(): void {
-    // this.enemySpawnerStore.objects.forEach((spawner) => {
-    //   const _spawner: Spawner<GameObjectType.Enemy> =
-    //     spawner as Spawner<GameObjectType.Enemy>
-    //   if (performance.now() - _spawner.lastSpawnTime < 10_000) return
-    //   console.log("spawning enemy")
-    //   const randomPlayer =
-    //     this.playerStore.objects[
-    //       Math.floor(Math.random() * this.playerStore.objects.length)
-    //     ]
-    //   const enemy = _spawner.spawn()
-    //   enemy.getComponent(Fighter)!.setTarget(randomPlayer)
-    //   this.enemyStore.add(enemy)
-    // })
+    // const enemySpawners = this.spawnerStore.filter(
+    //   (s) => (s as Spawner<any>).classRef === Enemy
+    // )
 
-    this.enemyStore.objects.forEach((enemy) => {
+    this.enemyStore.forEach((enemy) => {
       const fighter = enemy.getComponent(Fighter)!
       if (!fighter.target) {
         fighter.target = fighter.getTargetWithinFollowRange(
@@ -53,15 +38,6 @@ export class ServerGame extends BaseGame {
           this.playerStore.objects
         )
       }
-      //const collisions = Collider.getCollisions(enemy, this.playerStore.objects)
-      // for (const collision of collisions) {
-      //   const playerObj =
-      //     collision.objA.type === GameObjectType.Player
-      //       ? collision.objA
-      //       : collision.objB
-      //   const player = playerObj as ServerPlayer
-      //   player.pos = player.pos.add(collision.dir.scale(collision.overlap))
-      // }
     })
 
     super.update()
@@ -102,7 +78,7 @@ export class ServerGame extends BaseGame {
 
   handleAction<T extends GameActionType>(action: GameAction<T>): void {
     const pool = this.getObjectPool(action.payload.objectType)
-    const obj = pool.get(action.payload.objectId)
+    const obj = pool.find(action.payload.objectId)
     if (!obj) {
       throw new Error(
         `Object ${action.payload.objectId} not found in pool ${action.payload.objectType}`

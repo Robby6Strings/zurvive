@@ -132,7 +132,7 @@ export class LiveSocket {
       case GameObjectType.Enemy:
         newObject = new Enemy()
         break
-      case GameObjectType.EnemySpawner:
+      case GameObjectType.Spawner:
         newObject = new Spawner()
         break
       default:

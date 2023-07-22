@@ -12,7 +12,7 @@ export class GameObjectStore<T extends GameObjectType> {
     public objects: GameObject<T>[] = []
   ) {}
   add(object: GameObject<T>) {
-    if (this.get(object.id)) return
+    if (this.find(object.id)) return
     this.objects.push(object)
   }
   update() {
@@ -20,7 +20,7 @@ export class GameObjectStore<T extends GameObjectType> {
   }
 
   updateById(id: string, data: Partial<GameObject<T>>) {
-    const object = this.get(id)
+    const object = this.find(id)
     if (object) Object.assign(object, data)
   }
 
@@ -28,7 +28,7 @@ export class GameObjectStore<T extends GameObjectType> {
     this.objects = this.objects.filter((o) => o.id !== object.id)
   }
   removeById(id: string) {
-    const object = this.get(id)
+    const object = this.find(id)
     if (object) object.remove = true
     this.removeFlagged()
   }
@@ -36,8 +36,21 @@ export class GameObjectStore<T extends GameObjectType> {
   removeFlagged() {
     this.objects = this.objects.filter((o) => !o.remove)
   }
-  get(id: string) {
-    return this.objects.find((o) => o.id === id)
+  find(idOrPredicate: string | { (o: GameObject<T>): boolean }) {
+    if (typeof idOrPredicate === "string") {
+      return this.objects.find((o) => o.id === idOrPredicate)
+    }
+    return this.objects.find(idOrPredicate)
+  }
+
+  filter(predicate: { (o: GameObject<T>): boolean }) {
+    return this.objects.filter(predicate)
+  }
+
+  forEach(callback: { (o: GameObject<T>): void }) {
+    for (const obj of this.objects) {
+      callback(obj)
+    }
   }
 
   getChanges(): TypedMessage<undefined | GameActionType>[] {
