@@ -1,4 +1,5 @@
 import { GameObject } from "./gameObject"
+import { ISerializable } from "./serializable"
 
 export enum ComponentType {
   Mover,
@@ -14,7 +15,9 @@ export interface IComponent<T extends ComponentType> {
   deserialize(data: any): void
 }
 
-export abstract class Component implements IComponent<ComponentType> {
+export abstract class Component
+  implements IComponent<ComponentType>, ISerializable
+{
   constructor(public type: ComponentType, public enabled: boolean = true) {}
 
   abstract update(_obj: GameObject<any>): void

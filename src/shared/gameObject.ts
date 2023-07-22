@@ -6,6 +6,7 @@ import { Vec2 } from "./vec2"
 import { Health } from "./components/health"
 import { Collider } from "./components/collider"
 import { ShapeType } from "./types"
+import { ISerializable } from "./serializable"
 
 export enum GameObjectType {
   Unset = "unset",
@@ -22,11 +23,13 @@ export enum GameObjectType {
   EnemySpawner = "enemy-spawner",
 }
 
-export abstract class GameObject<T extends GameObjectType> {
+export abstract class GameObject<T extends GameObjectType>
+  implements ISerializable
+{
   id: string
   remove: boolean
   new: boolean = true
-  components: IComponent<any>[]
+  components: IComponent<ComponentType>[]
   _pos: Vec2 = new Vec2(0, 0)
   posChanged: boolean = false
   rotation: number = 0
