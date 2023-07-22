@@ -8,6 +8,7 @@ import { Mover } from "../../shared/components/mover"
 import { ServerPlayer } from "./serverPlayer"
 import { MessageType, TypedMessage } from "../../shared/message"
 import { Vec2 } from "../../shared/vec2"
+//import { Collider } from "../../shared/components/collider"
 
 export class ServerGame extends BaseGame {
   intervalRef: NodeJS.Timer
@@ -17,7 +18,7 @@ export class ServerGame extends BaseGame {
     this.enemyStore = new GameObjectStore(GameObjectType.Enemy, enemies)
     const enemySpawner = new Spawner<GameObjectType.Enemy>()
     enemySpawner.configure(() => {
-      return { pos: new Vec2(-200, -200) }
+      return { pos: new Vec2(0, 0) }
     }, Enemy)
     this.enemyStore.add(enemySpawner.spawn())
 
@@ -52,6 +53,15 @@ export class ServerGame extends BaseGame {
           this.playerStore.objects
         )
       }
+      //const collisions = Collider.getCollisions(enemy, this.playerStore.objects)
+      // for (const collision of collisions) {
+      //   const playerObj =
+      //     collision.objA.type === GameObjectType.Player
+      //       ? collision.objA
+      //       : collision.objB
+      //   const player = playerObj as ServerPlayer
+      //   player.pos = player.pos.add(collision.dir.scale(collision.overlap))
+      // }
     })
 
     super.update()

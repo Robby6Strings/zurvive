@@ -99,27 +99,25 @@ export class GameObjectStore<T extends GameObjectType> {
   }
 
   serialize() {
-    return JSON.stringify({
+    return {
       objectType: this.objectType,
       objects: this.objects.map((o) => o.serialize()),
-    })
+    }
   }
-  deserialize(data: string) {
-    const parsed = JSON.parse(data)
-    this.objectType = parsed.objectType
-    this.objects = parsed.objects.map((d: any) => {
-      const parsed = JSON.parse(d)
-      switch (parsed.type) {
+  deserialize(data: any) {
+    this.objectType = data.objectType
+    this.objects = data.objects.map((obj: any) => {
+      switch (obj.type) {
         case GameObjectType.Player:
-          const obj = new Player()
-          obj.deserialize(parsed)
-          return obj
+          const player = new Player()
+          player.deserialize(obj)
+          return player
         case GameObjectType.Enemy:
-          const obj2 = new Enemy()
-          obj2.deserialize(parsed)
-          return obj2
+          const enemy = new Enemy()
+          enemy.deserialize(obj)
+          return enemy
         default:
-          throw new Error(`Unknown object type ${parsed.type}`)
+          throw new Error(`Unknown object type ${obj.type}`)
       }
     })
   }

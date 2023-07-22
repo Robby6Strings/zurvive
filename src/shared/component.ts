@@ -10,7 +10,7 @@ export enum ComponentType {
 export interface IComponent<T extends ComponentType> {
   type: T
   update(_obj: GameObject<any>): void
-  serialize(): string
+  serialize(): Object
   deserialize(data: any): void
 }
 
@@ -19,5 +19,5 @@ export abstract class Component implements IComponent<ComponentType> {
 
   abstract update(_obj: GameObject<any>): void
   abstract deserialize(data: any): void
-  abstract serialize(): string
+  abstract serialize(): Object
 }

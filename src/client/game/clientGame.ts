@@ -20,10 +20,10 @@ export class ClientGame extends BaseGame {
   keys: {
     [key: string]: boolean
   } = {}
-  constructor(serializedGameState: string, liveSocket: LiveSocket) {
+  constructor(serializedGameState: Object, liveSocket: LiveSocket) {
     super()
     this.liveSocket = liveSocket
-    const { id, players, enemies } = JSON.parse(serializedGameState)
+    const { id, players, enemies } = serializedGameState as any
     this.id = id
     console.log("game id", this.id)
     this.playerStore = new GameObjectStore(GameObjectType.Player)
@@ -101,12 +101,7 @@ export class ClientGame extends BaseGame {
         continue
       }
       if (key in ["pos"] && object.properties.pos) {
-        const newPos =
-          typeof object.properties.pos === "string"
-            ? JSON.parse(object.properties.pos)
-            : object.properties.pos
-
-        obj.pos = Vec2.fromObject(newPos)
+        obj.pos = Vec2.fromObject(object.properties.pos)
         continue
       }
     }

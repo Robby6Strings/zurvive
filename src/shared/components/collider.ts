@@ -58,7 +58,7 @@ export class Collider extends Component {
     })
   }
 
-  static checkCollisions(obj: GameObject<any>, objs: GameObject<any>[]) {
+  static getCollisions(obj: GameObject<any>, objs: GameObject<any>[]) {
     const collisions: CollisionCheckResult[] = []
     for (const obj2 of objs) {
       const collision = Collider.checkCollision(obj, obj2)
@@ -74,7 +74,7 @@ export class Collider extends Component {
     const collider1 = obj1.getComponent(Collider)
     const collider2 = obj2.getComponent(Collider)
     if (!collider1 || !collider2) return
-    if (collider1.enabled || collider2.enabled) return
+    if (!collider1.enabled || !collider2.enabled) return
     if (collider1.static && collider2.static) return
 
     if (
@@ -258,7 +258,7 @@ export class Collider extends Component {
     return (x1 - x3) * (y2 - y3) - (x2 - x3) * (y1 - y3)
   }
 
-  deserialize(data: any): void {
+  deserialize(data: any) {
     this.enabled = data.enabled
     this.radius = data.radius
     this.width = data.width
@@ -266,8 +266,8 @@ export class Collider extends Component {
     this.shape = data.shape
     this.static = data.static
   }
-  serialize(): string {
-    return JSON.stringify({
+  serialize(): Object {
+    return {
       type: this.type,
       enabled: this.enabled,
       radius: this.radius,
@@ -275,6 +275,6 @@ export class Collider extends Component {
       height: this.height,
       shape: this.shape,
       static: this.static,
-    })
+    }
   }
 }

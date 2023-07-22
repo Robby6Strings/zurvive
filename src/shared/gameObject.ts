@@ -72,25 +72,45 @@ export abstract class GameObject<T extends GameObjectType> {
     }
   }
 
-  public serialize(): string {
-    return JSON.stringify({
+  static getDistance(objA: GameObject<any>, objB: GameObject<any>): number {
+    const colliderA = objA.getComponent(Collider)
+    const colliderB = objB.getComponent(Collider)
+
+    let colliderOffsets = 0
+    if (colliderA) {
+      colliderOffsets +=
+        colliderA.shape === ShapeType.Circle
+          ? colliderA.radius
+          : Math.max(colliderA.width, colliderA.height) / 2
+    }
+    if (colliderB) {
+      colliderOffsets +=
+        colliderB.shape === ShapeType.Circle
+          ? colliderB.radius
+          : Math.max(colliderB.width, colliderB.height) / 2
+    }
+
+    return objA.pos.distance(objB.pos) - colliderOffsets
+  }
+
+  public serialize(): Object {
+    return {
       id: this.id,
       type: this.type,
       pos: Vec2.serialize(this.pos),
       rotation: this.rotation,
       components: this.components.map((c) => c.serialize()),
-    })
+    }
   }
 
   public deserialize(data: any): void {
     this.id = data.id
     this.type = data.type
-    this.pos = data.pos ? Vec2.fromObject(JSON.parse(data.pos)) : Vec2.zero()
+    this.pos = data.pos ? Vec2.fromObject(data.pos) : Vec2.zero()
     this.rotation = data.rotation
     this.components = data.components.map((c: any) => {
-      const parsed = JSON.parse(c)
       let classType: ClassConstructor<Component> | undefined
-      switch (parsed.type as ComponentType) {
+      switch (c.type as ComponentType) {
         case ComponentType.Mover:
           classType = Mover
           break
@@ -107,7 +127,7 @@ export abstract class GameObject<T extends GameObjectType> {
           throw new Error(`Unknown component type ${c.type}`)
       }
       const component = new classType()
-      component.deserialize(parsed)
+      component.deserialize(c)
       return component
     })
   }

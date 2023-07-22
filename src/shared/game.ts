@@ -60,11 +60,11 @@ export abstract class BaseGame {
     }
   }
 
-  serialize(): string {
-    return JSON.stringify({
+  serialize(): Object {
+    return {
       id: this.id,
       players: this.playerStore.serialize(),
       enemies: this.enemyStore.serialize(),
-    })
+    }
   }
 }

@@ -64,6 +64,7 @@ export class LiveSocket {
   }
 
   private handleMessage<T extends GameActionType>(message: TypedMessage<T>) {
+    console.log("received message", message)
     switch (message.type) {
       case MessageType.auth:
         this.authId = message.playerId ?? ""
@@ -123,10 +124,8 @@ export class LiveSocket {
   }
 
   handleCreateObject(object: any) {
-    const parsed = JSON.parse(object)
-    console.log("new object", parsed)
     let newObject: GameObject<GameObjectType>
-    switch (parsed.type) {
+    switch (object.type) {
       case GameObjectType.Player:
         newObject = new Player()
         break
@@ -137,9 +136,9 @@ export class LiveSocket {
         newObject = new Spawner()
         break
       default:
-        throw new Error(`Unknown object type ${parsed.type}`)
+        throw new Error(`Unknown object type ${object.type}`)
     }
-    newObject.deserialize(parsed)
+    newObject.deserialize(object)
     this.gameState.value?.addObject(newObject)
   }
 }

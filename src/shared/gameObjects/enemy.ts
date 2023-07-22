@@ -3,6 +3,9 @@ import { Fighter } from "../components/fighter"
 import { Health } from "../components/health"
 import { Mover } from "../components/mover"
 import { GameObject, GameObjectType } from "../gameObject"
+import { ShapeType } from "../types"
+
+const enemyRadius = 25
 
 export class Enemy extends GameObject<GameObjectType.Enemy> {
   constructor() {
@@ -11,8 +14,12 @@ export class Enemy extends GameObject<GameObjectType.Enemy> {
       new Mover(),
       new Fighter(),
       new Health(),
-      Collider.circleCollider(25)
+      Collider.circleCollider(enemyRadius)
     )
-    this.renderSettings.color = "#F00"
+    Object.assign(this.renderSettings, {
+      shapeType: ShapeType.Circle,
+      radius: enemyRadius,
+      color: "#E44",
+    })
   }
 }

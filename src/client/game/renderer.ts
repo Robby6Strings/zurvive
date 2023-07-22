@@ -32,10 +32,13 @@ export class Renderer {
 
     ctx.save()
     ctx.beginPath()
-    if (shapeType === ShapeType.Circle) {
-      ctx.arc(obj.pos.x + x, obj.pos.y + y, radius ?? 30, 0, 2 * Math.PI)
+    if (shapeType == ShapeType.Circle) {
+      if (!radius) throw new Error("radius not set")
+      ctx.arc(obj.pos.x + x, obj.pos.y + y, radius, 0, 2 * Math.PI)
     } else {
-      ctx.rect(obj.pos.x + x, obj.pos.y + y, width ?? 30, height ?? 30)
+      console.log("rendering rect", obj)
+      if (!width || !height) throw new Error("width or height not set")
+      ctx.rect(obj.pos.x + x, obj.pos.y + y, width, height)
     }
     if (fill) {
       ctx.fillStyle = color

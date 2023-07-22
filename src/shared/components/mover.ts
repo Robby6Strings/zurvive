@@ -39,12 +39,12 @@ export class Mover extends Component {
     this.speed = data.speed
     this.targetPos = data.targetPos ? Vec2.fromObject(data.targetPos) : null
   }
-  serialize(): string {
-    return JSON.stringify({
+  serialize(): Object {
+    return {
       type: this.type,
       enabled: this.enabled,
       speed: this.speed,
       targetPos: this.targetPos ? Vec2.serialize(this.targetPos) : null,
-    })
+    }
   }
 }

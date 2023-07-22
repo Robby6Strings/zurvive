@@ -9,7 +9,7 @@ export class Fighter extends Component {
   critMultiplier: number = 2
   target: GameObject<any> | null = null
   followRange: number = 200
-  attackRange: number = 80
+  attackRange: number = 5
   attackTimer: number = 0
   attackCooldown: number = 1000
 
@@ -41,7 +41,7 @@ export class Fighter extends Component {
     const mover = obj.getComponent(Mover)!
 
     if (this.inAttackRange(obj)) {
-      //mover.setTargetPos(null)
+      mover.setTargetPos(null)
       if (this.attackTimer >= this.attackCooldown) {
         this.attack(this.target.getComponent(Health)!)
         this.attackTimer = 0
@@ -50,7 +50,12 @@ export class Fighter extends Component {
       }
       return
     }
-    mover.setTargetPos(this.target.pos)
+
+    // get direction to target
+    const dir = this.target.pos.sub(obj.pos).normalize()
+    // get position to move to
+    const targetPos = this.target.pos.sub(dir.scale(this.attackRange))
+    mover.setTargetPos(targetPos)
   }
 
   setTarget(target: GameObject<any>) {
@@ -59,12 +64,12 @@ export class Fighter extends Component {
 
   inFollowRange(obj: GameObject<any>): boolean {
     if (!this.target) return false
-    return obj.pos.distance(this.target.pos) < this.followRange
+    return GameObject.getDistance(obj, this.target) < this.followRange
   }
 
   inAttackRange(obj: GameObject<any>): boolean {
     if (!this.target) return false
-    return obj.pos.distance(this.target.pos) < this.attackRange
+    return GameObject.getDistance(obj, this.target) < this.attackRange
   }
 
   attack(target: Health): void {
@@ -78,13 +83,13 @@ export class Fighter extends Component {
     this.critChance = data.critChance
     this.critMultiplier = data.critMultiplier
   }
-  serialize(): string {
-    return JSON.stringify({
+  serialize(): Object {
+    return {
       type: this.type,
       enabled: this.enabled,
       damage: this.damage,
       critChance: this.critChance,
       critMultiplier: this.critMultiplier,
-    })
+    }
   }
 }

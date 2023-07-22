@@ -64,11 +64,11 @@ export class Health extends Component {
     this.currentHealth = data.currentHealth
     this.invulnerable = data.invulnerable
   }
-  serialize(): string {
-    return JSON.stringify({
+  serialize(): Object {
+    return {
       type: this.type,
       maxHealth: this.maxHealth,
       currentHealth: this.currentHealth,
-    })
+    }
   }
 }

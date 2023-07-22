@@ -5,11 +5,11 @@ export interface IVec2 {
 
 export class Vec2 implements IVec2 {
   constructor(public x: number = 0, public y: number = 0) {}
-  static serialize(v: Vec2): string {
-    return JSON.stringify({ x: v.x, y: v.y })
+  static serialize(v: Vec2) {
+    return { x: v.x, y: v.y }
   }
-  static deserialize(data: string): IVec2 {
-    const { x, y } = JSON.parse(data)
+  static deserialize(data: IVec2): Vec2 {
+    const { x, y } = data
     return new Vec2(x, y)
   }
   static fromObject(obj: IVec2): Vec2 {
