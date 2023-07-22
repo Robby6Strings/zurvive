@@ -11,7 +11,7 @@ export class Enemy extends GameObject<GameObjectType.Enemy> {
   constructor() {
     super(GameObjectType.Enemy)
     this.components.push(
-      new Mover(),
+      Object.assign(new Mover(), { speed: 1.5 }),
       new Fighter(),
       new Health(),
       Collider.circleCollider(enemyRadius)

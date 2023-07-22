@@ -13,10 +13,9 @@ export class Player extends GameObject<GameObjectType.Player> {
     this.components.push(
       new Mover(),
       new Fighter(),
-      new Health(),
+      Object.assign(new Health(), { invulnerable: true }),
       Collider.circleCollider(playerRadius)
     )
-    this.getComponent(Health)!.invulnerable = true
     Object.assign(this.renderSettings, {
       shapeType: ShapeType.Circle,
       radius: playerRadius,

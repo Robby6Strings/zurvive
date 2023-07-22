@@ -64,7 +64,6 @@ export class LiveSocket {
   }
 
   private handleMessage<T extends GameActionType>(message: TypedMessage<T>) {
-    console.log("received message", message)
     switch (message.type) {
       case MessageType.auth:
         this.authId = message.playerId ?? ""

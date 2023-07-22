@@ -1,5 +1,6 @@
 import { Component, ComponentType } from "../component"
 import { GameObject } from "../gameObject"
+import { Collider } from "./collider"
 import { Health } from "./health"
 import { Mover } from "./mover"
 
@@ -18,11 +19,12 @@ export class Fighter extends Component {
   }
 
   getTargetWithinFollowRange(
-    _obj: GameObject<any>,
+    obj: GameObject<any>,
     objects: GameObject<any>[]
   ): GameObject<any> | null {
     return (
-      objects.find((o) => o.pos.distance(_obj.pos) < this.followRange) ?? null
+      objects.find((o) => GameObject.getDistance(obj, o) < this.followRange) ??
+      null
     )
   }
 
@@ -54,7 +56,11 @@ export class Fighter extends Component {
     // get direction to target
     const dir = this.target.pos.sub(obj.pos).normalize()
     // get position to move to
-    const targetPos = this.target.pos.sub(dir.scale(this.attackRange))
+    const targetPos = this.target.pos.sub(
+      dir.scale(
+        this.attackRange + Collider.getSize(obj) + Collider.getSize(this.target)
+      )
+    )
     mover.setTargetPos(targetPos)
   }
 

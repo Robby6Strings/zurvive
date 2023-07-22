@@ -35,6 +35,14 @@ export class Collider extends Component {
     ]
   }
 
+  static getSize(obj: GameObject<any>): number {
+    const collider = obj.getComponent(Collider)
+    if (!collider) return 0
+    return collider.shape === ShapeType.Circle
+      ? collider.radius
+      : Math.max(collider.width, collider.height) / 2
+  }
+
   update(_obj: GameObject<any>): void {}
 
   static rectangleCollider(
