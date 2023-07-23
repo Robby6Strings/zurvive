@@ -9,6 +9,7 @@ export class Spawner<
   modifierFunc: { (obj: GameObject<T>): GameObject<T> } | undefined
   classRef: GameObjectConstructor<T> | undefined
   lastSpawnTime: number = performance.now()
+  lastSpawnPos: Vec2 = new Vec2(0, 0)
   constructor() {
     super(GameObjectType.Spawner)
     this.renderSettings.render = false
@@ -25,6 +26,8 @@ export class Spawner<
     if (!this.modifierFunc || !this.classRef)
       throw new Error("Spawner not configured")
     this.lastSpawnTime = performance.now()
-    return this.modifierFunc(new this.classRef())
+    const res = this.modifierFunc(new this.classRef())
+    this.lastSpawnPos = res.pos.clone()
+    return res
   }
 }
