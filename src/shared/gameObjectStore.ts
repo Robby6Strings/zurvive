@@ -3,12 +3,14 @@ import { Mover } from "./components/mover"
 import { GameActionType } from "./gameAction"
 import { GameObject, GameObjectType } from "./gameObject"
 import { newInstanceOfType } from "./gameObjects"
+import { CollisionLayer } from "./layers"
 import { MessageType, TypedMessage } from "./message"
 import { Vec2 } from "./vec2"
 
 export class GameObjectStore<T extends GameObjectType> {
   constructor(
     public objectType: GameObjectType,
+    public objectLayer: CollisionLayer,
     public objects: GameObject<T>[] = []
   ) {}
   add(object: GameObject<T>) {
@@ -16,7 +18,9 @@ export class GameObjectStore<T extends GameObjectType> {
     this.objects.push(object)
   }
   update() {
-    this.objects.forEach((o) => o.update())
+    for (const obj of this.objects) {
+      obj.update()
+    }
   }
 
   updateById(id: string, data: Partial<GameObject<T>>) {

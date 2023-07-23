@@ -1,4 +1,4 @@
-import { BaseGame } from "../../shared/game"
+import { Game } from "../../shared/game"
 import { GameObjectType } from "../../shared/gameObject"
 import { Enemy } from "../../shared/gameObjects/entities"
 import { Spawner } from "../../shared/gameObjects/spawner"
@@ -9,9 +9,8 @@ import { ServerPlayer } from "./serverPlayer"
 import { MessageType, TypedMessage } from "../../shared/message"
 import { Vec2 } from "../../shared/vec2"
 import { Tree } from "../../shared/gameObjects/environment/tree"
-//import { Collider } from "../../shared/components/collider"
 
-export class ServerGame extends BaseGame {
+export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
   constructor() {
     super()
@@ -39,7 +38,7 @@ export class ServerGame extends BaseGame {
     //   (s) => (s as Spawner<any>).classRef === Enemy
     // )
 
-    this.enemyStore.forEach((enemy) => {
+    for (const enemy of this.enemyStore.objects) {
       const fighter = enemy.getComponent(Fighter)!
       if (!fighter.target) {
         fighter.target = fighter.getTargetWithinFollowRange(
@@ -47,7 +46,21 @@ export class ServerGame extends BaseGame {
           this.playerStore.objects
         )
       }
-    })
+    }
+
+    this.handleCollisions()
+
+    // for (const player of this.playerStore.objects) {
+    //   const trees = this.treeStore.objects
+    //   const collisions = Collider.getCollisions(player, trees)
+    //   for (const collision of collisions) {
+    //     //const mover = player.getComponent(Mover)!
+    //     const newPos = player.pos.add(
+    //       collision.dir.multiply(collision.depth / 2)
+    //     )
+    //     player.pos = newPos
+    //   }
+    // }
 
     super.update()
   }
@@ -86,8 +99,9 @@ export class ServerGame extends BaseGame {
   }
 
   handleAction<T extends GameActionType>(action: GameAction<T>): void {
-    const pool = this.getObjectPool(action.payload.objectType)
-    const obj = pool.find(action.payload.objectId)
+    const obj = this.getObjectPoolByType(action.payload.objectType).find(
+      action.payload.objectId
+    )
     if (!obj) {
       throw new Error(
         `Object ${action.payload.objectId} not found in pool ${action.payload.objectType}`
@@ -107,7 +121,6 @@ export class ServerGame extends BaseGame {
         break
       case GameActionType.interact:
         break
-
       default:
         throw new Error(`Unknown action type ${action.type}`)
     }

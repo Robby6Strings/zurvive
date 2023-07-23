@@ -16,7 +16,7 @@ export class Player extends GameObject<GameObjectType.Player> {
       Object.assign(new Health(), { invulnerable: true }),
       Collider.circleCollider(playerRadius)
     )
-    Object.assign(this.renderSettings, {
+    this.setRenderSettings({
       shapeType: ShapeType.Circle,
       radius: playerRadius,
       color: "#44E",

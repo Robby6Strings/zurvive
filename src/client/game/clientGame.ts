@@ -1,5 +1,4 @@
-import { BaseGame } from "../../shared/game"
-import { GameObjectStore } from "../../shared/gameObjectStore"
+import { Game } from "../../shared/game"
 import { GameObject, GameObjectType } from "../../shared/gameObject"
 import { GameActionType, GameAction } from "../../shared/gameAction"
 import { Mover } from "../../shared/components/mover"
@@ -8,7 +7,7 @@ import { Camera } from "./camera"
 import { Vec2 } from "../../shared/vec2"
 import { LiveSocket } from "../liveSocket"
 
-export class ClientGame extends BaseGame {
+export class ClientGame extends Game {
   playerId: string = ""
   liveSocket: LiveSocket
   camera: Camera
@@ -26,9 +25,7 @@ export class ClientGame extends BaseGame {
     const { id, players, enemies } = serializedGameState
     this.id = id
     console.log("game id", this.id)
-    this.playerStore = new GameObjectStore(GameObjectType.Player)
     this.playerStore.deserialize(players)
-    this.enemyStore = new GameObjectStore(GameObjectType.Enemy)
     this.enemyStore.deserialize(enemies)
     this.camera = new Camera()
     this.renderer = new Renderer()
@@ -91,16 +88,15 @@ export class ClientGame extends BaseGame {
     type: T
     properties: Partial<GameObject<T>>
   }) {
-    const pool = this.getObjectPool(object.type)
-    const obj = pool.find(object.id)
+    const obj = this.getObjectPoolByType(object.type).find(object.id)
     if (!obj) {
       return
     }
     for (const key in object.properties) {
-      if (key in ["id", "type"]) {
+      if (["id", "type"].includes(key)) {
         continue
       }
-      if (key in ["pos"] && object.properties.pos) {
+      if (key === "pos" && object.properties.pos) {
         obj.pos = Vec2.fromObject(object.properties.pos)
         continue
       }
@@ -108,7 +104,7 @@ export class ClientGame extends BaseGame {
   }
 
   handleAction<T extends GameActionType>(action: GameAction<T>): void {
-    const pool = this.getObjectPool(action.payload.objectType)
+    const pool = this.getObjectPoolByType(action.payload.objectType)
     const obj = pool.find(action.payload.objectId)
     if (!obj) {
       return

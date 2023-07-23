@@ -16,7 +16,7 @@ export class Enemy extends GameObject<GameObjectType.Enemy> {
       new Health(),
       Collider.circleCollider(enemyRadius)
     )
-    Object.assign(this.renderSettings, {
+    this.setRenderSettings({
       shapeType: ShapeType.Circle,
       radius: enemyRadius,
       color: "#E44",

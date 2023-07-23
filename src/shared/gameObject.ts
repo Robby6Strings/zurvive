@@ -55,6 +55,12 @@ export abstract class GameObject<T extends GameObjectType>
     this.remove = false
     this.components = []
   }
+  setRenderSettings(settings: Partial<RenderSettings>): void {
+    Object.assign<RenderSettings, Partial<RenderSettings>>(
+      this.renderSettings,
+      settings
+    )
+  }
 
   getComponent<T extends typeof Component>(
     classRef: T

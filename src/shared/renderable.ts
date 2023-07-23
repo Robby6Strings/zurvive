@@ -14,4 +14,5 @@ export type RenderSettings = {
 
 export interface IRenderable {
   renderSettings: RenderSettings
+  setRenderSettings(settings: Partial<RenderSettings>): void
 }

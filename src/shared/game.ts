@@ -1,22 +1,39 @@
 import { GameObjectStore } from "./gameObjectStore"
 import { GameActionType, GameAction } from "./gameAction"
 import { GameObject, GameObjectType } from "./gameObject"
+import { CollisionLayer } from "./layers"
+import { Collider } from "./components/collider"
 
-export abstract class BaseGame {
+export abstract class Game {
   frameDuration: number = 1000 / 60
   id: string = Math.random().toString(36).substring(7)
   playerStore: GameObjectStore<GameObjectType.Player> = new GameObjectStore(
-    GameObjectType.Player
+    GameObjectType.Player,
+    CollisionLayer.Player
   )
   enemyStore: GameObjectStore<GameObjectType.Enemy> = new GameObjectStore(
-    GameObjectType.Player
+    GameObjectType.Player,
+    CollisionLayer.Enemy
   )
   spawnerStore: GameObjectStore<GameObjectType.Spawner> = new GameObjectStore(
-    GameObjectType.Spawner
+    GameObjectType.Spawner,
+    CollisionLayer.Background
   )
   treeStore: GameObjectStore<GameObjectType.Tree> = new GameObjectStore(
-    GameObjectType.Tree
+    GameObjectType.Tree,
+    CollisionLayer.Environment
   )
+
+  static collisionLayers: Map<GameObjectType, CollisionLayer[]> = new Map([
+    [
+      GameObjectType.Player,
+      [CollisionLayer.Player, CollisionLayer.Enemy, CollisionLayer.Environment],
+    ],
+    [
+      GameObjectType.Enemy,
+      [CollisionLayer.Player, CollisionLayer.Enemy, CollisionLayer.Environment],
+    ],
+  ])
 
   get objectStores() {
     return [
@@ -25,6 +42,27 @@ export abstract class BaseGame {
       this.spawnerStore,
       this.treeStore,
     ]
+  }
+
+  handleCollisions() {
+    for (const store of this.objectStores) {
+      for (const objA of store.objects) {
+        const collisionLayers = Game.collisionLayers.get(objA.type)
+        if (!collisionLayers) continue
+
+        for (const layer of collisionLayers) {
+          const otherStores = this.getObjectPoolsByLayer(layer)
+          for (const otherStore of otherStores) {
+            const collisions = Collider.getCollisions(objA, otherStore.objects)
+            for (const collision of collisions) {
+              objA.pos = objA.pos.add(
+                collision.dir.multiply(collision.depth / 2)
+              )
+            }
+          }
+        }
+      }
+    }
   }
 
   abstract handleAction<T extends GameActionType>(action: GameAction<T>): void
@@ -42,7 +80,7 @@ export abstract class BaseGame {
   }
 
   addObject<T extends GameObjectType>(object: GameObject<T>) {
-    this.getObjectPool(object.type).add(object)
+    this.getObjectPoolByType(object.type).add(object)
   }
 
   removeObject<T extends GameObjectType>({
@@ -53,10 +91,10 @@ export abstract class BaseGame {
     type: T
   }) {
     console.log("removing", id, type)
-    this.getObjectPool(type).removeById(id)
+    this.getObjectPoolByType(type).removeById(id)
   }
 
-  getObjectPool<T extends GameObjectType>(type: T): GameObjectStore<T> {
+  getObjectPoolByType<T extends GameObjectType>(type: T): GameObjectStore<T> {
     switch (type) {
       case GameObjectType.Player:
         return this.playerStore as GameObjectStore<T>
@@ -69,6 +107,10 @@ export abstract class BaseGame {
       default:
         throw new Error(`Unknown object type ${type}`)
     }
+  }
+
+  getObjectPoolsByLayer(layer: CollisionLayer): GameObjectStore<any>[] {
+    return this.objectStores.filter((store) => store.objectLayer === layer)
   }
 
   serialize(): Object {

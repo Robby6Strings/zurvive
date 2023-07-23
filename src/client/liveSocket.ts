@@ -3,7 +3,6 @@ import { ClientGame } from "./game/clientGame"
 import { MessageType, TypedMessage } from "../shared/message"
 import { GameAction, GameActionType } from "../shared/gameAction"
 import { newInstanceOfType } from "../shared/gameObjects"
-import { GameObjectType } from "../shared/gameObject"
 
 export class LiveSocket {
   socket: any
@@ -18,6 +17,9 @@ export class LiveSocket {
   public gameState: Signal<ClientGame | null> = createSignal<ClientGame | null>(
     null
   )
+  get game(): ClientGame | null {
+    return this.gameState.value
+  }
 
   constructor() {
     const { hostname, port } = window.location
@@ -67,8 +69,8 @@ export class LiveSocket {
     switch (message.type) {
       case MessageType.auth:
         this.authId = message.playerId ?? ""
-        if (this.authId && this.gameState.value) {
-          this.gameState.value.playerId = this.authId
+        if (this.authId && this.game) {
+          this.game.playerId = this.authId
           this.gameState.notify()
         }
         break
@@ -82,11 +84,13 @@ export class LiveSocket {
         break
 
       case MessageType.action:
-        this.gameState.value?.handleAction(message.action as GameAction<T>)
+        this.game?.handleAction(message.action as GameAction<T>)
         break
 
       case MessageType.newObject:
-        this.handleCreateObject(message.object)
+        this.game?.addObject(
+          newInstanceOfType(message.object.type).deserialize(message.object)
+        )
         break
 
       case MessageType.update:
@@ -96,17 +100,19 @@ export class LiveSocket {
         for (const change of changes) {
           switch (change.type) {
             case MessageType.newObject:
-              this.handleCreateObject(change.object)
+              this.game?.addObject(
+                newInstanceOfType(change.object.type).deserialize(change.object)
+              )
               break
             case MessageType.removeObject:
               console.log("removing", change.object)
-              this.gameState.value?.removeObject(change.object)
+              this.game?.removeObject(change.object)
               break
             case MessageType.action:
-              this.gameState.value?.handleAction(change.action as GameAction<T>)
+              this.game?.handleAction(change.action as GameAction<T>)
               break
             case MessageType.updateObject:
-              this.gameState.value?.updateObject(change.object)
+              this.game?.updateObject(change.object)
               break
             default:
               throw new Error(`Unknown update type ${change.type}`)
@@ -120,12 +126,5 @@ export class LiveSocket {
       default:
         return
     }
-  }
-
-  handleCreateObject(object: any) {
-    const newObj = newInstanceOfType(object.type).deserialize(object)
-
-    if (object.type === GameObjectType.Tree) console.log(newObj)
-    this.gameState.value?.addObject(newObj)
   }
 }

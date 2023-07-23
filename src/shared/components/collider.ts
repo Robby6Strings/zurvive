@@ -9,7 +9,7 @@ type CollisionCheckResult = {
   aStatic: boolean
   bStatic: boolean
   dir: Vec2
-  overlap: number
+  depth: number
 }
 
 export class Collider extends Component {
@@ -50,7 +50,7 @@ export class Collider extends Component {
     height: number,
     isStatic: boolean = false
   ) {
-    return Object.assign(new Collider(), {
+    return Object.assign<Collider, Partial<Collider>>(new Collider(), {
       width,
       height,
       shape: ShapeType.Rectangle,
@@ -69,6 +69,7 @@ export class Collider extends Component {
   static getCollisions(obj: GameObject<any>, objs: GameObject<any>[]) {
     const collisions: CollisionCheckResult[] = []
     for (const obj2 of objs) {
+      if (obj.id === obj2.id) continue
       const collision = Collider.checkCollision(obj, obj2)
       if (collision) collisions.push(collision)
     }
@@ -128,7 +129,7 @@ export class Collider extends Component {
 
     return {
       dir,
-      overlap,
+      depth: overlap,
       objA: obj1,
       objB: obj2,
       aStatic: collider1.static,
@@ -147,16 +148,56 @@ export class Collider extends Component {
     const rectRotation = rectObj.rotation
     const rectCenter = rectObj.pos
 
-    const circleCenter = circleObj.pos
-    const circleRadius = circleCollider.radius
-
     const rectPoints = rectCollider.getPoints()
-
     const rectPointsRotated = rectPoints.map((p) =>
       p.rotate(rectRotation).add(rectCenter)
     )
 
-    const closestPoint = rectPointsRotated.reduce(
+    const circleCenter = circleObj.pos
+    const circleRadius = circleCollider.radius
+
+    const collidedWithCorner = rectPointsRotated.some((p) =>
+      Collider.pointInRectangle(p, [
+        new Vec2(circleCenter.x + circleRadius, circleCenter.y + circleRadius),
+        new Vec2(circleCenter.x - circleRadius, circleCenter.y + circleRadius),
+        new Vec2(circleCenter.x - circleRadius, circleCenter.y - circleRadius),
+        new Vec2(circleCenter.x + circleRadius, circleCenter.y - circleRadius),
+      ])
+    )
+
+    if (collidedWithCorner) {
+      const overlap = rectPointsRotated.reduce(
+        (acc, p) => {
+          const dist = p.distance(circleCenter)
+          if (dist < acc.dist) return { dist, point: p }
+          return acc
+        },
+        { dist: Infinity, point: new Vec2(0, 0) }
+      )
+      const dir = circleObj.pos.subtract(overlap.point).normalize()
+      const depth = circleObj.pos.distance(overlap.point)
+      return {
+        dir,
+        depth,
+        objA: circleObj,
+        objB: rectObj,
+        aStatic: circleCollider.static,
+        bStatic: rectCollider.static,
+      }
+    }
+
+    const collided = rectPointsRotated.some((p) =>
+      Collider.pointInRectangle(p, [
+        new Vec2(circleCenter.x + circleRadius, circleCenter.y),
+        new Vec2(circleCenter.x, circleCenter.y + circleRadius),
+        new Vec2(circleCenter.x - circleRadius, circleCenter.y),
+        new Vec2(circleCenter.x, circleCenter.y - circleRadius),
+      ])
+    )
+
+    if (!collided) return
+
+    const overlap = rectPointsRotated.reduce(
       (acc, p) => {
         const dist = p.distance(circleCenter)
         if (dist < acc.dist) return { dist, point: p }
@@ -164,17 +205,11 @@ export class Collider extends Component {
       },
       { dist: Infinity, point: new Vec2(0, 0) }
     )
-
-    const dist = closestPoint.point.distance(circleCenter)
-    const collided = dist < circleRadius
-    if (!collided) return
-
-    const overlap = circleRadius - dist
-    const dir = circleCenter.subtract(closestPoint.point).normalize()
-
+    const dir = circleObj.pos.subtract(overlap.point).normalize()
+    const depth = circleObj.pos.distance(overlap.point)
     return {
       dir,
-      overlap,
+      depth,
       objA: circleObj,
       objB: rectObj,
       aStatic: circleCollider.static,
@@ -224,7 +259,7 @@ export class Collider extends Component {
 
     return {
       dir,
-      overlap: overlap.dist,
+      depth: overlap.dist,
       objA: obj1,
       objB: obj2,
       aStatic: collider1.static,
