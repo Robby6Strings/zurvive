@@ -1,12 +1,14 @@
 import { BaseGame } from "../../shared/game"
 import { GameObjectType } from "../../shared/gameObject"
-import { Enemy, Spawner } from "../../shared/gameObjects"
+import { Enemy } from "../../shared/gameObjects/entities"
+import { Spawner } from "../../shared/gameObjects/spawner"
 import { GameActionType, GameAction } from "../../shared/gameAction"
 import { Fighter } from "../../shared/components/fighter"
 import { Mover } from "../../shared/components/mover"
 import { ServerPlayer } from "./serverPlayer"
 import { MessageType, TypedMessage } from "../../shared/message"
 import { Vec2 } from "../../shared/vec2"
+import { Tree } from "../../shared/gameObjects/environment/tree"
 //import { Collider } from "../../shared/components/collider"
 
 export class ServerGame extends BaseGame {
@@ -19,6 +21,13 @@ export class ServerGame extends BaseGame {
       return { pos: new Vec2(0, 0) }
     }, Enemy)
     this.enemyStore.add(enemySpawner.spawn())
+
+    const treeSpawner = new Spawner<GameObjectType.Tree>()
+    this.spawnerStore.add(treeSpawner)
+    treeSpawner.configure(() => {
+      return { pos: new Vec2(-200, -200) }
+    }, Tree)
+    this.treeStore.add(treeSpawner.spawn())
 
     this.intervalRef = setInterval(() => {
       this.update()

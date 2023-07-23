@@ -11,6 +11,7 @@ export class Spawner<
   lastSpawnTime: number = performance.now()
   constructor() {
     super(GameObjectType.Spawner)
+    this.renderSettings.render = false
     this.pos = new Vec2(0, 0)
   }
   configure(

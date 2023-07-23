@@ -1,50 +1,52 @@
-import { GameObject, GameObjectType } from "../../shared/gameObject"
+import { RenderSettings } from "../../shared/renderable"
 import { ShapeType } from "../../shared/types"
+import { IVec2 } from "../../shared/vec2"
 import { HtmlElements } from "../../state"
+import { Camera } from "./camera"
 import { ClientGame } from "./clientGame"
 
 export class Renderer {
-  constructor(private game: ClientGame) {}
+  constructor() {}
   get canvas() {
     return HtmlElements.value?.canvas
   }
   get ctx() {
     return HtmlElements.value?.ctx
   }
-  public render() {
+  public render(game: ClientGame, camera: Camera) {
     if (!this.canvas || !this.ctx) return
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-
-    for (const player of this.game.playerStore.objects) {
-      this.renderObject(player)
-    }
-    for (const enemy of this.game.enemyStore.objects) {
-      this.renderObject(enemy)
+    for (const objectStore of game.objectStores) {
+      for (const obj of objectStore.objects) {
+        this.renderObject(obj.pos, obj.renderSettings, camera)
+      }
     }
   }
 
-  private renderObject<T extends GameObjectType>(obj: GameObject<T>) {
+  private renderObject(pos: IVec2, settings: RenderSettings, camera: Camera) {
     if (!this.ctx) return
+    if (settings.render === false) return
+
     const { ctx } = this
-    const { x, y } = this.game.camera.offset
+    const { x, y } = pos
+    const { x: xOffset, y: yOffset } = camera.offset
     const { shapeType, radius, width, height, lineWidth, fill, color } =
-      obj.renderSettings
+      settings
 
     ctx.save()
     ctx.beginPath()
     if (shapeType == ShapeType.Circle) {
       if (!radius) throw new Error("radius not set")
-      ctx.arc(obj.pos.x + x, obj.pos.y + y, radius, 0, 2 * Math.PI)
+      ctx.arc(x + xOffset, y + yOffset, radius, 0, 2 * Math.PI)
     } else {
-      console.log("rendering rect", obj)
       if (!width || !height) throw new Error("width or height not set")
-      ctx.rect(obj.pos.x + x, obj.pos.y + y, width, height)
+      ctx.rect(x + xOffset - width / 2, y + yOffset - height / 2, width, height)
     }
     if (fill) {
       ctx.fillStyle = color
       ctx.fill()
     }
-    if (obj.renderSettings.lineWidth > 0) {
+    if (lineWidth > 0) {
       ctx.lineWidth = lineWidth
       ctx.strokeStyle = color
       ctx.stroke()

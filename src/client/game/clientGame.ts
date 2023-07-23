@@ -31,10 +31,10 @@ export class ClientGame extends BaseGame {
     this.enemyStore = new GameObjectStore(GameObjectType.Enemy)
     this.enemyStore.deserialize(enemies)
     this.camera = new Camera()
-    this.renderer = new Renderer(this)
+    this.renderer = new Renderer()
     this.intervalRef = window.setInterval(() => {
       this.update()
-      this.renderer.render()
+      this.renderer.render(this, this.camera)
     }, this.frameDuration)
     this.attachListeners()
   }

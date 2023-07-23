@@ -1,5 +1,5 @@
 import { SocketStream } from "@fastify/websocket"
-import { Player } from "../../shared/gameObjects"
+import { Player } from "../../shared/gameObjects/entities"
 
 export class ServerPlayer extends Player {
   conn: SocketStream

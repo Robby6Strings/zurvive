@@ -7,6 +7,7 @@ import { Health } from "./components/health"
 import { Collider } from "./components/collider"
 import { ShapeType } from "./types"
 import { ISerializable } from "./serializable"
+import { IRenderable, RenderSettings } from "./renderable"
 
 export enum GameObjectType {
   Unset = "unset",
@@ -24,7 +25,7 @@ export enum GameObjectType {
 }
 
 export abstract class GameObject<T extends GameObjectType>
-  implements ISerializable
+  implements ISerializable, IRenderable
 {
   id: string
   remove: boolean
@@ -33,15 +34,8 @@ export abstract class GameObject<T extends GameObjectType>
   _pos: Vec2 = new Vec2(0, 0)
   posChanged: boolean = false
   rotation: number = 0
-  renderSettings: {
-    shapeType: ShapeType
-    color: string
-    lineWidth: number
-    fill: boolean
-    radius?: number
-    width?: number
-    height?: number
-  } = {
+  renderSettings: RenderSettings = {
+    render: true,
     shapeType: ShapeType.Circle,
     color: "#FFF",
     lineWidth: 1,
@@ -93,7 +87,7 @@ export abstract class GameObject<T extends GameObjectType>
     }
   }
 
-  public deserialize(data: any): void {
+  public deserialize(data: any): GameObject<T> {
     this.id = data.id
     this.type = data.type
     this.pos = data.pos ? Vec2.fromObject(data.pos) : Vec2.zero()
@@ -120,5 +114,6 @@ export abstract class GameObject<T extends GameObjectType>
       component.deserialize(c)
       return component
     })
+    return this
   }
 }

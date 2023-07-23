@@ -2,8 +2,8 @@ import { Signal, createSignal } from "cinnabun"
 import { ClientGame } from "./game/clientGame"
 import { MessageType, TypedMessage } from "../shared/message"
 import { GameAction, GameActionType } from "../shared/gameAction"
-import { Enemy, Player, Spawner } from "../shared/gameObjects"
-import { GameObject, GameObjectType } from "../shared/gameObject"
+import { newInstanceOfType } from "../shared/gameObjects"
+import { GameObjectType } from "../shared/gameObject"
 
 export class LiveSocket {
   socket: any
@@ -123,21 +123,9 @@ export class LiveSocket {
   }
 
   handleCreateObject(object: any) {
-    let newObject: GameObject<GameObjectType>
-    switch (object.type) {
-      case GameObjectType.Player:
-        newObject = new Player()
-        break
-      case GameObjectType.Enemy:
-        newObject = new Enemy()
-        break
-      case GameObjectType.Spawner:
-        newObject = new Spawner()
-        break
-      default:
-        throw new Error(`Unknown object type ${object.type}`)
-    }
-    newObject.deserialize(object)
-    this.gameState.value?.addObject(newObject)
+    const newObj = newInstanceOfType(object.type).deserialize(object)
+
+    if (object.type === GameObjectType.Tree) console.log(newObj)
+    this.gameState.value?.addObject(newObj)
   }
 }

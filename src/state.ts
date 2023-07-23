@@ -4,11 +4,10 @@ export const pathStore = createSignal(
   Cinnabun.isClient ? window.location.pathname : "/"
 )
 
-type HtmlElements = {
+export const HtmlElements = createSignal<null | {
   canvas: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
-}
-export const HtmlElements = createSignal<HtmlElements | null>(null)
+}>(null)
 
 if (Cinnabun.isClient) {
   window.addEventListener("resize", () => {

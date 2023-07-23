@@ -1,9 +1,9 @@
-import { Collider } from "../components/collider"
-import { Fighter } from "../components/fighter"
-import { Health } from "../components/health"
-import { Mover } from "../components/mover"
-import { GameObject, GameObjectType } from "../gameObject"
-import { ShapeType } from "../types"
+import { Collider } from "../../components/collider"
+import { Fighter } from "../../components/fighter"
+import { Health } from "../../components/health"
+import { Mover } from "../../components/mover"
+import { GameObject, GameObjectType } from "../../gameObject"
+import { ShapeType } from "../../types"
 
 const playerRadius = 25
 

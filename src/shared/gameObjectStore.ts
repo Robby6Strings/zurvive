@@ -2,7 +2,7 @@ import { ComponentType } from "./component"
 import { Mover } from "./components/mover"
 import { GameActionType } from "./gameAction"
 import { GameObject, GameObjectType } from "./gameObject"
-import { Enemy, Player } from "./gameObjects"
+import { newInstanceOfType } from "./gameObjects"
 import { MessageType, TypedMessage } from "./message"
 import { Vec2 } from "./vec2"
 
@@ -119,19 +119,8 @@ export class GameObjectStore<T extends GameObjectType> {
   }
   deserialize(data: any) {
     this.objectType = data.objectType
-    this.objects = data.objects.map((obj: any) => {
-      switch (obj.type) {
-        case GameObjectType.Player:
-          const player = new Player()
-          player.deserialize(obj)
-          return player
-        case GameObjectType.Enemy:
-          const enemy = new Enemy()
-          enemy.deserialize(obj)
-          return enemy
-        default:
-          throw new Error(`Unknown object type ${obj.type}`)
-      }
-    })
+    this.objects = data.objects.map((obj: any) =>
+      newInstanceOfType(obj.type).deserialize(obj)
+    )
   }
 }
