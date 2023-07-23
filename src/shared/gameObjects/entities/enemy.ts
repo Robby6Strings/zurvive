@@ -7,7 +7,7 @@ import { ShapeType } from "../../types"
 
 const enemyRadius = 25
 
-export class Enemy extends GameObject<GameObjectType.Enemy> {
+export class Enemy extends GameObject {
   constructor() {
     super(GameObjectType.Enemy)
     this.components.push(

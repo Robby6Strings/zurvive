@@ -8,7 +8,7 @@ export class Fighter extends Component {
   damage: number = 5
   critChance: number = 0.1
   critMultiplier: number = 2
-  target: GameObject<any> | null = null
+  target: GameObject | null = null
   followRange: number = 200
   attackRange: number = 5
   attackTimer: number = 0
@@ -19,16 +19,16 @@ export class Fighter extends Component {
   }
 
   getTargetWithinFollowRange(
-    obj: GameObject<any>,
-    objects: GameObject<any>[]
-  ): GameObject<any> | null {
+    obj: GameObject,
+    objects: GameObject[]
+  ): GameObject | null {
     return (
       objects.find((o) => GameObject.getDistance(obj, o) < this.followRange) ??
       null
     )
   }
 
-  update(obj: GameObject<any>): void {
+  update(obj: GameObject): void {
     if (!this.enabled) return
     if (this.target?.remove) {
       this.target = null
@@ -64,16 +64,16 @@ export class Fighter extends Component {
     mover.setTargetPos(targetPos)
   }
 
-  setTarget(target: GameObject<any>) {
+  setTarget(target: GameObject) {
     this.target = target
   }
 
-  inFollowRange(obj: GameObject<any>): boolean {
+  inFollowRange(obj: GameObject): boolean {
     if (!this.target) return false
     return GameObject.getDistance(obj, this.target) < this.followRange
   }
 
-  inAttackRange(obj: GameObject<any>): boolean {
+  inAttackRange(obj: GameObject): boolean {
     if (!this.target) return false
     return GameObject.getDistance(obj, this.target) < this.attackRange
   }

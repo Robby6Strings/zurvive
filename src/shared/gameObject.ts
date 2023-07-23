@@ -24,9 +24,7 @@ export enum GameObjectType {
   Spawner = "spawner",
 }
 
-export abstract class GameObject<T extends GameObjectType>
-  implements ISerializable, IRenderable
-{
+export abstract class GameObject implements ISerializable, IRenderable {
   id: string
   remove: boolean
   new: boolean = true
@@ -46,7 +44,7 @@ export abstract class GameObject<T extends GameObjectType>
     fill: true,
   }
 
-  constructor(public type: T) {
+  constructor(public type: GameObjectType) {
     this.id = Math.random().toString(36).substring(2, 9)
     this.remove = false
     this.components = []
@@ -71,7 +69,7 @@ export abstract class GameObject<T extends GameObjectType>
     }
   }
 
-  static getDistance(objA: GameObject<any>, objB: GameObject<any>): number {
+  static getDistance(objA: GameObject, objB: GameObject): number {
     return (
       objA.pos.distance(objB.pos) -
       Collider.getSize(objA) +
@@ -89,7 +87,7 @@ export abstract class GameObject<T extends GameObjectType>
     }
   }
 
-  public deserialize(data: any): GameObject<T> {
+  public deserialize(data: any): GameObject {
     this.id = data.id
     this.type = data.type
     this.pos = data.pos ? Vec2.fromObject(data.pos) : Vec2.zero()

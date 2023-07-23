@@ -29,7 +29,7 @@ export class Health extends Component {
     super(ComponentType.Health, true)
   }
 
-  update(obj: GameObject<any>): void {
+  update(obj: GameObject): void {
     if (!this.enabled) return
     if (this.dead) obj.remove = true
   }

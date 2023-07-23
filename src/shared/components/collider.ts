@@ -4,8 +4,8 @@ import { ShapeType } from "../types"
 import { IVec2, Vec2 } from "../vec2"
 
 type CollisionCheckResult = {
-  objA: GameObject<any>
-  objB: GameObject<any>
+  objA: GameObject
+  objB: GameObject
   aStatic: boolean
   bStatic: boolean
   dir: Vec2
@@ -35,7 +35,7 @@ export class Collider extends Component {
     ]
   }
 
-  static getSize(obj: GameObject<any>): number {
+  static getSize(obj: GameObject): number {
     const collider = obj.getComponent(Collider)
     if (!collider) return 0
     return collider.shape === ShapeType.Circle
@@ -43,7 +43,7 @@ export class Collider extends Component {
       : Math.max(collider.width, collider.height) / 2
   }
 
-  update(_obj: GameObject<any>): void {}
+  update(_obj: GameObject): void {}
 
   static rectangleCollider(
     width: number,
@@ -66,7 +66,7 @@ export class Collider extends Component {
     })
   }
 
-  static getCollisions(obj: GameObject<any>, objs: GameObject<any>[]) {
+  static getCollisions(obj: GameObject, objs: GameObject[]) {
     const collisions: CollisionCheckResult[] = []
     for (const obj2 of objs) {
       if (obj.id === obj2.id) continue
@@ -77,8 +77,8 @@ export class Collider extends Component {
   }
 
   static checkCollision(
-    obj1: GameObject<any>,
-    obj2: GameObject<any>
+    obj1: GameObject,
+    obj2: GameObject
   ): CollisionCheckResult | void {
     const collider1 = obj1.getComponent(Collider)
     const collider2 = obj2.getComponent(Collider)
@@ -113,8 +113,8 @@ export class Collider extends Component {
   }
 
   static circleCircleCollision(
-    obj1: GameObject<any>,
-    obj2: GameObject<any>
+    obj1: GameObject,
+    obj2: GameObject
   ): CollisionCheckResult | void {
     const collider1 = obj1.getComponent(Collider)
     const collider2 = obj2.getComponent(Collider)
@@ -138,8 +138,8 @@ export class Collider extends Component {
   }
 
   static circleRectangleCollision(
-    circleObj: GameObject<any>,
-    rectObj: GameObject<any>
+    circleObj: GameObject,
+    rectObj: GameObject
   ): CollisionCheckResult | void {
     const circleCollider = circleObj.getComponent(Collider)
     const rectCollider = rectObj.getComponent(Collider)
@@ -218,8 +218,8 @@ export class Collider extends Component {
   }
 
   static rectangleRectangleCollision(
-    obj1: GameObject<any>,
-    obj2: GameObject<any>
+    obj1: GameObject,
+    obj2: GameObject
   ): CollisionCheckResult | void {
     const collider1 = obj1.getComponent(Collider)
     const collider2 = obj2.getComponent(Collider)

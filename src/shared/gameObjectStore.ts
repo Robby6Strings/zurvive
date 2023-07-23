@@ -1,5 +1,3 @@
-import { ComponentType } from "./component"
-import { Mover } from "./components/mover"
 import { GameActionType } from "./gameAction"
 import { GameObject, GameObjectType } from "./gameObject"
 import { newInstanceOfType } from "./gameObjects"
@@ -7,13 +5,13 @@ import { CollisionLayer } from "./layers"
 import { MessageType, TypedMessage } from "./message"
 import { Vec2 } from "./vec2"
 
-export class GameObjectStore<T extends GameObjectType> {
+export class GameObjectStore {
   constructor(
     public objectType: GameObjectType,
     public objectLayer: CollisionLayer,
-    public objects: GameObject<T>[] = []
+    public objects: GameObject[] = []
   ) {}
-  add(object: GameObject<T>) {
+  add(object: GameObject) {
     if (this.find(object.id)) return
     this.objects.push(object)
   }
@@ -23,12 +21,12 @@ export class GameObjectStore<T extends GameObjectType> {
     }
   }
 
-  updateById(id: string, data: Partial<GameObject<T>>) {
+  updateById(id: string, data: Partial<GameObject>) {
     const object = this.find(id)
     if (object) Object.assign(object, data)
   }
 
-  remove(object: GameObject<T>) {
+  remove(object: GameObject) {
     this.objects = this.objects.filter((o) => o.id !== object.id)
   }
   removeById(id: string) {
@@ -40,18 +38,18 @@ export class GameObjectStore<T extends GameObjectType> {
   removeFlagged() {
     this.objects = this.objects.filter((o) => !o.remove)
   }
-  find(idOrPredicate: string | { (o: GameObject<T>): boolean }) {
+  find(idOrPredicate: string | { (o: GameObject): boolean }) {
     if (typeof idOrPredicate === "string") {
       return this.objects.find((o) => o.id === idOrPredicate)
     }
     return this.objects.find(idOrPredicate)
   }
 
-  filter(predicate: { (o: GameObject<T>): boolean }) {
+  filter(predicate: { (o: GameObject): boolean }) {
     return this.objects.filter(predicate)
   }
 
-  forEach(callback: { (o: GameObject<T>): void }) {
+  forEach(callback: { (o: GameObject): void }) {
     for (const obj of this.objects) {
       callback(obj)
     }

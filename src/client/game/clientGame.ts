@@ -86,7 +86,7 @@ export class ClientGame extends Game {
   updateObject<T extends GameObjectType>(object: {
     id: string
     type: T
-    properties: Partial<GameObject<T>>
+    properties: Partial<GameObject>
   }) {
     const obj = this.getObjectPoolByType(object.type).find(object.id)
     if (!obj) {

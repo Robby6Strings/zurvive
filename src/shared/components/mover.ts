@@ -23,7 +23,7 @@ export class Mover extends Component {
     super(ComponentType.Mover, true)
   }
 
-  update(obj: GameObject<any>): void {
+  update(obj: GameObject): void {
     if (!this.enabled) return
     if (!this.targetPos) return
     if (obj.pos.equals(this.targetPos)) return

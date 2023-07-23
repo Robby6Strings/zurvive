@@ -7,19 +7,19 @@ import { Collider } from "./components/collider"
 export abstract class Game {
   frameDuration: number = 1000 / 60
   id: string = Math.random().toString(36).substring(7)
-  playerStore: GameObjectStore<GameObjectType.Player> = new GameObjectStore(
+  playerStore: GameObjectStore = new GameObjectStore(
     GameObjectType.Player,
     CollisionLayer.Player
   )
-  enemyStore: GameObjectStore<GameObjectType.Enemy> = new GameObjectStore(
+  enemyStore: GameObjectStore = new GameObjectStore(
     GameObjectType.Player,
     CollisionLayer.Enemy
   )
-  spawnerStore: GameObjectStore<GameObjectType.Spawner> = new GameObjectStore(
+  spawnerStore: GameObjectStore = new GameObjectStore(
     GameObjectType.Spawner,
     CollisionLayer.Background
   )
-  treeStore: GameObjectStore<GameObjectType.Tree> = new GameObjectStore(
+  treeStore: GameObjectStore = new GameObjectStore(
     GameObjectType.Tree,
     CollisionLayer.Environment
   )
@@ -79,7 +79,7 @@ export abstract class Game {
     this.onUpdated()
   }
 
-  addObject<T extends GameObjectType>(object: GameObject<T>) {
+  addObject(object: GameObject) {
     this.getObjectPoolByType(object.type).add(object)
   }
 
@@ -94,22 +94,22 @@ export abstract class Game {
     this.getObjectPoolByType(type).removeById(id)
   }
 
-  getObjectPoolByType<T extends GameObjectType>(type: T): GameObjectStore<T> {
+  getObjectPoolByType<T extends GameObjectType>(type: T): GameObjectStore {
     switch (type) {
       case GameObjectType.Player:
-        return this.playerStore as GameObjectStore<T>
+        return this.playerStore as GameObjectStore
       case GameObjectType.Enemy:
-        return this.enemyStore as GameObjectStore<T>
+        return this.enemyStore as GameObjectStore
       case GameObjectType.Spawner:
-        return this.spawnerStore as GameObjectStore<T>
+        return this.spawnerStore as GameObjectStore
       case GameObjectType.Tree:
-        return this.treeStore as GameObjectStore<T>
+        return this.treeStore as GameObjectStore
       default:
         throw new Error(`Unknown object type ${type}`)
     }
   }
 
-  getObjectPoolsByLayer(layer: CollisionLayer): GameObjectStore<any>[] {
+  getObjectPoolsByLayer(layer: CollisionLayer): GameObjectStore[] {
     return this.objectStores.filter((store) => store.objectLayer === layer)
   }
 

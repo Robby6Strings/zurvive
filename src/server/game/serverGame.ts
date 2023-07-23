@@ -1,5 +1,4 @@
 import { Game } from "../../shared/game"
-import { GameObjectType } from "../../shared/gameObject"
 import { Enemy } from "../../shared/gameObjects/entities"
 import { Spawner } from "../../shared/gameObjects/spawner"
 import { GameActionType, GameAction } from "../../shared/gameAction"
@@ -14,7 +13,7 @@ export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
   constructor() {
     super()
-    const enemySpawner = new Spawner<GameObjectType.Enemy>()
+    const enemySpawner = new Spawner()
     this.spawnerStore.add(enemySpawner)
     enemySpawner.configure(
       (e: Enemy) => Object.assign(e, { pos: new Vec2(0, 0) }),
@@ -22,7 +21,7 @@ export class ServerGame extends Game {
     )
     this.enemyStore.add(enemySpawner.spawn())
 
-    const treeSpawner = new Spawner<GameObjectType.Tree>()
+    const treeSpawner = new Spawner()
     this.spawnerStore.add(treeSpawner)
     treeSpawner.configure(
       (t) => Object.assign(t, { pos: new Vec2(-200, -200) }),
@@ -40,10 +39,10 @@ export class ServerGame extends Game {
       return
     }
     const enemySpawners = this.spawnerStore.filter(
-      (s) => (s as Spawner<any>).classRef === Enemy
+      (s) => (s as Spawner).classRef === Enemy
     )
     enemySpawners.forEach((obj) => {
-      const spawner = obj as Spawner<GameObjectType.Enemy>
+      const spawner = obj as Spawner
       const enemies = this.enemyStore.objects
       if (
         enemies.length < 3 &&

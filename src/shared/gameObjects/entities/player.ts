@@ -7,7 +7,7 @@ import { ShapeType } from "../../types"
 
 const playerRadius = 25
 
-export class Player extends GameObject<GameObjectType.Player> {
+export class Player extends GameObject {
   constructor() {
     super(GameObjectType.Player)
     this.components.push(
