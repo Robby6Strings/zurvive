@@ -6,7 +6,7 @@ type GameObjectConstructor<T extends GameObjectType> = { new (): GameObject<T> }
 export class Spawner<
   T extends GameObjectType
 > extends GameObject<GameObjectType.Spawner> {
-  spawnOpts: { (): Partial<GameObject<T>> } | undefined
+  modifierFunc: { (obj: GameObject<T>): GameObject<T> } | undefined
   classRef: GameObjectConstructor<T> | undefined
   lastSpawnTime: number = performance.now()
   constructor() {
@@ -15,16 +15,16 @@ export class Spawner<
     this.pos = new Vec2(0, 0)
   }
   configure(
-    fn: { (): Partial<GameObject<T>> },
+    fn: { (obj: GameObject<T>): GameObject<T> },
     classRef: GameObjectConstructor<T>
   ) {
-    this.spawnOpts = fn
+    this.modifierFunc = fn
     this.classRef = classRef
   }
   spawn(): GameObject<T> {
-    if (!this.spawnOpts || !this.classRef)
+    if (!this.modifierFunc || !this.classRef)
       throw new Error("Spawner not configured")
     this.lastSpawnTime = performance.now()
-    return Object.assign(new this.classRef(), this.spawnOpts())
+    return this.modifierFunc(new this.classRef())
   }
 }

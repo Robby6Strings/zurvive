@@ -1,8 +1,8 @@
 import { GameObjectType } from "./gameObject"
 
 export enum CollisionLayer {
-  Background = "bg",
-  Environment = "env",
+  Background,
+  Environment,
   Player = GameObjectType.Player,
   Enemy = GameObjectType.Enemy,
 }

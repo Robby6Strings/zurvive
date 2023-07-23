@@ -31,8 +31,12 @@ export abstract class GameObject<T extends GameObjectType>
   remove: boolean
   new: boolean = true
   components: IComponent<ComponentType>[]
-  _pos: Vec2 = new Vec2(0, 0)
-  posChanged: boolean = false
+  pos: Vec2 = new Vec2(0, 0)
+  lastPos: Vec2 = new Vec2(0, 0)
+  get posChanged(): boolean {
+    return this.pos.round().notEquals(this.lastPos.round())
+  }
+
   rotation: number = 0
   renderSettings: RenderSettings = {
     render: true,
@@ -40,14 +44,6 @@ export abstract class GameObject<T extends GameObjectType>
     color: "#FFF",
     lineWidth: 1,
     fill: true,
-  }
-
-  get pos(): Vec2 {
-    return this._pos
-  }
-  set pos(value: Vec2) {
-    this.posChanged = !this._pos.round().equals(value.round())
-    this._pos = value
   }
 
   constructor(public type: T) {

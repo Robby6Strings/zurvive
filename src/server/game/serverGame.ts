@@ -16,16 +16,18 @@ export class ServerGame extends Game {
     super()
     const enemySpawner = new Spawner<GameObjectType.Enemy>()
     this.spawnerStore.add(enemySpawner)
-    enemySpawner.configure(() => {
-      return { pos: new Vec2(0, 0) }
-    }, Enemy)
+    enemySpawner.configure(
+      (e: Enemy) => Object.assign(e, { pos: new Vec2(0, 0) }),
+      Enemy
+    )
     this.enemyStore.add(enemySpawner.spawn())
 
     const treeSpawner = new Spawner<GameObjectType.Tree>()
     this.spawnerStore.add(treeSpawner)
-    treeSpawner.configure(() => {
-      return { pos: new Vec2(-200, -200) }
-    }, Tree)
+    treeSpawner.configure(
+      (t) => Object.assign(t, { pos: new Vec2(-200, -200) }),
+      Tree
+    )
     this.treeStore.add(treeSpawner.spawn())
 
     this.intervalRef = setInterval(() => {
@@ -34,9 +36,22 @@ export class ServerGame extends Game {
   }
 
   update(): void {
-    // const enemySpawners = this.spawnerStore.filter(
-    //   (s) => (s as Spawner<any>).classRef === Enemy
-    // )
+    if (this.playerStore.objects.length === 0) {
+      return
+    }
+    const enemySpawners = this.spawnerStore.filter(
+      (s) => (s as Spawner<any>).classRef === Enemy
+    )
+    enemySpawners.forEach((obj) => {
+      const spawner = obj as Spawner<GameObjectType.Enemy>
+      const enemies = this.enemyStore.objects
+      if (
+        enemies.length < 3 &&
+        performance.now() - spawner.lastSpawnTime >= 5000
+      ) {
+        this.enemyStore.add(spawner.spawn())
+      }
+    })
 
     for (const enemy of this.enemyStore.objects) {
       const fighter = enemy.getComponent(Fighter)!

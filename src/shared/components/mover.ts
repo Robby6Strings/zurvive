@@ -4,23 +4,21 @@ import { IVec2, Vec2 } from "../vec2"
 
 export class Mover extends Component {
   speed: number = 5
-  _targetPos: Vec2 | null = null
-  targetPosChanged: boolean = false
-
-  get targetPos(): Vec2 | null {
-    return this._targetPos
-  }
-  set targetPos(value: Vec2 | null) {
-    if (value === null && this._targetPos) {
-      this.targetPosChanged = true
-    } else if (value && !this._targetPos) {
-      this.targetPosChanged = true
-    } else if (value && this._targetPos) {
-      this.targetPosChanged = !value.round().equals(this._targetPos.round())
+  targetPos: Vec2 | null = null
+  lastTargetPos: Vec2 | null = null
+  get targetPosChanged(): boolean {
+    if (!this.targetPos && !this.lastTargetPos) {
+      return false
+    } else if (this.targetPos && this.lastTargetPos) {
+      return this.targetPos.notEquals(this.lastTargetPos)
+    } else if (
+      (this.targetPos && !this.lastTargetPos) ||
+      (!this.targetPos && this.lastTargetPos)
+    ) {
+      return true
     }
-    this._targetPos = value ? value : null
+    return false
   }
-
   constructor() {
     super(ComponentType.Mover, true)
   }

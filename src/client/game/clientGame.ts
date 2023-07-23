@@ -74,8 +74,8 @@ export class ClientGame extends Game {
       this.lastMousePos = this.mousePos
       //this.playerStore.objects[0].getComponent(Mover)?.setTarget(coords)
     }
-    this.playerStore.update()
-    this.enemyStore.update()
+    //this.playerStore.update()
+    //this.enemyStore.update()
     // for (const player of this.playerStore.objects) {
     //   console.log(player.id, player.pos)
     // }

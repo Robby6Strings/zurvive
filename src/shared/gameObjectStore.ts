@@ -76,7 +76,7 @@ export class GameObjectStore<T extends GameObjectType> {
           },
         })
       } else if (obj.posChanged) {
-        obj.posChanged = false
+        obj.lastPos = obj.pos.clone()
         changes.push({
           type: MessageType.updateObject,
           object: {
@@ -88,29 +88,29 @@ export class GameObjectStore<T extends GameObjectType> {
           },
         })
       }
-      for (const component of obj.components) {
-        switch (component.type) {
-          case ComponentType.Mover:
-            const mover = component as Mover
-            if (mover.targetPosChanged) {
-              mover.targetPosChanged = false
-              changes.push({
-                type: MessageType.action,
-                action: {
-                  type: GameActionType.setTargetPos,
-                  payload: {
-                    objectType: obj.type,
-                    objectId: obj.id,
-                    data: mover.targetPos
-                      ? Vec2.serialize(mover.targetPos)
-                      : null,
-                  },
-                },
-              })
-            }
-            break
-        }
-      }
+      // for (const component of obj.components) {
+      //   switch (component.type) {
+      //     case ComponentType.Mover:
+      //       const mover = component as Mover
+      //       if (mover.targetPosChanged) {
+      //         mover.targetPosChanged = false
+      //         changes.push({
+      //           type: MessageType.action,
+      //           action: {
+      //             type: GameActionType.setTargetPos,
+      //             payload: {
+      //               objectType: obj.type,
+      //               objectId: obj.id,
+      //               data: mover.targetPos
+      //                 ? Vec2.serialize(mover.targetPos)
+      //                 : null,
+      //             },
+      //           },
+      //         })
+      //       }
+      //       break
+      //   }
+      // }
     }
     return changes
   }

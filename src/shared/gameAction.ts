@@ -3,11 +3,11 @@ import { IVec2 } from "./vec2"
 
 export enum GameActionType {
   unset,
-  setTargetPos,
-  setTargetObj,
-  attack,
-  interact,
-  takeDamage,
+  setTargetPos = "set-target",
+  setTargetObj = "set-target-obj",
+  attack = "attack",
+  interact = "interact",
+  takeDamage = "take-damage",
 }
 
 type GameActionData<T extends GameActionType> =

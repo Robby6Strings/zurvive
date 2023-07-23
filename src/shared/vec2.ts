@@ -5,16 +5,6 @@ export interface IVec2 {
 
 export class Vec2 implements IVec2 {
   constructor(public x: number = 0, public y: number = 0) {}
-  static serialize(v: Vec2) {
-    return { x: v.x, y: v.y }
-  }
-  static deserialize(data: IVec2): Vec2 {
-    const { x, y } = data
-    return new Vec2(x, y)
-  }
-  static fromObject(obj: IVec2): Vec2 {
-    return new Vec2(obj.x, obj.y)
-  }
 
   add(other: IVec2): Vec2 {
     return new Vec2(this.x + other.x, this.y + other.y)
@@ -56,8 +46,13 @@ export class Vec2 implements IVec2 {
       this.x * Math.sin(angle) + this.y * Math.cos(angle)
     )
   }
-  equals(other: IVec2): boolean {
+  equals(other: IVec2 | null): boolean {
+    if (!other) return false
     return this.x === other.x && this.y === other.y
+  }
+  notEquals(other: IVec2 | null): boolean {
+    if (!other) return true
+    return this.x !== other.x || this.y !== other.y
   }
   clone(): Vec2 {
     return new Vec2(this.x, this.y)
@@ -90,5 +85,16 @@ export class Vec2 implements IVec2 {
   }
   static distance(a: IVec2, b: IVec2): number {
     return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
+  }
+
+  static serialize(v: Vec2) {
+    return { x: Math.round(v.x), y: Math.round(v.y) }
+  }
+  static deserialize(data: IVec2): Vec2 {
+    const { x, y } = data
+    return new Vec2(x, y)
+  }
+  static fromObject(obj: IVec2): Vec2 {
+    return new Vec2(obj.x, obj.y)
   }
 }
