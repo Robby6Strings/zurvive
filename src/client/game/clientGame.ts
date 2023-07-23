@@ -20,10 +20,10 @@ export class ClientGame extends BaseGame {
   keys: {
     [key: string]: boolean
   } = {}
-  constructor(serializedGameState: Object, liveSocket: LiveSocket) {
+  constructor(serializedGameState: any, liveSocket: LiveSocket) {
     super()
     this.liveSocket = liveSocket
-    const { id, players, enemies } = serializedGameState as any
+    const { id, players, enemies } = serializedGameState
     this.id = id
     console.log("game id", this.id)
     this.playerStore = new GameObjectStore(GameObjectType.Player)
