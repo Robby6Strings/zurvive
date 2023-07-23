@@ -65,7 +65,7 @@ export class ClientGame extends BaseGame {
 
   update(): void {
     if (this.mouseDown && !this.mousePos.equals(this.lastMousePos)) {
-      const coords = this.mousePos.sub(this.camera.offset)
+      const coords = this.mousePos.subtract(this.camera.offset)
       this.liveSocket.sendGameAction({
         type: GameActionType.setTargetPos,
         payload: {

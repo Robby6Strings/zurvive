@@ -52,7 +52,7 @@ export abstract class GameObject<T extends GameObjectType>
     return this._pos
   }
   set pos(value: Vec2) {
-    this.posChanged = !this._pos.equals(value)
+    this.posChanged = !this._pos.round().equals(value.round())
     this._pos = value
   }
 

@@ -54,10 +54,10 @@ export class Fighter extends Component {
     }
 
     // get direction to target
-    const dir = this.target.pos.sub(obj.pos).normalize()
+    const dir = this.target.pos.subtract(obj.pos).normalize()
     // get position to move to
-    const targetPos = this.target.pos.sub(
-      dir.scale(
+    const targetPos = this.target.pos.subtract(
+      dir.multiply(
         this.attackRange + Collider.getSize(obj) + Collider.getSize(this.target)
       )
     )

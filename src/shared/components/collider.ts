@@ -124,7 +124,7 @@ export class Collider extends Component {
     if (!collided) return
 
     const overlap = collider1.radius + collider2.radius - dist
-    const dir = obj1.pos.sub(obj2.pos).normalize()
+    const dir = obj1.pos.subtract(obj2.pos).normalize()
 
     return {
       dir,
@@ -170,7 +170,7 @@ export class Collider extends Component {
     if (!collided) return
 
     const overlap = circleRadius - dist
-    const dir = circleCenter.sub(closestPoint.point).normalize()
+    const dir = circleCenter.subtract(closestPoint.point).normalize()
 
     return {
       dir,
@@ -220,7 +220,7 @@ export class Collider extends Component {
       },
       { dist: Infinity, point: new Vec2(0, 0) }
     )
-    const dir = obj1.pos.sub(obj2.pos).normalize()
+    const dir = obj1.pos.subtract(obj2.pos).normalize()
 
     return {
       dir,

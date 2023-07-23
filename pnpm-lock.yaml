@@ -15,8 +15,8 @@ dependencies:
     specifier: ^8.2.0
     version: 8.2.0
   cinnabun:
-    specifier: ^0.1.46
-    version: 0.1.46
+    specifier: ^0.1.48
+    version: 0.1.48
   esbuild:
     specifier: ^0.17.19
     version: 0.17.19
@@ -388,8 +388,8 @@ packages:
       ieee754: 1.2.1
     dev: false
 
-  /cinnabun@0.1.46:
-    resolution: {integrity: sha512-3CbL0QbhoALpHq043AwOP5ghecuNHWtSBV6z1JUvnNqKiDhWVeyGT8h9PcC4pg4U08Wwbf2fhJyHHX7WAS4JLw==}
+  /cinnabun@0.1.48:
+    resolution: {integrity: sha512-U3CePheC6ViPIpkirSTUssPZo1Ppdj7IsJE73apflal21x0ea83boFoHvXZN2XhZIE5cP9RedbZtLr0pIN2RNw==}
     dev: false
 
   /content-disposition@0.5.4:

@@ -19,17 +19,17 @@ export class Vec2 implements IVec2 {
   add(other: IVec2): Vec2 {
     return new Vec2(this.x + other.x, this.y + other.y)
   }
-  sub(other: IVec2): Vec2 {
+  subtract(other: IVec2): Vec2 {
     return new Vec2(this.x - other.x, this.y - other.y)
   }
-  mul(other: IVec2): Vec2 {
-    return new Vec2(this.x * other.x, this.y * other.y)
+  multiply(v2OrNumber: IVec2 | number): Vec2 {
+    if (typeof v2OrNumber === "number") {
+      return new Vec2(this.x * v2OrNumber, this.y * v2OrNumber)
+    }
+    return new Vec2(this.x * v2OrNumber.x, this.y * v2OrNumber.y)
   }
-  div(other: IVec2): Vec2 {
+  divide(other: IVec2): Vec2 {
     return new Vec2(this.x / other.x, this.y / other.y)
-  }
-  scale(scalar: number): Vec2 {
-    return new Vec2(this.x * scalar, this.y * scalar)
   }
   distance(other: IVec2): number {
     return Vec2.distance(this, other)
@@ -37,10 +37,6 @@ export class Vec2 implements IVec2 {
   magnitude(): number {
     return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2))
   }
-  length(): number {
-    return this.magnitude()
-  }
-
   normalize(): Vec2 {
     const mag = this.magnitude()
     return new Vec2(this.x / mag, this.y / mag)
@@ -65,6 +61,10 @@ export class Vec2 implements IVec2 {
   }
   clone(): Vec2 {
     return new Vec2(this.x, this.y)
+  }
+
+  round(): Vec2 {
+    return new Vec2(Math.round(this.x), Math.round(this.y))
   }
 
   static fromAngle(angle: number): Vec2 {
