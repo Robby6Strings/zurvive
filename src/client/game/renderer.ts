@@ -52,5 +52,6 @@ export class Renderer {
       ctx.stroke()
     }
     ctx.closePath()
+    ctx.restore()
   }
 }

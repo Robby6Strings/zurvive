@@ -92,31 +92,19 @@ export class LiveSocket {
           newInstanceOfType(message.object.type).deserialize(message.object)
         )
         break
+      case MessageType.removeObject:
+        this.game?.removeObject(message.object)
+        break
+      case MessageType.updateObject:
+        this.game?.updateObject(message.object)
+        break
 
       case MessageType.update:
         const changes = message.changes as TypedMessage<
           GameActionType | undefined
         >[]
         for (const change of changes) {
-          switch (change.type) {
-            case MessageType.newObject:
-              this.game?.addObject(
-                newInstanceOfType(change.object.type).deserialize(change.object)
-              )
-              break
-            case MessageType.removeObject:
-              console.log("removing", change.object)
-              this.game?.removeObject(change.object)
-              break
-            case MessageType.action:
-              this.game?.handleAction(change.action as GameAction<T>)
-              break
-            case MessageType.updateObject:
-              this.game?.updateObject(change.object)
-              break
-            default:
-              throw new Error(`Unknown update type ${change.type}`)
-          }
+          this.handleMessage(change as TypedMessage<GameActionType>)
         }
         break
 
