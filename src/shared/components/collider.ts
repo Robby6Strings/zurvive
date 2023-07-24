@@ -66,19 +66,11 @@ export class Collider extends Component {
     })
   }
 
-  static getCollisions(obj: GameObject, objs: GameObject[]) {
-    const collisions: CollisionCheckResult[] = []
-    for (const obj2 of objs) {
-      if (obj.id === obj2.id) continue
-      const collision = Collider.checkCollision(obj, obj2)
-      if (collision) collisions.push(collision)
-    }
-    return collisions
-  }
-
   static checkCollision(
     obj1: GameObject,
-    obj2: GameObject
+    obj2: GameObject,
+    obj1Pos: Vec2 = obj1.pos,
+    obj2Pos: Vec2 = obj2.pos
   ): CollisionCheckResult | void {
     const collider1 = obj1.getComponent(Collider)
     const collider2 = obj2.getComponent(Collider)
@@ -90,42 +82,44 @@ export class Collider extends Component {
       collider1.shape === ShapeType.Circle &&
       collider2.shape === ShapeType.Circle
     ) {
-      return Collider.circleCircleCollision(obj1, obj2)
+      return Collider.circleCircleCollision(obj1, obj2, obj1Pos, obj2Pos)
     }
     if (
       collider1.shape === ShapeType.Circle &&
       collider2.shape === ShapeType.Rectangle
     ) {
-      return Collider.circleRectangleCollision(obj1, obj2)
+      return Collider.circleRectangleCollision(obj1, obj2, obj1Pos, obj2Pos)
     }
     if (
       collider1.shape === ShapeType.Rectangle &&
       collider2.shape === ShapeType.Circle
     ) {
-      return Collider.circleRectangleCollision(obj2, obj1)
+      return Collider.circleRectangleCollision(obj2, obj1, obj1Pos, obj2Pos)
     }
     if (
       collider1.shape === ShapeType.Rectangle &&
       collider2.shape === ShapeType.Rectangle
     ) {
-      return Collider.rectangleRectangleCollision(obj1, obj2)
+      return Collider.rectangleRectangleCollision(obj1, obj2, obj1Pos, obj2Pos)
     }
   }
 
   static circleCircleCollision(
     obj1: GameObject,
-    obj2: GameObject
+    obj2: GameObject,
+    obj1Pos: Vec2 = obj1.pos,
+    obj2Pos: Vec2 = obj2.pos
   ): CollisionCheckResult | void {
     const collider1 = obj1.getComponent(Collider)
     const collider2 = obj2.getComponent(Collider)
     if (!collider1 || !collider2) return
 
-    const dist = obj1.pos.distance(obj2.pos)
+    const dist = obj1Pos.distance(obj2Pos)
     const collided = dist < collider1.radius + collider2.radius
     if (!collided) return
 
     const overlap = collider1.radius + collider2.radius - dist
-    const dir = obj1.pos.subtract(obj2.pos).normalize()
+    const dir = obj1Pos.subtract(obj2Pos).normalize()
 
     return {
       dir,
@@ -139,21 +133,23 @@ export class Collider extends Component {
 
   static circleRectangleCollision(
     circleObj: GameObject,
-    rectObj: GameObject
+    rectObj: GameObject,
+    circleObjPos: Vec2 = circleObj.pos,
+    rectObjPos: Vec2 = rectObj.pos
   ): CollisionCheckResult | void {
     const circleCollider = circleObj.getComponent(Collider)
     const rectCollider = rectObj.getComponent(Collider)
     if (!circleCollider || !rectCollider) return
 
     const rectRotation = rectObj.rotation
-    const rectCenter = rectObj.pos
+    const rectCenter = rectObjPos
 
     const rectPoints = rectCollider.getPoints()
     const rectPointsRotated = rectPoints.map((p) =>
       p.rotate(rectRotation).add(rectCenter)
     )
 
-    const circleCenter = circleObj.pos
+    const circleCenter = circleObjPos
     const circleRadius = circleCollider.radius
 
     const collidedWithCorner = rectPointsRotated.some((p) =>
@@ -174,8 +170,8 @@ export class Collider extends Component {
         },
         { dist: Infinity, point: new Vec2(0, 0) }
       )
-      const dir = circleObj.pos.subtract(overlap.point).normalize()
-      const depth = circleObj.pos.distance(overlap.point)
+      const dir = circleObjPos.subtract(overlap.point).normalize()
+      const depth = circleObjPos.distance(overlap.point)
       return {
         dir,
         depth,
@@ -205,8 +201,8 @@ export class Collider extends Component {
       },
       { dist: Infinity, point: new Vec2(0, 0) }
     )
-    const dir = circleObj.pos.subtract(overlap.point).normalize()
-    const depth = circleObj.pos.distance(overlap.point)
+    const dir = circleObjPos.subtract(overlap.point).normalize()
+    const depth = circleObjPos.distance(overlap.point)
     return {
       dir,
       depth,
@@ -219,17 +215,19 @@ export class Collider extends Component {
 
   static rectangleRectangleCollision(
     obj1: GameObject,
-    obj2: GameObject
+    obj2: GameObject,
+    obj1Pos: Vec2 = obj1.pos,
+    obj2Pos: Vec2 = obj2.pos
   ): CollisionCheckResult | void {
     const collider1 = obj1.getComponent(Collider)
     const collider2 = obj2.getComponent(Collider)
     if (!collider1 || !collider2) return
 
     const rect1Rotation = obj1.rotation
-    const rect1Center = obj1.pos
+    const rect1Center = obj1Pos
 
     const rect2Rotation = obj2.rotation
-    const rect2Center = obj2.pos
+    const rect2Center = obj2Pos
 
     const rect1Points = collider1.getPoints()
     const rect2Points = collider2.getPoints()
@@ -255,7 +253,7 @@ export class Collider extends Component {
       },
       { dist: Infinity, point: new Vec2(0, 0) }
     )
-    const dir = obj1.pos.subtract(obj2.pos).normalize()
+    const dir = obj1Pos.subtract(obj2Pos).normalize()
 
     return {
       dir,

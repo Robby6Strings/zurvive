@@ -14,20 +14,18 @@ export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
   constructor() {
     super()
-    const enemySpawner = new Spawner()
-    this.objectStore.add(enemySpawner)
-    enemySpawner.configure(
+    const enemySpawner = new Spawner().configure(
       (e: Enemy) => Object.assign(e, { pos: new Vec2(0, 0) }),
       Enemy
     )
+    this.objectStore.add(enemySpawner)
     this.objectStore.add(enemySpawner.spawn())
 
-    const treeSpawner = new Spawner()
-    this.objectStore.add(treeSpawner)
-    treeSpawner.configure(
+    const treeSpawner = new Spawner().configure(
       (t) => Object.assign(t, { pos: new Vec2(-200, -200) }),
       Tree
     )
+    this.objectStore.add(treeSpawner)
     this.objectStore.add(treeSpawner.spawn())
 
     this.intervalRef = setInterval(() => {

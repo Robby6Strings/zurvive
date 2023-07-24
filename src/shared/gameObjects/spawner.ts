@@ -19,6 +19,7 @@ export class Spawner extends GameObject {
   ) {
     this.modifierFunc = fn
     this.spawnClass = spawnClass
+    return this
   }
   spawn(): GameObject {
     if (!this.modifierFunc || !this.spawnClass)
