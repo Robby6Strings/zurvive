@@ -22,11 +22,10 @@ export class ClientGame extends Game {
   constructor(serializedGameState: any, liveSocket: LiveSocket) {
     super()
     this.liveSocket = liveSocket
-    const { id, players, enemies } = serializedGameState
+    const { id, objects } = serializedGameState
     this.id = id
     console.log("game id", this.id)
-    this.playerStore.deserialize(players)
-    this.enemyStore.deserialize(enemies)
+    this.objectStore.deserialize(objects)
     this.camera = new Camera()
     this.renderer = new Renderer()
     this.intervalRef = window.setInterval(() => {
@@ -88,7 +87,9 @@ export class ClientGame extends Game {
     type: T
     properties: Partial<GameObject>
   }) {
-    const obj = this.getObjectPoolByType(object.type).find(object.id)
+    const obj = this.objectStore.find(
+      (o) => o.id === object.id && o.type === object.type
+    )
     if (!obj) {
       return
     }
@@ -104,8 +105,10 @@ export class ClientGame extends Game {
   }
 
   handleAction<T extends GameActionType>(action: GameAction<T>): void {
-    const pool = this.getObjectPoolByType(action.payload.objectType)
-    const obj = pool.find(action.payload.objectId)
+    const obj = this.objectStore.find(
+      (o) =>
+        o.id === action.payload.objectId && o.type === action.payload.objectType
+    )
     if (!obj) {
       return
     }

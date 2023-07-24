@@ -3,6 +3,7 @@ import { Fighter } from "../../components/fighter"
 import { Health } from "../../components/health"
 import { Mover } from "../../components/mover"
 import { GameObject, GameObjectType } from "../../gameObject"
+import { CollisionLayer } from "../../layers"
 import { ShapeType } from "../../types"
 
 const enemyRadius = 25
@@ -16,6 +17,7 @@ export class Enemy extends GameObject {
       new Health(),
       Collider.circleCollider(enemyRadius)
     )
+    this.collisionLayers.push(CollisionLayer.Enemy)
     this.setRenderSettings({
       shapeType: ShapeType.Circle,
       radius: enemyRadius,

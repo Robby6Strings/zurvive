@@ -1,5 +1,5 @@
 import { Game } from "../../shared/game"
-import { Enemy } from "../../shared/gameObjects/entities"
+import { Enemy, Player } from "../../shared/gameObjects/entities"
 import { Spawner } from "../../shared/gameObjects/spawner"
 import { GameActionType, GameAction } from "../../shared/gameAction"
 import { Fighter } from "../../shared/components/fighter"
@@ -8,87 +8,80 @@ import { ServerPlayer } from "./serverPlayer"
 import { MessageType, TypedMessage } from "../../shared/message"
 import { Vec2 } from "../../shared/vec2"
 import { Tree } from "../../shared/gameObjects/environment/tree"
+import { GameObjectType } from "../../shared/gameObject"
 
 export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
   constructor() {
     super()
     const enemySpawner = new Spawner()
-    this.spawnerStore.add(enemySpawner)
+    this.objectStore.add(enemySpawner)
     enemySpawner.configure(
       (e: Enemy) => Object.assign(e, { pos: new Vec2(0, 0) }),
       Enemy
     )
-    this.enemyStore.add(enemySpawner.spawn())
+    this.objectStore.add(enemySpawner.spawn())
 
     const treeSpawner = new Spawner()
-    this.spawnerStore.add(treeSpawner)
+    this.objectStore.add(treeSpawner)
     treeSpawner.configure(
       (t) => Object.assign(t, { pos: new Vec2(-200, -200) }),
       Tree
     )
-    this.treeStore.add(treeSpawner.spawn())
+    this.objectStore.add(treeSpawner.spawn())
 
     this.intervalRef = setInterval(() => {
       this.update()
     }, this.frameDuration)
   }
 
+  get players(): ServerPlayer[] {
+    return this.objectStore.objects.filter(
+      (o) => o instanceof ServerPlayer
+    ) as ServerPlayer[]
+  }
+
   update(): void {
-    if (this.playerStore.objects.length === 0) {
+    if (this.objectStore.objects.length === 0) {
       return
     }
-    const enemySpawners = this.spawnerStore.filter(
-      (s) => (s as Spawner).classRef === Enemy
+    const enemySpawners = this.objectStore
+      .findByObjectType<Spawner>(GameObjectType.Spawner)
+      .filter((s) => s.spawnClass === Enemy)
+
+    const enemies = this.objectStore.findByObjectType<Enemy>(
+      GameObjectType.Enemy
     )
-    enemySpawners.forEach((obj) => {
-      const spawner = obj as Spawner
-      const enemies = this.enemyStore.objects
+    const players = this.objectStore.findByObjectType<Player>(
+      GameObjectType.Player
+    )
+
+    enemySpawners.forEach((spawner) => {
       if (
         enemies.length < 3 &&
         performance.now() - spawner.lastSpawnTime >= 5000
       ) {
-        this.enemyStore.add(spawner.spawn())
+        this.objectStore.add(spawner.spawn())
       }
     })
 
-    for (const enemy of this.enemyStore.objects) {
+    for (const enemy of enemies) {
       const fighter = enemy.getComponent(Fighter)!
       if (!fighter.target) {
-        fighter.target = fighter.getTargetWithinFollowRange(
-          enemy,
-          this.playerStore.objects
-        )
+        fighter.target = fighter.getTargetWithinFollowRange(enemy, players)
       }
     }
 
     this.handleCollisions()
-
-    // for (const player of this.playerStore.objects) {
-    //   const trees = this.treeStore.objects
-    //   const collisions = Collider.getCollisions(player, trees)
-    //   for (const collision of collisions) {
-    //     //const mover = player.getComponent(Mover)!
-    //     const newPos = player.pos.add(
-    //       collision.dir.multiply(collision.depth / 2)
-    //     )
-    //     player.pos = newPos
-    //   }
-    // }
-
     super.update()
   }
 
   onUpdated(): void {
-    let changes: TypedMessage<GameActionType | undefined>[] = []
-    for (const store of this.objectStores) {
-      changes = changes.concat(store.getChanges())
-    }
+    let changes: TypedMessage<GameActionType | undefined>[] =
+      this.objectStore.getChanges()
+
     if (changes.length > 0) {
-      this.broadcast(
-        { type: MessageType.update, changes },
-        this.playerStore.objects as ServerPlayer[]
-      )
+      this.broadcast({ type: MessageType.update, changes }, this.players)
     }
     super.onUpdated()
   }
@@ -100,21 +93,19 @@ export class ServerGame extends Game {
   }
 
   broadcastAction<T extends GameActionType>(action: GameAction<T>): void {
-    this.broadcast(
-      { type: MessageType.action, action },
-      this.playerStore.objects as ServerPlayer[]
-    )
+    this.broadcast({ type: MessageType.action, action }, this.players)
   }
   broadcastPlayer(player: ServerPlayer) {
     this.broadcast(
       { type: MessageType.newObject, object: player.serialize() },
-      this.playerStore.objects as ServerPlayer[]
+      this.players
     )
   }
 
   handleAction<T extends GameActionType>(action: GameAction<T>): void {
-    const obj = this.getObjectPoolByType(action.payload.objectType).find(
-      action.payload.objectId
+    const obj = this.objectStore.find(
+      (o) =>
+        o.id === action.payload.objectId && o.type === action.payload.objectType
     )
     if (!obj) {
       throw new Error(

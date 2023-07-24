@@ -16,10 +16,8 @@ export class Renderer {
   public render(game: ClientGame, camera: Camera) {
     if (!this.canvas || !this.ctx) return
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    for (const objectStore of game.objectStores) {
-      for (const obj of objectStore.objects) {
-        this.renderObject(obj.pos, obj.renderSettings, camera)
-      }
+    for (const obj of game.objectStore.objects) {
+      this.renderObject(obj.pos, obj.renderSettings, camera)
     }
   }
 

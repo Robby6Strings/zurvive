@@ -1,16 +1,11 @@
 import { GameActionType } from "./gameAction"
 import { GameObject, GameObjectType } from "./gameObject"
 import { newInstanceOfType } from "./gameObjects"
-import { CollisionLayer } from "./layers"
 import { MessageType, TypedMessage } from "./message"
 import { Vec2 } from "./vec2"
 
 export class GameObjectStore {
-  constructor(
-    public objectType: GameObjectType,
-    public objectLayer: CollisionLayer,
-    public objects: GameObject[] = []
-  ) {}
+  constructor(public objects: GameObject[] = []) {}
   add(object: GameObject) {
     if (this.find(object.id)) return
     this.objects.push(object)
@@ -43,6 +38,10 @@ export class GameObjectStore {
       return this.objects.find((o) => o.id === idOrPredicate)
     }
     return this.objects.find(idOrPredicate)
+  }
+
+  findByObjectType<T extends GameObject>(objectType: GameObjectType) {
+    return this.objects.filter((o) => o.type === objectType) as T[]
   }
 
   filter(predicate: { (o: GameObject): boolean }) {
@@ -114,14 +113,10 @@ export class GameObjectStore {
   }
 
   serialize() {
-    return {
-      objectType: this.objectType,
-      objects: this.objects.map((o) => o.serialize()),
-    }
+    return this.objects.map((o) => o.serialize())
   }
   deserialize(data: any) {
-    this.objectType = data.objectType
-    this.objects = data.objects.map((obj: any) =>
+    this.objects = data.map((obj: any) =>
       newInstanceOfType(obj.type).deserialize(obj)
     )
   }

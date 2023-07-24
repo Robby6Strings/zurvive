@@ -5,7 +5,7 @@ type GameObjectConstructor = { new (): GameObject }
 
 export class Spawner extends GameObject {
   modifierFunc: { (obj: GameObject): GameObject } | undefined
-  classRef: GameObjectConstructor | undefined
+  spawnClass: GameObjectConstructor | undefined
   lastSpawnTime: number = performance.now()
   lastSpawnPos: Vec2 = new Vec2(0, 0)
   constructor() {
@@ -15,16 +15,16 @@ export class Spawner extends GameObject {
   }
   configure(
     fn: { (obj: GameObject): GameObject },
-    classRef: GameObjectConstructor
+    spawnClass: GameObjectConstructor
   ) {
     this.modifierFunc = fn
-    this.classRef = classRef
+    this.spawnClass = spawnClass
   }
   spawn(): GameObject {
-    if (!this.modifierFunc || !this.classRef)
+    if (!this.modifierFunc || !this.spawnClass)
       throw new Error("Spawner not configured")
     this.lastSpawnTime = performance.now()
-    const res = this.modifierFunc(new this.classRef())
+    const res = this.modifierFunc(new this.spawnClass())
     this.lastSpawnPos = res.pos.clone()
     return res
   }

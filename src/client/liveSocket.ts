@@ -25,13 +25,9 @@ export class LiveSocket {
     const { hostname, port } = window.location
     this.socket = new WebSocket(`ws://${hostname}:${port}/ws`)
     this.socket.onmessage = (msg: any) => {
-      try {
-        const data = JSON.parse(msg.data)
-        if (!("type" in data)) throw new Error("received invalid message")
-        this.handleMessage(data)
-      } catch (error) {
-        console.error(error)
-      }
+      const data = JSON.parse(msg.data)
+      if (!("type" in data)) throw new Error("received invalid message")
+      this.handleMessage(data)
     }
     this.socket.onopen = () => {
       setInterval(() => {
@@ -88,9 +84,13 @@ export class LiveSocket {
         break
 
       case MessageType.newObject:
-        this.game?.addObject(
-          newInstanceOfType(message.object.type).deserialize(message.object)
-        )
+        try {
+          this.game?.addObject(
+            newInstanceOfType(message.object.type).deserialize(message.object)
+          )
+        } catch (error) {
+          console.error("Failed to add object", message.object, error)
+        }
         break
       case MessageType.removeObject:
         this.game?.removeObject(message.object)

@@ -8,6 +8,7 @@ import { Collider } from "./components/collider"
 import { ShapeType } from "./types"
 import { ISerializable } from "./serializable"
 import { IRenderable, RenderSettings } from "./renderable"
+import { CollisionLayer } from "./layers"
 
 export enum GameObjectType {
   Unset = "unset",
@@ -31,6 +32,7 @@ export abstract class GameObject implements ISerializable, IRenderable {
   components: IComponent<ComponentType>[]
   pos: Vec2 = new Vec2(0, 0)
   lastPos: Vec2 = new Vec2(0, 0)
+  collisionLayers: CollisionLayer[] = []
   get posChanged(): boolean {
     return this.pos.round().notEquals(this.lastPos.round())
   }
