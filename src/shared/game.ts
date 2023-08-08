@@ -50,7 +50,7 @@ export abstract class Game {
         if (!collision) continue
 
         objA.pos = objA.pos.add(collision.dir.multiply(collision.depth / 2))
-        objA.vel = objA.vel.add(collision.dir.multiply(collision.depth))
+        objA.vel = objA.vel.add(collision.dir.multiply(collision.depth / 2))
       }
     }
   }
@@ -69,14 +69,7 @@ export abstract class Game {
     this.objectStore.add(object)
   }
 
-  removeObject<T extends GameObjectType>({
-    id,
-    type,
-  }: {
-    id: string
-    type: T
-  }) {
-    console.log("removing", id, type)
+  removeObject<T extends GameObjectType>({ id }: { id: string; type: T }) {
     this.objectStore.removeById(id)
   }
 

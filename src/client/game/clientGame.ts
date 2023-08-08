@@ -94,6 +94,8 @@ export class ClientGame extends Game {
         },
       })
     }
+    const player = this.objectStore.find((o) => o.id === this.playerId)
+    if (player && this.camera.fixed) this.camera.followPlayer(player)
   }
 
   onUpdated(): void {}

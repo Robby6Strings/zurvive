@@ -21,9 +21,6 @@ export class GameObjectStore {
     if (object) Object.assign(object, data)
   }
 
-  remove(object: GameObject) {
-    this.objects = this.objects.filter((o) => o.id !== object.id)
-  }
   removeById(id: string) {
     const object = this.find(id)
     if (object) object.remove = true
