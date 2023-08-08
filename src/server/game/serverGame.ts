@@ -8,7 +8,6 @@ import { Shooter } from "../../shared/components/shooter"
 import { ServerPlayer } from "./serverPlayer"
 import { MessageType, TypedMessage } from "../../shared/message"
 import { Vec2 } from "../../shared/vec2"
-import { Tree } from "../../shared/gameObjects/environment/tree"
 import { GameObjectType } from "../../shared/gameObject"
 import { Bullet } from "../../shared/gameObjects/bullet"
 
@@ -16,19 +15,13 @@ export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
   constructor() {
     super()
-    const enemySpawner = new Spawner().configure(
-      (e: Enemy) => Object.assign(e, { pos: new Vec2(0, 0) }),
-      Enemy
-    )
-    this.objectStore.add(enemySpawner)
-    this.objectStore.add(enemySpawner.spawn())
 
-    const treeSpawner = new Spawner().configure(
-      (t) => Object.assign(t, { pos: new Vec2(-200, -200) }),
-      Tree
+    this.objectStore.add(
+      new Spawner().configure(
+        (e: Enemy) => Object.assign(e, { pos: new Vec2(0, 0) }),
+        Enemy
+      )
     )
-    this.objectStore.add(treeSpawner)
-    this.objectStore.add(treeSpawner.spawn())
 
     this.intervalRef = setInterval(() => {
       this.update()

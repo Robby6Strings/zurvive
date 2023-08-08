@@ -6,7 +6,7 @@ import { IVec2, Vec2 } from "../vec2"
 export class Shooter extends Component {
   lastShotTime: number = 0
   shootCooldown: number = 200
-  bulletSpeed: number = 5
+  bulletSpeed: number = 15
 
   constructor() {
     super(ComponentType.Shooter, true)
@@ -25,27 +25,6 @@ export class Shooter extends Component {
       .multiply(this.bulletSpeed)
     return bullet
   }
-
-  // shoot(obj: GameObject, pos: IVec2): Bullet | void {
-  //   if (performance.now() - this.lastShotTime < this.shootCooldown) {
-  //     return
-  //   }
-  //   this.lastShotTime = performance.now()
-
-  //   return Object.assign<Bullet, Partial<Bullet>>(new Bullet(), {
-  //     config: {
-  //       size: this.bulletSize,
-  //       speed: this.bulletSpeed,
-  //       damage: this.bulletDamage,
-  //       range: this.bulletRange,
-  //     },
-  //     pos: obj.pos,
-  //     vel: Vec2.fromObject(pos)
-  //       .subtract(obj.pos)
-  //       .normalize()
-  //       .multiply(this.bulletSpeed),
-  //   })
-  // }
 
   update(_obj: GameObject): void {
     //throw new Error("Method not implemented.")
