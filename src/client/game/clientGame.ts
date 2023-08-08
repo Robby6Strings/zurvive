@@ -14,7 +14,6 @@ export class ClientGame extends Game {
   renderer: Renderer
   intervalRef: number
   mousePos: Vec2 = new Vec2(0, 0)
-  lastMousePos: Vec2 = new Vec2(0, 0)
   mouseDown: boolean = false
   keys: {
     [key: string]: boolean
@@ -60,7 +59,7 @@ export class ClientGame extends Game {
   }
 
   update(): void {
-    if (this.mouseDown && !this.mousePos.equals(this.lastMousePos)) {
+    if (this.mouseDown) {
       //const coords = this.mousePos.subtract(this.camera.offset)
       // this.liveSocket.sendGameAction({
       //   type: GameActionType.setTargetPos,
@@ -70,23 +69,20 @@ export class ClientGame extends Game {
       //     data: coords,
       //   },
       // })
-      this.lastMousePos = this.mousePos
-      //this.playerStore.objects[0].getComponent(Mover)?.setTarget(coords)
     }
 
     let inputVelocity = new Vec2(0, 0)
-
     if (this.keys["w"]) {
-      inputVelocity = inputVelocity.add(new Vec2(0, -1))
+      inputVelocity = inputVelocity.add(Vec2.up())
     }
     if (this.keys["a"]) {
-      inputVelocity = inputVelocity.add(new Vec2(-1, 0))
+      inputVelocity = inputVelocity.add(Vec2.left())
     }
     if (this.keys["s"]) {
-      inputVelocity = inputVelocity.add(new Vec2(0, 1))
+      inputVelocity = inputVelocity.add(Vec2.down())
     }
     if (this.keys["d"]) {
-      inputVelocity = inputVelocity.add(new Vec2(1, 0))
+      inputVelocity = inputVelocity.add(Vec2.right())
     }
 
     if (inputVelocity.notEquals(Vec2.zero())) {
@@ -99,11 +95,6 @@ export class ClientGame extends Game {
         },
       })
     }
-    //this.playerStore.update()
-    //this.enemyStore.update()
-    // for (const player of this.playerStore.objects) {
-    //   console.log(player.id, player.pos)
-    // }
   }
 
   onUpdated(): void {}

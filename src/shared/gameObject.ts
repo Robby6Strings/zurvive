@@ -31,6 +31,7 @@ export abstract class GameObject implements ISerializable, IRenderable {
   new: boolean = true
   components: IComponent<ComponentType>[]
   pos: Vec2 = new Vec2(0, 0)
+  vel: Vec2 = new Vec2(0, 0)
   lastPos: Vec2 = new Vec2(0, 0)
   collisionLayers: CollisionLayer[] = []
   get posChanged(): boolean {
@@ -68,6 +69,11 @@ export abstract class GameObject implements ISerializable, IRenderable {
   public update(): void {
     for (const component of this.components) {
       component.update(this)
+    }
+
+    if (this.vel.notEquals(Vec2.zero())) {
+      this.pos = this.pos.add(this.vel)
+      this.vel = this.vel.multiply(0.842)
     }
   }
 

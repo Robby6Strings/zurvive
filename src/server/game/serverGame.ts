@@ -125,11 +125,19 @@ export class ServerGame extends Game {
       case GameActionType.interact:
         break
       case GameActionType.move:
-        obj.pos = obj.pos.add(
-          Vec2.deserialize(
-            (action as GameAction<GameActionType.move>).payload.data
-          ).multiply(5)
-        )
+        const inputVel = (action as GameAction<GameActionType.move>).payload
+          .data
+        const vel = new Vec2()
+        // clamp input velocity to -1, 1
+        if (inputVel.x !== 0 || inputVel.y !== 0) {
+          if (inputVel.x !== 0) {
+            vel.x = Math.max(-1, Math.min(1, inputVel.x))
+          }
+          if (inputVel.y !== 0) {
+            vel.y = Math.max(-1, Math.min(1, inputVel.y))
+          }
+        }
+        obj.vel = obj.vel.add(vel).clamp(-15, 15)
         break
       default:
         throw new Error(`Unknown action type ${action.type}`)

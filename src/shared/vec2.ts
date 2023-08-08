@@ -6,6 +6,13 @@ export interface IVec2 {
 export class Vec2 implements IVec2 {
   constructor(public x: number = 0, public y: number = 0) {}
 
+  clamp(min: number, max: number): Vec2 {
+    return new Vec2(
+      Math.max(min, Math.min(max, this.x)),
+      Math.max(min, Math.min(max, this.y))
+    )
+  }
+
   add(other: IVec2): Vec2 {
     return new Vec2(this.x + other.x, this.y + other.y)
   }
@@ -72,10 +79,10 @@ export class Vec2 implements IVec2 {
     return new Vec2(1, 1)
   }
   static up(): Vec2 {
-    return new Vec2(0, 1)
+    return new Vec2(0, -1)
   }
   static down(): Vec2 {
-    return new Vec2(0, -1)
+    return new Vec2(0, 1)
   }
   static left(): Vec2 {
     return new Vec2(-1, 0)
