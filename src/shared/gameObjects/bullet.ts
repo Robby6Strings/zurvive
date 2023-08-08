@@ -32,4 +32,14 @@ export class Bullet extends GameObject {
     })
     this.applyFriction = false
   }
+
+  update(): void {
+    super.update()
+    if (this.vel.length() > 0) {
+      this.config.range -= this.vel.length()
+    }
+    if (this.config.range <= 0) {
+      this.remove = true
+    }
+  }
 }
