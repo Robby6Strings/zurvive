@@ -124,6 +124,13 @@ export class ServerGame extends Game {
         break
       case GameActionType.interact:
         break
+      case GameActionType.move:
+        obj.pos = obj.pos.add(
+          Vec2.deserialize(
+            (action as GameAction<GameActionType.move>).payload.data
+          ).multiply(5)
+        )
+        break
       default:
         throw new Error(`Unknown action type ${action.type}`)
     }

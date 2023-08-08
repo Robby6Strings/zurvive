@@ -6,6 +6,7 @@ export enum GameActionType {
   setTargetPos = "set-target",
   setTargetObj = "set-target-obj",
   attack = "attack",
+  move = "move",
   interact = "interact",
   takeDamage = "take-damage",
 }
@@ -17,6 +18,8 @@ type GameActionData<T extends GameActionType> =
     ? string
     : T extends GameActionType.attack
     ? boolean
+    : T extends GameActionType.move
+    ? IVec2
     : T extends GameActionType.interact
     ? boolean
     : T extends GameActionType.takeDamage

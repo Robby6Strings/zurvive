@@ -44,10 +44,10 @@ export class ClientGame extends Game {
   }
 
   handleKeyDown(e: KeyboardEvent): void {
-    this.keys[e.key] = true
+    this.keys[e.key.toLowerCase()] = true
   }
   handleKeyUp(e: KeyboardEvent): void {
-    this.keys[e.key] = false
+    this.keys[e.key.toLowerCase()] = false
   }
   handleMouseMove(e: MouseEvent): void {
     this.mousePos = new Vec2(e.clientX, e.clientY)
@@ -61,17 +61,43 @@ export class ClientGame extends Game {
 
   update(): void {
     if (this.mouseDown && !this.mousePos.equals(this.lastMousePos)) {
-      const coords = this.mousePos.subtract(this.camera.offset)
+      //const coords = this.mousePos.subtract(this.camera.offset)
+      // this.liveSocket.sendGameAction({
+      //   type: GameActionType.setTargetPos,
+      //   payload: {
+      //     objectType: GameObjectType.Player,
+      //     objectId: this.playerId,
+      //     data: coords,
+      //   },
+      // })
+      this.lastMousePos = this.mousePos
+      //this.playerStore.objects[0].getComponent(Mover)?.setTarget(coords)
+    }
+
+    let inputVelocity = new Vec2(0, 0)
+
+    if (this.keys["w"]) {
+      inputVelocity = inputVelocity.add(new Vec2(0, -1))
+    }
+    if (this.keys["a"]) {
+      inputVelocity = inputVelocity.add(new Vec2(-1, 0))
+    }
+    if (this.keys["s"]) {
+      inputVelocity = inputVelocity.add(new Vec2(0, 1))
+    }
+    if (this.keys["d"]) {
+      inputVelocity = inputVelocity.add(new Vec2(1, 0))
+    }
+
+    if (inputVelocity.notEquals(Vec2.zero())) {
       this.liveSocket.sendGameAction({
-        type: GameActionType.setTargetPos,
+        type: GameActionType.move,
         payload: {
           objectType: GameObjectType.Player,
           objectId: this.playerId,
-          data: coords,
+          data: inputVelocity,
         },
       })
-      this.lastMousePos = this.mousePos
-      //this.playerStore.objects[0].getComponent(Mover)?.setTarget(coords)
     }
     //this.playerStore.update()
     //this.enemyStore.update()
