@@ -79,10 +79,10 @@ export class Vec2 implements IVec2 {
     return new Vec2(1, 1)
   }
   static up(): Vec2 {
-    return new Vec2(0, 1)
+    return new Vec2(0, -1)
   }
   static down(): Vec2 {
-    return new Vec2(0, -1)
+    return new Vec2(0, 1)
   }
   static left(): Vec2 {
     return new Vec2(-1, 0)

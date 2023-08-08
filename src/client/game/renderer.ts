@@ -35,7 +35,7 @@ export class Renderer {
     ctx.beginPath()
     if (shapeType == ShapeType.Circle) {
       if (!radius) throw new Error("radius not set")
-      ctx.arc(x + xOffset, -y + yOffset, radius, 0, 2 * Math.PI)
+      ctx.arc(x + xOffset, y + yOffset, radius, 0, 2 * Math.PI)
     } else {
       if (!width || !height) throw new Error("width or height not set")
       ctx.rect(x + xOffset - width / 2, y + yOffset - height / 2, width, height)
