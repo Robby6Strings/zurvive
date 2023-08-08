@@ -1,6 +1,6 @@
 import { Collider } from "../../components/collider"
-import { Fighter } from "../../components/fighter"
 import { Health } from "../../components/health"
+import { Shooter } from "../../components/shooter"
 import { GameObject, GameObjectType } from "../../gameObject"
 import { CollisionLayer } from "../../layers"
 import { ShapeType } from "../../types"
@@ -11,7 +11,7 @@ export class Player extends GameObject {
   constructor() {
     super(GameObjectType.Player)
     this.components.push(
-      new Fighter(),
+      new Shooter(),
       Object.assign(new Health(), { invulnerable: true }),
       Collider.circleCollider(playerRadius)
     )

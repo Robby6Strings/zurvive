@@ -4,11 +4,13 @@ import { Spawner } from "../../shared/gameObjects/spawner"
 import { GameActionType, GameAction } from "../../shared/gameAction"
 import { Fighter } from "../../shared/components/fighter"
 import { Mover } from "../../shared/components/mover"
+import { Shooter } from "../../shared/components/shooter"
 import { ServerPlayer } from "./serverPlayer"
 import { MessageType, TypedMessage } from "../../shared/message"
 import { Vec2 } from "../../shared/vec2"
 import { Tree } from "../../shared/gameObjects/environment/tree"
 import { GameObjectType } from "../../shared/gameObject"
+import { Bullet } from "../../shared/gameObjects/bullet"
 
 export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
@@ -121,6 +123,22 @@ export class ServerGame extends Game {
       case GameActionType.setTargetObj:
         break
       case GameActionType.attack:
+        const attackPos = (action as GameAction<GameActionType.attack>).payload
+          .data
+        const shooter = obj.getComponent(Shooter)!
+        const bullet = shooter.shoot(
+          obj,
+          attackPos,
+          Object.assign(new Bullet(), {
+            config: {
+              size: 5,
+              speed: 10,
+              damage: 1,
+              range: 1000,
+            },
+          })
+        )
+        if (bullet) this.objectStore.add(bullet)
         break
       case GameActionType.interact:
         break

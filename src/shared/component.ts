@@ -6,6 +6,7 @@ export enum ComponentType {
   Health,
   Fighter,
   Collider,
+  Shooter,
 }
 
 export interface IComponent<T extends ComponentType> {

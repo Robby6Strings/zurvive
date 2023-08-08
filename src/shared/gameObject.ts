@@ -1,5 +1,6 @@
 import { ClassConstructor } from "cinnabun/src/types"
 import { Component, ComponentType, IComponent } from "./component"
+import { Shooter } from "./components/shooter"
 import { Fighter } from "./components/fighter"
 import { Mover } from "./components/mover"
 import { Vec2 } from "./vec2"
@@ -32,6 +33,7 @@ export abstract class GameObject implements ISerializable, IRenderable {
   components: IComponent<ComponentType>[]
   pos: Vec2 = new Vec2(0, 0)
   vel: Vec2 = new Vec2(0, 0)
+  applyFriction: boolean = true
   lastPos: Vec2 = new Vec2(0, 0)
   collisionLayers: CollisionLayer[] = []
   get posChanged(): boolean {
@@ -73,7 +75,7 @@ export abstract class GameObject implements ISerializable, IRenderable {
 
     if (this.vel.notEquals(Vec2.zero())) {
       this.pos = this.pos.add(this.vel)
-      this.vel = this.vel.multiply(0.842)
+      if (this.applyFriction) this.vel = this.vel.multiply(0.842)
     }
   }
 
@@ -114,6 +116,9 @@ export abstract class GameObject implements ISerializable, IRenderable {
           break
         case ComponentType.Collider:
           classType = Collider
+          break
+        case ComponentType.Shooter:
+          classType = Shooter
           break
         default:
           throw new Error(`Unknown component type ${c.type}`)

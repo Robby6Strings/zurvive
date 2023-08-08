@@ -17,7 +17,7 @@ type GameActionData<T extends GameActionType> =
     : T extends GameActionType.setTargetObj
     ? string
     : T extends GameActionType.attack
-    ? boolean
+    ? IVec2
     : T extends GameActionType.move
     ? IVec2
     : T extends GameActionType.interact

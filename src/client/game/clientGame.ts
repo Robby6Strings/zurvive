@@ -60,15 +60,14 @@ export class ClientGame extends Game {
 
   update(): void {
     if (this.mouseDown) {
-      //const coords = this.mousePos.subtract(this.camera.offset)
-      // this.liveSocket.sendGameAction({
-      //   type: GameActionType.setTargetPos,
-      //   payload: {
-      //     objectType: GameObjectType.Player,
-      //     objectId: this.playerId,
-      //     data: coords,
-      //   },
-      // })
+      this.liveSocket.sendGameAction({
+        type: GameActionType.attack,
+        payload: {
+          objectType: GameObjectType.Player,
+          objectId: this.playerId,
+          data: this.mousePos.subtract(this.camera.offset),
+        },
+      })
     }
 
     let inputVelocity = new Vec2(0, 0)
