@@ -8,6 +8,7 @@ export type BulletConfig = {
   speed: number
   damage: number
   range: number
+  weight: number
 }
 
 export class Bullet extends GameObject {
@@ -16,6 +17,7 @@ export class Bullet extends GameObject {
     speed: 10,
     damage: 1,
     range: 1000,
+    weight: 1,
   }
   constructor() {
     super(GameObjectType.Bullet)

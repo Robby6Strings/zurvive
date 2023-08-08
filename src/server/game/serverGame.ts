@@ -99,7 +99,7 @@ export class ServerGame extends Game {
     const obj = this.objectStore.find(
       (o) =>
         o.id === action.payload.objectId && o.type === action.payload.objectType
-    )
+    ) as ServerPlayer | undefined
     if (!obj) {
       throw new Error(
         `Object ${action.payload.objectId} not found in pool ${action.payload.objectType}`
@@ -128,6 +128,7 @@ export class ServerGame extends Game {
               speed: 10,
               damage: 1,
               range: 1000,
+              weight: 1,
             },
           })
         )

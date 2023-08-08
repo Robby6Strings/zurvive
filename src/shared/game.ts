@@ -3,6 +3,7 @@ import { GameActionType, GameAction } from "./gameAction"
 import { GameObject, GameObjectType } from "./gameObject"
 import { CollisionLayer } from "./layers"
 import { Collider } from "./components/collider"
+import { Bullet } from "./gameObjects/bullet"
 
 export abstract class Game {
   frameDuration: number = 1000 / 60
@@ -50,7 +51,17 @@ export abstract class Game {
         if (!collision) continue
 
         objA.pos = objA.pos.add(collision.dir.multiply(collision.depth / 2))
-        objA.vel = objA.vel.add(collision.dir.multiply(collision.depth / 2))
+        if (objA instanceof Bullet || objB instanceof Bullet) {
+          const other = objA instanceof Bullet ? objB : objA
+          const bullet = (objA instanceof Bullet ? objA : objB) as Bullet
+          if (other && !(other instanceof Bullet)) {
+            other.vel = other.vel.add(
+              bullet.vel.multiply(
+                ((collision.depth / 2) * bullet.config.weight) / 100
+              )
+            )
+          }
+        }
       }
     }
   }
