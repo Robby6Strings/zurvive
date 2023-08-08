@@ -50,10 +50,7 @@ export class ServerGame extends Game {
     )
 
     enemySpawners.forEach((spawner) => {
-      if (
-        enemies.length < 3 &&
-        performance.now() - spawner.lastSpawnTime >= 5000
-      ) {
+      if (performance.now() - spawner.lastSpawnTime >= 2000) {
         this.objectStore.add(spawner.spawn())
       }
     })
@@ -62,6 +59,9 @@ export class ServerGame extends Game {
       const fighter = enemy.getComponent(Fighter)!
       if (!fighter.target) {
         fighter.target = fighter.getTargetWithinFollowRange(enemy, players)
+      }
+      if (!fighter.target) {
+        enemy.getComponent(Mover)?.setTargetPos(null)
       }
     }
 

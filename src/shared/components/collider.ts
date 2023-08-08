@@ -18,9 +18,19 @@ export class Collider extends Component {
   height: number = 0
   shape: ShapeType = ShapeType.Circle
   static: boolean = false
+  private _onCollision: { (): void } | undefined
 
   constructor() {
     super(ComponentType.Collider, true)
+  }
+
+  get onCollision(): { (): void } | undefined {
+    return this._onCollision
+  }
+
+  withCollisionEffect(fn: { (): void }): Collider {
+    this._onCollision = fn
+    return this
   }
 
   getPoints(): Vec2[] {
@@ -71,37 +81,43 @@ export class Collider extends Component {
     obj2: GameObject,
     obj1Pos: Vec2 = obj1.pos,
     obj2Pos: Vec2 = obj2.pos
-  ): CollisionCheckResult | void {
+  ): CollisionCheckResult | undefined {
     const collider1 = obj1.getComponent(Collider)
     const collider2 = obj2.getComponent(Collider)
     if (!collider1 || !collider2) return
     if (!collider1.enabled || !collider2.enabled) return
     if (collider1.static && collider2.static) return
 
+    let res: CollisionCheckResult | undefined
     if (
       collider1.shape === ShapeType.Circle &&
       collider2.shape === ShapeType.Circle
     ) {
-      return Collider.circleCircleCollision(obj1, obj2, obj1Pos, obj2Pos)
+      res = Collider.circleCircleCollision(obj1, obj2, obj1Pos, obj2Pos)
     }
     if (
       collider1.shape === ShapeType.Circle &&
       collider2.shape === ShapeType.Rectangle
     ) {
-      return Collider.circleRectangleCollision(obj1, obj2, obj1Pos, obj2Pos)
+      res = Collider.circleRectangleCollision(obj1, obj2, obj1Pos, obj2Pos)
     }
     if (
       collider1.shape === ShapeType.Rectangle &&
       collider2.shape === ShapeType.Circle
     ) {
-      return Collider.circleRectangleCollision(obj2, obj1, obj1Pos, obj2Pos)
+      res = Collider.circleRectangleCollision(obj2, obj1, obj1Pos, obj2Pos)
     }
     if (
       collider1.shape === ShapeType.Rectangle &&
       collider2.shape === ShapeType.Rectangle
     ) {
-      return Collider.rectangleRectangleCollision(obj1, obj2, obj1Pos, obj2Pos)
+      res = Collider.rectangleRectangleCollision(obj1, obj2, obj1Pos, obj2Pos)
     }
+    if (res) {
+      if (collider1.onCollision) collider1.onCollision()
+      if (collider2.onCollision) collider2.onCollision()
+    }
+    return res
   }
 
   static circleCircleCollision(
@@ -109,7 +125,7 @@ export class Collider extends Component {
     obj2: GameObject,
     obj1Pos: Vec2 = obj1.pos,
     obj2Pos: Vec2 = obj2.pos
-  ): CollisionCheckResult | void {
+  ): CollisionCheckResult | undefined {
     const collider1 = obj1.getComponent(Collider)
     const collider2 = obj2.getComponent(Collider)
     if (!collider1 || !collider2) return
@@ -136,7 +152,7 @@ export class Collider extends Component {
     rectObj: GameObject,
     circleObjPos: Vec2 = circleObj.pos,
     rectObjPos: Vec2 = rectObj.pos
-  ): CollisionCheckResult | void {
+  ): CollisionCheckResult | undefined {
     const circleCollider = circleObj.getComponent(Collider)
     const rectCollider = rectObj.getComponent(Collider)
     if (!circleCollider || !rectCollider) return
@@ -218,7 +234,7 @@ export class Collider extends Component {
     obj2: GameObject,
     obj1Pos: Vec2 = obj1.pos,
     obj2Pos: Vec2 = obj2.pos
-  ): CollisionCheckResult | void {
+  ): CollisionCheckResult | undefined {
     const collider1 = obj1.getComponent(Collider)
     const collider2 = obj2.getComponent(Collider)
     if (!collider1 || !collider2) return

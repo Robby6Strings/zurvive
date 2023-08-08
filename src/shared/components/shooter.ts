@@ -5,8 +5,8 @@ import { IVec2, Vec2 } from "../vec2"
 
 export class Shooter extends Component {
   lastShotTime: number = 0
-  shootCooldown: number = 200
-  bulletSpeed: number = 15
+  shootCooldown: number = 100
+  bulletSpeed: number = 30
 
   constructor() {
     super(ComponentType.Shooter, true)

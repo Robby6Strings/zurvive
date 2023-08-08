@@ -19,7 +19,11 @@ export class Bullet extends GameObject {
   }
   constructor() {
     super(GameObjectType.Bullet)
-    this.components.push(Collider.circleCollider(this.config.size))
+    this.components.push(
+      Collider.circleCollider(this.config.size).withCollisionEffect(
+        () => (this.remove = true)
+      )
+    )
     this.collisionLayers.push(CollisionLayer.PlayerBullet)
     this.setRenderSettings({
       shapeType: ShapeType.Circle,

@@ -25,7 +25,12 @@ export abstract class Game {
           CollisionLayer.Player,
           CollisionLayer.Enemy,
           CollisionLayer.Environment,
+          CollisionLayer.PlayerBullet,
         ],
+      ],
+      [
+        GameObjectType.Bullet,
+        [CollisionLayer.Enemy, CollisionLayer.Environment],
       ],
     ])
 
@@ -45,6 +50,7 @@ export abstract class Game {
         if (!collision) continue
 
         objA.pos = objA.pos.add(collision.dir.multiply(collision.depth / 2))
+        objA.vel = objA.vel.add(collision.dir.multiply(collision.depth))
       }
     }
   }
