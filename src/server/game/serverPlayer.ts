@@ -11,10 +11,12 @@ export class ServerPlayer extends Player {
   constructor(conn: SocketStream) {
     super()
     this.conn = conn
-    this.getComponent(Health)!.onKilled = (health) => {
+    const health = this.getComponent(Health)
+    health!.onKilled = (health) => {
       health.currentHealth = health.maxHealth
       return false
     }
+    health!.regenAmount = 1
   }
 
   handleAttack(pos: IVec2): void | GameObject[] {
@@ -28,7 +30,7 @@ export class ServerPlayer extends Player {
             size: 3,
             speed: 10,
             damage: 5,
-            range: 1000,
+            range: 200,
             weight: this.bulletWeight,
           },
         })

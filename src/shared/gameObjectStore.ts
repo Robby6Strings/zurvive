@@ -1,3 +1,6 @@
+import { ComponentType } from "./component"
+import { Health } from "./components/health"
+import { Mover } from "./components/mover"
 import { GameActionType } from "./gameAction"
 import { GameObject, GameObjectType } from "./gameObject"
 import { newInstanceOfType } from "./gameObjects"
@@ -92,29 +95,46 @@ export class GameObjectStore {
           },
         })
       }
-      // for (const component of obj.components) {
-      //   switch (component.type) {
-      //     case ComponentType.Mover:
-      //       const mover = component as Mover
-      //       if (mover.targetPosChanged) {
-      //         mover.targetPosChanged = false
-      //         changes.push({
-      //           type: MessageType.action,
-      //           action: {
-      //             type: GameActionType.setTargetPos,
-      //             payload: {
-      //               objectType: obj.type,
-      //               objectId: obj.id,
-      //               data: mover.targetPos
-      //                 ? Vec2.serialize(mover.targetPos)
-      //                 : null,
-      //             },
-      //           },
-      //         })
-      //       }
-      //       break
-      //   }
-      // }
+      for (const component of obj.components) {
+        switch (component.type) {
+          case ComponentType.Mover:
+            const mover = component as Mover
+            if (mover.targetPosChanged) {
+              changes.push({
+                type: MessageType.action,
+                action: {
+                  type: GameActionType.setTargetPos,
+                  payload: {
+                    objectType: obj.type,
+                    objectId: obj.id,
+                    data: mover.targetPos
+                      ? Vec2.serialize(mover.targetPos)
+                      : null,
+                  },
+                },
+              })
+            }
+            break
+          case ComponentType.Health:
+            const health = component as Health
+            if (health.currentHealthChanged) {
+              changes.push({
+                type: MessageType.action,
+                action: {
+                  type:
+                    health.currentHealth > health._lastHealth
+                      ? GameActionType.heal
+                      : GameActionType.takeDamage,
+                  payload: {
+                    objectType: obj.type,
+                    objectId: obj.id,
+                    data: health.currentHealth,
+                  },
+                },
+              })
+            }
+        }
+      }
     }
     return changes
   }

@@ -7,6 +7,7 @@ import { Camera } from "./camera"
 import { Vec2 } from "../../shared/vec2"
 import { LiveSocket } from "../liveSocket"
 import { Enemy, Player } from "../../shared/gameObjects/entities"
+import { Health } from "../../shared/components/health"
 
 export class ClientGame extends Game {
   playerId: string = ""
@@ -102,7 +103,9 @@ export class ClientGame extends Game {
       })
     }
     const player = this.objectStore.find((o) => o.id === this.playerId)
-    if (player && this.camera.fixed) this.camera.followPlayer(player as Player)
+    if (player && this.camera.fixed) {
+      this.camera.followPlayer(player as Player)
+    }
   }
 
   onUpdated(): void {}
@@ -157,6 +160,15 @@ export class ClientGame extends Game {
       case GameActionType.attack:
         break
       case GameActionType.interact:
+        break
+      case GameActionType.takeDamage:
+      case GameActionType.heal:
+        console.log(action.type, action.payload.data)
+        const health = obj.getComponent(Health)
+        health!.setHealth(
+          (action as GameAction<GameActionType.takeDamage>).payload.data
+        )
+        health!.renderTime = 2000
         break
       default:
         throw new Error(`Unknown action type ${action.type}`)

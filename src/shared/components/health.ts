@@ -4,8 +4,13 @@ import { GameObject } from "../gameObject"
 export class Health extends Component {
   _maxHealth: number = 30
   _currentHealth: number = 30
+  _lastHealth: number = 30
   maxHealthChanged: boolean = false
-  currentHealthChanged: boolean = false
+  renderTime: number = 0
+  regenTick: number = 0
+  regenInterval: number = 1000
+  regenAmount: number = 0
+
   invulnerable: boolean = false
   private _onKilled: { (health: Health): boolean } | undefined
 
@@ -25,8 +30,11 @@ export class Health extends Component {
     return this._currentHealth
   }
   set currentHealth(value: number) {
-    this.currentHealthChanged = value !== this._currentHealth
     this._currentHealth = value
+  }
+
+  get currentHealthChanged(): boolean {
+    return this._lastHealth !== this._currentHealth
   }
 
   get dead(): boolean {
@@ -46,25 +54,36 @@ export class Health extends Component {
         obj.remove = true
       }
     }
+
+    this._lastHealth = this._currentHealth
+    this.regenTick += 1000 / 60
+    if (this.regenTick >= this.regenInterval) {
+      this.regenTick = 0
+      this.heal(this.regenAmount)
+    }
   }
 
   takeDamage(amount: number): void {
     if (this.invulnerable) return
     this.currentHealth -= amount
-    this.currentHealthChanged = true
 
     if (this.currentHealth < 0) {
       this.currentHealth = 0
     }
   }
 
+  setHealth(amount: number): void {
+    this.currentHealth = amount
+    if (this.currentHealth > this.maxHealth) {
+      this.currentHealth = this.maxHealth
+    }
+  }
+
   heal(amount: number): void {
-    let prevHealth = this.currentHealth
     this.currentHealth += amount
     if (this.currentHealth > this.maxHealth) {
       this.currentHealth = this.maxHealth
     }
-    if (prevHealth !== this.currentHealth) this.currentHealthChanged = true
   }
 
   deserialize(data: any): void {

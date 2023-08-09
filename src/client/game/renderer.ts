@@ -1,4 +1,6 @@
+import { Health } from "../../shared/components/health"
 import { Sprite } from "../../shared/components/sprite"
+import { Player } from "../../shared/gameObjects/entities"
 import { RenderSettings } from "../../shared/renderable"
 import { ShapeType } from "../../shared/types"
 import { IVec2 } from "../../shared/vec2"
@@ -30,6 +32,40 @@ export class Renderer {
     }
 
     this.renderCursor(game)
+    this.renderPlayerHealth(player, camera)
+  }
+  renderPlayerHealth(player: Player, camera: Camera) {
+    if (!this.ctx) return
+    const health = player.getComponent(Health)
+    if (!health) return
+    health.renderTime -= 1000 / 60
+    if (health.renderTime < 0) {
+      health.renderTime = 0
+      return
+    }
+    const { ctx } = this
+    const { x, y } = player.pos
+    const { x: xOffset, y: yOffset } = camera.offset
+    const { radius } = player.renderSettings
+    const { currentHealth, maxHealth } = health
+    const healthBarWidth = 30
+    const healthBarHeight = 5
+    const healthBarOffset = 10
+    const healthBarX = x + xOffset - healthBarWidth / 2
+    const healthBarY = y + yOffset - radius! - healthBarOffset
+    const healthBarCurrentWidth = (currentHealth / maxHealth) * healthBarWidth
+    ctx.save()
+    ctx.beginPath()
+    ctx.rect(healthBarX, healthBarY, healthBarWidth, healthBarHeight)
+    ctx.fillStyle = "#000a"
+    ctx.fill()
+    ctx.closePath()
+    ctx.beginPath()
+    ctx.rect(healthBarX, healthBarY, healthBarCurrentWidth, healthBarHeight)
+    ctx.fillStyle = "#f00a"
+    ctx.fill()
+    ctx.closePath()
+    ctx.restore()
   }
 
   private renderCursor(game: ClientGame) {

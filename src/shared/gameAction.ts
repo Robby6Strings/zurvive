@@ -9,6 +9,7 @@ export enum GameActionType {
   move = "move",
   interact = "interact",
   takeDamage = "take-damage",
+  heal = "heal",
 }
 
 type GameActionData<T extends GameActionType> =

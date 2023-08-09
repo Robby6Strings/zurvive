@@ -17,7 +17,7 @@ export class Bullet extends GameObject {
     size: 3,
     speed: 10,
     damage: 5,
-    range: 1000,
+    range: 200,
     weight: 1,
   }
   constructor() {

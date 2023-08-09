@@ -10,8 +10,8 @@ const playerRadius = 16
 
 export class Player extends GameObject implements IGunConfig {
   numBullets: number = 3
-  bulletWeight: number = 5
-  bulletCooldown: number = 333
+  bulletWeight: number = 3
+  bulletCooldown: number = 666
 
   constructor() {
     super(GameObjectType.Player)
