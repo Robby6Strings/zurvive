@@ -28,6 +28,22 @@ export class Renderer {
       }
       this.renderObject(obj.pos, obj.renderSettings, camera)
     }
+
+    this.renderCursor(game)
+  }
+
+  private renderCursor(game: ClientGame) {
+    if (!this.ctx) return
+    const cursorSize = 20
+    const mousePos = game.mousePos
+    this.ctx.strokeStyle = "#afac"
+    this.ctx.beginPath()
+    this.ctx.moveTo(mousePos.x - cursorSize / 2, mousePos.y)
+    this.ctx.lineTo(mousePos.x + cursorSize / 2, mousePos.y)
+    this.ctx.moveTo(mousePos.x, mousePos.y - cursorSize / 2)
+    this.ctx.lineTo(mousePos.x, mousePos.y + cursorSize / 2)
+    this.ctx.stroke()
+    this.ctx.closePath()
   }
 
   private renderImage(pos: IVec2, settings: RenderSettings, camera: Camera) {
