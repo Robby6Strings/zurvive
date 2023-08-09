@@ -106,8 +106,7 @@ export class Sprite extends Component implements IRenderable {
     if (this.imgSetIdx > 3) {
       this.imgSetOffset.y = 32 * 4
     }
-    this.imgSetOffset.x = 32 * (this.imgSetIdx % 4)
-
+    this.imgSetOffset.x = 32 * 3 * (this.imgSetIdx % 4)
     this.setImage()
   }
   serialize(): Object {
