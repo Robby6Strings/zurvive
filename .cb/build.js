@@ -1,5 +1,6 @@
 import esbuild from "esbuild"
 import kill from "tree-kill"
+import fs from "fs"
 import { log, fmt } from "./logger.js"
 
 import { exec, ChildProcess } from "node:child_process"
@@ -89,6 +90,11 @@ const clientCfg = {
           console.time(fmt("Dim", "client build time"))
         })
         onEnd(() => {
+          fs.cpSync("./src/client/assets", "./dist/static/assets", {
+            recursive: true,
+            force: true,
+          })
+
           clientBuilt = true
           console.timeEnd(fmt("Dim", "client build time"))
           emitter.emit("build-finished")

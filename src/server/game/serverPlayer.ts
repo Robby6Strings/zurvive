@@ -25,7 +25,7 @@ export class ServerPlayer extends Player {
       ...Array.from({ length: this.numBullets }).map(() =>
         Object.assign(new Bullet(), {
           config: {
-            size: 5,
+            size: 3,
             speed: 10,
             damage: 5,
             range: 1000,

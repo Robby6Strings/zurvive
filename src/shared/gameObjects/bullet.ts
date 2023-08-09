@@ -14,7 +14,7 @@ export type BulletConfig = {
 
 export class Bullet extends GameObject {
   config: BulletConfig = {
-    size: 5,
+    size: 3,
     speed: 10,
     damage: 5,
     range: 1000,
@@ -34,7 +34,7 @@ export class Bullet extends GameObject {
     this.setRenderSettings({
       shapeType: ShapeType.Circle,
       radius: this.config.size,
-      color: "red",
+      color: "#aaaa",
     })
     this.applyFriction = false
   }

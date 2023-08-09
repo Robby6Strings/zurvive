@@ -40,8 +40,8 @@ export class Health extends Component {
   update(obj: GameObject): void {
     if (!this.enabled) return
     if (this.dead) {
-      if (this._onKilled && this._onKilled(this)) {
-        obj.remove = true
+      if (this._onKilled) {
+        if (this._onKilled(this)) obj.remove = true
       } else {
         obj.remove = true
       }

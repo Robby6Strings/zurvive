@@ -72,16 +72,23 @@ export class GameObjectStore {
             id: obj.id,
           },
         })
-      } else if (obj.posChanged) {
-        obj.lastPos = obj.pos.clone()
+      } else if (obj.posChanged || obj.velChanged) {
+        const deltas: any = {}
+        if (obj.posChanged) {
+          obj.lastPos = obj.pos.clone()
+          deltas.pos = Vec2.serialize(obj.pos)
+        }
+        if (obj.velChanged) {
+          obj.lastVel = obj.vel.clone()
+          deltas.vel = Vec2.serialize(obj.vel)
+        }
+
         changes.push({
           type: MessageType.updateObject,
           object: {
             type: obj.type,
             id: obj.id,
-            properties: {
-              pos: Vec2.serialize(obj.pos),
-            },
+            properties: deltas,
           },
         })
       }

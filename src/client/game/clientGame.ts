@@ -6,6 +6,7 @@ import { Renderer } from "./renderer"
 import { Camera } from "./camera"
 import { Vec2 } from "../../shared/vec2"
 import { LiveSocket } from "../liveSocket"
+import { Enemy, Player } from "../../shared/gameObjects/entities"
 
 export class ClientGame extends Game {
   playerId: string = ""
@@ -32,6 +33,12 @@ export class ClientGame extends Game {
       this.renderer.render(this, this.camera)
     }, this.frameDuration)
     this.attachListeners()
+  }
+
+  getPlayer(): Player | undefined {
+    return this.objectStore.find(
+      (o) => o.id === this.playerId && o.type === GameObjectType.Player
+    ) as Player
   }
 
   attachListeners(): void {
@@ -95,7 +102,7 @@ export class ClientGame extends Game {
       })
     }
     const player = this.objectStore.find((o) => o.id === this.playerId)
-    if (player && this.camera.fixed) this.camera.followPlayer(player)
+    if (player && this.camera.fixed) this.camera.followPlayer(player as Player)
   }
 
   onUpdated(): void {}
@@ -116,7 +123,14 @@ export class ClientGame extends Game {
         continue
       }
       if (key === "pos" && object.properties.pos) {
+        if (obj instanceof Enemy) {
+          obj.vel = Vec2.fromObject(object.properties.pos).subtract(obj.pos)
+        }
         obj.pos = Vec2.fromObject(object.properties.pos)
+        continue
+      }
+      if (key === "vel" && object.properties.vel) {
+        obj.vel = Vec2.fromObject(object.properties.vel)
         continue
       }
     }

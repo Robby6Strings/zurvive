@@ -3,6 +3,7 @@ import { ClientGame } from "./game/clientGame"
 import { MessageType, TypedMessage } from "../shared/message"
 import { GameAction, GameActionType } from "../shared/gameAction"
 import { newInstanceOfType } from "../shared/gameObjects"
+import { loadImages } from "./images"
 
 export class LiveSocket {
   socket: any
@@ -22,6 +23,12 @@ export class LiveSocket {
   }
 
   constructor() {
+    loadImages(() => {
+      this.connect()
+    })
+  }
+
+  private async connect() {
     const { hostname, port } = window.location
     this.socket = new WebSocket(`ws://${hostname}:${port}/ws`)
     this.socket.onmessage = (msg: any) => {
@@ -39,14 +46,6 @@ export class LiveSocket {
         this.socket.send(JSON.stringify({ type: MessageType.ping }))
       }, 1000)
     }
-
-    this.load()
-  }
-
-  private async load() {
-    // const res = await getChatMessages()
-    // if (res.error) return
-    //this.state.value = res.data
   }
 
   public sendGameAction<T extends GameActionType>(action: GameAction<T>) {

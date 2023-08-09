@@ -6,11 +6,11 @@ import { IGunConfig } from "../../gunConfig"
 import { CollisionLayer } from "../../layers"
 import { ShapeType } from "../../types"
 
-const playerRadius = 25
+const playerRadius = 16
 
 export class Player extends GameObject implements IGunConfig {
-  numBullets: number = 1
-  bulletWeight: number = 1
+  numBullets: number = 3
+  bulletWeight: number = 5
   bulletCooldown: number = 333
 
   constructor() {

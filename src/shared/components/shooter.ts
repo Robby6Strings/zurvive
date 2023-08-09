@@ -38,7 +38,7 @@ export class Shooter extends Component {
     }
 
     // fire the bullets in a cone
-    const angle = Math.PI / 12
+    const angle = Math.PI / 16
     const angleStep = (2 * angle) / (numBullets - 1)
     const startAngle = -angle
     for (let i = 0; i < numBullets; i++) {

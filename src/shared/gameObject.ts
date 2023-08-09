@@ -10,6 +10,7 @@ import { ShapeType } from "./types"
 import { ISerializable } from "./serializable"
 import { IRenderable, RenderSettings } from "./renderable"
 import { CollisionLayer } from "./layers"
+import { Sprite } from "./components/sprite"
 
 export enum GameObjectType {
   Unset = "unset",
@@ -35,9 +36,13 @@ export abstract class GameObject implements ISerializable, IRenderable {
   vel: Vec2 = new Vec2(0, 0)
   applyFriction: boolean = true
   lastPos: Vec2 = new Vec2(0, 0)
+  lastVel: Vec2 = new Vec2(0, 0)
   collisionLayers: CollisionLayer[] = []
   get posChanged(): boolean {
     return this.pos.round().notEquals(this.lastPos.round())
+  }
+  get velChanged(): boolean {
+    return this.vel.round().notEquals(this.lastVel.round())
   }
 
   rotation: number = 0
@@ -92,6 +97,7 @@ export abstract class GameObject implements ISerializable, IRenderable {
       id: this.id,
       type: this.type,
       pos: Vec2.serialize(this.pos),
+      vel: Vec2.serialize(this.vel),
       rotation: this.rotation,
       components: this.components.map((c) => c.serialize()),
     }
@@ -101,6 +107,7 @@ export abstract class GameObject implements ISerializable, IRenderable {
     this.id = data.id
     this.type = data.type
     this.pos = data.pos ? Vec2.fromObject(data.pos) : Vec2.zero()
+    this.vel = data.vel ? Vec2.fromObject(data.vel) : Vec2.zero()
     this.rotation = data.rotation
     this.components = data.components.map((c: any) => {
       let classType: ClassConstructor<Component> | undefined
@@ -119,6 +126,9 @@ export abstract class GameObject implements ISerializable, IRenderable {
           break
         case ComponentType.Shooter:
           classType = Shooter
+          break
+        case ComponentType.Sprite:
+          classType = Sprite
           break
         default:
           throw new Error(`Unknown component type ${c.type}`)

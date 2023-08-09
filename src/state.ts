@@ -17,3 +17,9 @@ if (Cinnabun.isClient) {
     canvas.height = window.innerHeight
   })
 }
+
+export type GameImage = {
+  image: HTMLImageElement
+  name: string
+}
+export const images = createSignal<GameImage[]>([])

@@ -10,6 +10,8 @@ export type RenderSettings = {
   width?: number
   height?: number
   imgRef?: string
+  img?: HTMLImageElement
+  imgOffset?: { x: number; y: number }
 }
 
 export interface IRenderable {
