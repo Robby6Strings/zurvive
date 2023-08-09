@@ -2,17 +2,22 @@ import { Collider } from "../../components/collider"
 import { Health } from "../../components/health"
 import { Shooter } from "../../components/shooter"
 import { GameObject, GameObjectType } from "../../gameObject"
+import { IGunConfig } from "../../gunConfig"
 import { CollisionLayer } from "../../layers"
 import { ShapeType } from "../../types"
 
 const playerRadius = 25
 
-export class Player extends GameObject {
+export class Player extends GameObject implements IGunConfig {
+  numBullets: number = 1
+  bulletWeight: number = 1
+  bulletCooldown: number = 333
+
   constructor() {
     super(GameObjectType.Player)
     this.components.push(
-      new Shooter(),
-      Object.assign(new Health(), { invulnerable: true }),
+      Object.assign(new Health()),
+      Object.assign(new Shooter(), { shootCooldown: this.bulletCooldown }),
       Collider.circleCollider(playerRadius)
     )
     this.collisionLayers.push(CollisionLayer.Player)

@@ -30,20 +30,17 @@ export class Fighter extends Component {
 
   update(obj: GameObject): void {
     if (!this.enabled) return
-    if (this.target?.remove) {
-      this.target = null
-    }
+    if (this.target?.remove) this.target = null
     if (!this.target) return
 
-    if (!this.inFollowRange(obj)) {
+    const dist = GameObject.getDistance(obj, this.target)
+    if (dist > this.followRange) {
       this.target = null
       return
     }
 
-    const mover = obj.getComponent(Mover)!
-
-    if (this.inAttackRange(obj)) {
-      mover.setTargetPos(null)
+    if (dist <= this.attackRange) {
+      obj.getComponent(Mover)!.setTargetPos(null)
       if (this.attackTimer >= this.attackCooldown) {
         this.attack(this.target.getComponent(Health)!)
         this.attackTimer = 0
@@ -61,21 +58,11 @@ export class Fighter extends Component {
         this.attackRange + Collider.getSize(obj) + Collider.getSize(this.target)
       )
     )
-    mover.setTargetPos(targetPos)
+    obj.getComponent(Mover)!.setTargetPos(targetPos)
   }
 
   setTarget(target: GameObject) {
     this.target = target
-  }
-
-  inFollowRange(obj: GameObject): boolean {
-    if (!this.target) return false
-    return GameObject.getDistance(obj, this.target) < this.followRange
-  }
-
-  inAttackRange(obj: GameObject): boolean {
-    if (!this.target) return false
-    return GameObject.getDistance(obj, this.target) < this.attackRange
   }
 
   attack(target: Health): void {

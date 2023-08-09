@@ -6,9 +6,12 @@ import { Vec2 } from "./vec2"
 
 export class GameObjectStore {
   constructor(public objects: GameObject[] = []) {}
-  add(object: GameObject) {
-    if (this.find(object.id)) return
-    this.objects.push(object)
+
+  add(...objects: GameObject[]) {
+    for (const obj of objects) {
+      if (this.find(obj.id)) continue
+      this.objects.push(obj)
+    }
   }
   update() {
     for (const obj of this.objects) {

@@ -6,8 +6,12 @@ export class Health extends Component {
   _currentHealth: number = 30
   maxHealthChanged: boolean = false
   currentHealthChanged: boolean = false
-  dead: boolean = false
   invulnerable: boolean = false
+  private _onKilled: { (health: Health): boolean } | undefined
+
+  set onKilled(value: { (health: Health): boolean }) {
+    this._onKilled = value
+  }
 
   get maxHealth(): number {
     return this._maxHealth
@@ -25,23 +29,29 @@ export class Health extends Component {
     this._currentHealth = value
   }
 
+  get dead(): boolean {
+    return this.currentHealth <= 0
+  }
+
   constructor() {
     super(ComponentType.Health, true)
   }
 
   update(obj: GameObject): void {
     if (!this.enabled) return
-    if (this.dead) obj.remove = true
+    if (this.dead) {
+      if (this._onKilled && this._onKilled(this)) obj.remove = true
+    }
   }
 
   takeDamage(amount: number): void {
+    console.log("taking damage", amount)
     if (this.invulnerable) return
     this.currentHealth -= amount
     this.currentHealthChanged = true
 
-    if (this.currentHealth <= 0) {
+    if (this.currentHealth < 0) {
       this.currentHealth = 0
-      this.dead = true
     }
   }
 
@@ -52,10 +62,6 @@ export class Health extends Component {
       this.currentHealth = this.maxHealth
     }
     if (prevHealth !== this.currentHealth) this.currentHealthChanged = true
-  }
-
-  isDead(): boolean {
-    return this.currentHealth <= 0
   }
 
   deserialize(data: any): void {

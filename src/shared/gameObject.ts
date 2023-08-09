@@ -82,7 +82,7 @@ export abstract class GameObject implements ISerializable, IRenderable {
   static getDistance(objA: GameObject, objB: GameObject): number {
     return (
       objA.pos.distance(objB.pos) -
-      Collider.getSize(objA) +
+      Collider.getSize(objA) -
       Collider.getSize(objB)
     )
   }
