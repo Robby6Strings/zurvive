@@ -18,17 +18,17 @@ export class Collider extends Component {
   height: number = 0
   shape: ShapeType = ShapeType.Circle
   static: boolean = false
-  private _onCollision: { (): void } | undefined
+  private _onCollision: { (obj: GameObject): void } | undefined
 
   constructor() {
     super(ComponentType.Collider, true)
   }
 
-  get onCollision(): { (): void } | undefined {
+  get onCollision(): { (obj: GameObject): void } | undefined {
     return this._onCollision
   }
 
-  withCollisionEffect(fn: { (): void }): Collider {
+  withCollisionEffect(fn: { (obj: GameObject): void }): Collider {
     this._onCollision = fn
     return this
   }
@@ -114,8 +114,8 @@ export class Collider extends Component {
       res = Collider.rectangleRectangleCollision(obj1, obj2, obj1Pos, obj2Pos)
     }
     if (res) {
-      if (collider1.onCollision) collider1.onCollision()
-      if (collider2.onCollision) collider2.onCollision()
+      if (collider1.onCollision) collider1.onCollision(obj2)
+      if (collider2.onCollision) collider2.onCollision(obj1)
     }
     return res
   }

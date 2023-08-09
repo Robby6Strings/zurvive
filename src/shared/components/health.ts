@@ -40,13 +40,17 @@ export class Health extends Component {
   update(obj: GameObject): void {
     if (!this.enabled) return
     if (this.dead) {
-      if (this._onKilled && this._onKilled(this)) obj.remove = true
+      if (this._onKilled && this._onKilled(this)) {
+        obj.remove = true
+      } else {
+        obj.remove = true
+      }
     }
   }
 
   takeDamage(amount: number): void {
-    console.log("taking damage", amount)
     if (this.invulnerable) return
+    console.log("taking damage", amount, this.currentHealth)
     this.currentHealth -= amount
     this.currentHealthChanged = true
 

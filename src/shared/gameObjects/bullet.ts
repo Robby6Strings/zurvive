@@ -1,4 +1,5 @@
 import { Collider } from "../components/collider"
+import { Health } from "../components/health"
 import { GameObject, GameObjectType } from "../gameObject"
 import { CollisionLayer } from "../layers"
 import { ShapeType } from "../types"
@@ -22,9 +23,12 @@ export class Bullet extends GameObject {
   constructor() {
     super(GameObjectType.Bullet)
     this.components.push(
-      Collider.circleCollider(this.config.size).withCollisionEffect(
-        () => (this.remove = true)
-      )
+      Collider.circleCollider(this.config.size).withCollisionEffect((obj) => {
+        if (obj.type === GameObjectType.Bullet) return
+        if (this.remove) return
+        obj.getComponent(Health)?.takeDamage(this.config.damage)
+        this.remove = true
+      })
     )
     this.collisionLayers.push(CollisionLayer.PlayerBullet)
     this.setRenderSettings({
