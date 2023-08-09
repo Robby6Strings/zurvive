@@ -50,7 +50,6 @@ export class Health extends Component {
 
   takeDamage(amount: number): void {
     if (this.invulnerable) return
-    console.log("taking damage", amount, this.currentHealth)
     this.currentHealth -= amount
     this.currentHealthChanged = true
 

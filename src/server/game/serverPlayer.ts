@@ -27,7 +27,7 @@ export class ServerPlayer extends Player {
           config: {
             size: 5,
             speed: 10,
-            damage: 1,
+            damage: 5,
             range: 1000,
             weight: this.bulletWeight,
           },
