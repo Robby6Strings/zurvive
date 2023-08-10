@@ -18,7 +18,7 @@ export class ExperienceOrb extends GameObject {
     this.components.push(collider)
     this.setRenderSettings({
       shapeType: ShapeType.Circle,
-      radius: 5,
+      radius: 2,
       color: "#8c8",
       glow: true,
       glowColor: "#8c8",

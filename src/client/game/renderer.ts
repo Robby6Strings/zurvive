@@ -46,7 +46,7 @@ export class Renderer {
 
     // render a large bar at the bottom of the screen to indicate level progress
     const barWidth = 200
-    const barHeight = 20
+    const barHeight = 10
     const barX = canvas.width / 2 - barWidth / 2
     const barY = canvas.height - barHeight - 10
     const currentXp = xp.currentExperience
