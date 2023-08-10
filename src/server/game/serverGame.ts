@@ -17,7 +17,11 @@ export class ServerGame extends Game {
     super()
 
     const variance = 50
-    const spawner2Pos = new Vec2(0, 300)
+    const spawnerDist = 300
+    const spawnerPos = new Vec2(-spawnerDist, -spawnerDist)
+    const spawner2Pos = new Vec2(spawnerDist, -spawnerDist)
+    const spawner3Pos = new Vec2(spawnerDist, spawnerDist)
+    const spawner4Pos = new Vec2(-spawnerDist, spawnerDist)
     this.objectStore.add(
       new Spawner().configure((e: Enemy) => {
         e.getComponent(Health)!.onKilled = () => {
@@ -28,7 +32,7 @@ export class ServerGame extends Game {
           pos: new Vec2(
             -variance + Math.random() * (variance * 2),
             -variance + Math.random() * (variance * 2)
-          ),
+          ).add(spawnerPos),
         })
       }, Enemy),
       Object.assign(
@@ -42,6 +46,34 @@ export class ServerGame extends Game {
               -variance + Math.random() * (variance * 2),
               -variance + Math.random() * (variance * 2)
             ).add(spawner2Pos),
+          })
+        }, Enemy)
+      ),
+      Object.assign(
+        new Spawner().configure((e: Enemy) => {
+          e.getComponent(Health)!.onKilled = () => {
+            this.spawnExperience(e.pos, 1)
+            return true
+          }
+          return Object.assign(e, {
+            pos: new Vec2(
+              -variance + Math.random() * (variance * 2),
+              -variance + Math.random() * (variance * 2)
+            ).add(spawner3Pos),
+          })
+        }, Enemy)
+      ),
+      Object.assign(
+        new Spawner().configure((e: Enemy) => {
+          e.getComponent(Health)!.onKilled = () => {
+            this.spawnExperience(e.pos, 1)
+            return true
+          }
+          return Object.assign(e, {
+            pos: new Vec2(
+              -variance + Math.random() * (variance * 2),
+              -variance + Math.random() * (variance * 2)
+            ).add(spawner4Pos),
           })
         }, Enemy)
       )
@@ -82,9 +114,11 @@ export class ServerGame extends Game {
     enemySpawners.forEach((spawner) => {
       if (
         enemies.length < 100 &&
-        performance.now() - spawner.lastSpawnTime >= 1000
+        performance.now() - spawner.lastSpawnTime >= 3000
       ) {
-        this.objectStore.add(spawner.spawn())
+        for (let i = 0; i < 3; i++) {
+          this.objectStore.add(spawner.spawn())
+        }
       }
     })
 
