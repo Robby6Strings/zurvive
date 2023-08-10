@@ -67,7 +67,8 @@ export class GameObjectStore {
           type: MessageType.newObject,
           object: obj.serialize(),
         })
-      } else if (obj.remove) {
+      }
+      if (obj.remove) {
         changes.push({
           type: MessageType.removeObject,
           object: {

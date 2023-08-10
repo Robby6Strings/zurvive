@@ -104,7 +104,7 @@ export class ServerGame extends Game {
   }
 
   onUpdated(): void {
-    let changes: TypedMessage<GameActionType | undefined>[] =
+    const changes: TypedMessage<GameActionType | undefined>[] =
       this.objectStore.getChanges()
 
     if (changes.length > 0) {
