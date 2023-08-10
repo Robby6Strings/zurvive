@@ -64,7 +64,6 @@ export abstract class Game {
             (objA.type === GameObjectType.Player &&
               objB.type === GameObjectType.ExperienceOrb)
           ) {
-            const dist = GameObject.getDistance(objA, objB)
             if (dist < 200) {
               const orb =
                 objA.type === GameObjectType.ExperienceOrb ? objA : objB
