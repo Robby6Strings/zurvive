@@ -8,6 +8,7 @@ import { Vec2 } from "../../shared/vec2"
 import { LiveSocket } from "../liveSocket"
 import { Enemy, Player } from "../../shared/gameObjects/entities"
 import { Health } from "../../shared/components/health"
+import { Experience } from "../../shared/components/experience"
 
 export class ClientGame extends Game {
   playerId: string = ""
@@ -176,6 +177,13 @@ export class ClientGame extends Game {
           (action as GameAction<GameActionType.takeDamage>).payload.data
         )
         health!.renderTime = 2000
+        break
+      case GameActionType.move:
+        break
+      case GameActionType.exp:
+        const data = (action as GameAction<GameActionType.exp>).payload.data
+        const exp = obj.getComponent(Experience)
+        exp!.setExperience(data)
         break
       default:
         throw new Error(`Unknown action type ${action.type}`)

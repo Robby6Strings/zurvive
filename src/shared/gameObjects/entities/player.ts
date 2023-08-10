@@ -1,4 +1,5 @@
 import { Collider } from "../../components/collider"
+import { Experience } from "../../components/experience"
 import { Health } from "../../components/health"
 import { Shooter } from "../../components/shooter"
 import { GameObject, GameObjectType } from "../../gameObject"
@@ -23,7 +24,8 @@ export class Player extends GameObject implements IGunConfig {
     this.components.push(
       Object.assign(new Health()),
       Object.assign(new Shooter(), { shootCooldown: this.bulletCooldown }),
-      Collider.circleCollider(playerRadius)
+      Collider.circleCollider(playerRadius),
+      new Experience()
     )
     this.collisionLayers.push(CollisionLayer.Player)
     this.setRenderSettings({

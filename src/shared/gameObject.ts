@@ -11,6 +11,7 @@ import { ISerializable } from "./serializable"
 import { IRenderable, RenderSettings } from "./renderable"
 import { CollisionLayer } from "./layers"
 import { Sprite } from "./components/sprite"
+import { Experience } from "./components/experience"
 
 export enum GameObjectType {
   Unset = "unset",
@@ -139,7 +140,11 @@ export abstract class GameObject implements ISerializable, IRenderable {
         case ComponentType.Sprite:
           classType = Sprite
           break
+        case ComponentType.Experience:
+          classType = Experience
+          break
         default:
+          console.log(c)
           throw new Error(`Unknown component type ${c.type}`)
       }
       const component = new classType()

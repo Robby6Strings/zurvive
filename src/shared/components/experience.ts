@@ -1,4 +1,4 @@
-import { Component } from "../component"
+import { Component, ComponentType } from "../component"
 import { GameObject } from "../gameObject"
 
 export class Experience extends Component {
@@ -6,6 +6,9 @@ export class Experience extends Component {
   _prevExperience: number = 0
   currentLevel: number = 1
   currentExperience: number = 0
+  constructor() {
+    super(ComponentType.Experience)
+  }
   get experienceToNextLevel() {
     return this.currentLevel * 10
   }
@@ -21,17 +24,23 @@ export class Experience extends Component {
       this.currentLevel++
     }
   }
+  setExperience(data: { level: number; experience: number }) {
+    this.currentLevel = data.level
+    this.currentExperience = data.experience
+  }
   update(_obj: GameObject): void {
+    this._prevExperience = this.currentExperience
     this._prevLevel = this.currentLevel
   }
   deserialize(data: any): void {
-    this.currentLevel = data.currentLevel
-    this.currentExperience = data.currentExperience
+    this.currentLevel = data.level
+    this.currentExperience = data.experience
   }
   serialize(): Object {
     return {
-      currentLevel: this.currentLevel,
-      currentExperience: this.currentExperience,
+      type: this.type,
+      level: this.currentLevel,
+      experience: this.currentExperience,
     }
   }
 }

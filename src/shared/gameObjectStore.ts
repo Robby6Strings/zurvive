@@ -1,4 +1,5 @@
 import { ComponentType } from "./component"
+import { Experience } from "./components/experience"
 import { Health } from "./components/health"
 import { Mover } from "./components/mover"
 import { GameActionType } from "./gameAction"
@@ -134,6 +135,27 @@ export class GameObjectStore {
                 },
               })
             }
+            break
+          case ComponentType.Experience:
+            const experience = component as Experience
+            if (experience.levelChanged || experience.experienceChanged) {
+              changes.push({
+                type: MessageType.action,
+                action: {
+                  type: GameActionType.exp,
+                  payload: {
+                    objectType: obj.type,
+                    objectId: obj.id,
+                    data: {
+                      level: experience.currentLevel,
+                      experience: experience.currentExperience,
+                    },
+                  },
+                },
+              })
+            }
+
+            break
         }
       }
     }

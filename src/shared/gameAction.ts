@@ -10,6 +10,7 @@ export enum GameActionType {
   interact = "interact",
   takeDamage = "take-damage",
   heal = "heal",
+  exp = "exp",
 }
 
 type GameActionData<T extends GameActionType> =
@@ -17,14 +18,17 @@ type GameActionData<T extends GameActionType> =
     ? IVec2 | null
     : T extends GameActionType.setTargetObj
     ? string
-    : T extends GameActionType.attack
-    ? IVec2
-    : T extends GameActionType.move
+    : T extends GameActionType.attack | GameActionType.move
     ? IVec2
     : T extends GameActionType.interact
     ? boolean
-    : T extends GameActionType.takeDamage
+    : T extends GameActionType.takeDamage | GameActionType.heal
     ? number
+    : T extends GameActionType.exp
+    ? {
+        level: number
+        experience: number
+      }
     : never
 
 export type GameAction<T extends GameActionType> = {
