@@ -2,6 +2,7 @@ import { GameObjectType } from "../gameObject"
 import { Bullet } from "./bullet"
 import { Player, Enemy } from "./entities"
 import { Tree } from "./environment/tree"
+import { ExperienceOrb } from "./experienceOrb"
 import { Spawner } from "./spawner"
 
 export const getClassRefFromType = (type: GameObjectType) => {
@@ -16,6 +17,8 @@ export const getClassRefFromType = (type: GameObjectType) => {
       return Tree
     case GameObjectType.Bullet:
       return Bullet
+    case GameObjectType.ExperienceOrb:
+      return ExperienceOrb
     default:
       throw new Error(`Unknown object type ${type}`)
   }

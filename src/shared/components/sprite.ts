@@ -19,7 +19,7 @@ export class Sprite extends Component implements IRenderable {
     height: 32,
     width: 32,
     imgRef: "zombie",
-    imgOffset: { x: 0, y: 0 },
+    offset: { x: 0, y: 0 },
   }
   imgOffsets: (IVec2 & { dir: "up" | "right" | "down" | "left" })[] = [
     { x: 0, y: 0, dir: "down" },
@@ -96,7 +96,7 @@ export class Sprite extends Component implements IRenderable {
       this.imgIdx
     ]
     if (!imgOffset) throw new Error("imgOffset not found")
-    this.renderSettings.imgOffset = {
+    this.renderSettings.offset = {
       x: this.imgSetOffset.x + imgOffset.x,
       y: this.imgSetOffset.y + imgOffset.y,
     }

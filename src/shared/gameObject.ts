@@ -25,6 +25,7 @@ export enum GameObjectType {
   Door = "door",
   Floor = "floor",
   Spawner = "spawner",
+  ExperienceOrb = "experienceOrb",
 }
 
 export abstract class GameObject implements ISerializable, IRenderable {
@@ -73,6 +74,11 @@ export abstract class GameObject implements ISerializable, IRenderable {
     return this.components.find((c) => c instanceof classRef)
   }
 
+  getComponents<T extends typeof Component>(classRef: T): InstanceType<T>[] {
+    //@ts-ignore
+    return this.components.filter((c) => c instanceof classRef)
+  }
+
   public update(): void {
     for (const component of this.components) {
       component.update(this)
@@ -90,6 +96,9 @@ export abstract class GameObject implements ISerializable, IRenderable {
       Collider.getSize(objA) -
       Collider.getSize(objB)
     )
+  }
+  static getDirection(objA: GameObject, objB: GameObject) {
+    return objB.pos.subtract(objA.pos).normalize()
   }
 
   public serialize(): Object {

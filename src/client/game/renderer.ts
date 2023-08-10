@@ -1,6 +1,6 @@
 import { Health } from "../../shared/components/health"
 import { Sprite } from "../../shared/components/sprite"
-import { GameObject } from "../../shared/gameObject"
+import { GameObject, GameObjectType } from "../../shared/gameObject"
 import { RenderSettings } from "../../shared/renderable"
 import { ShapeType } from "../../shared/types"
 import { IVec2 } from "../../shared/vec2"
@@ -27,6 +27,7 @@ export class Renderer {
         sprite.setImageOffset(obj, player.pos)
         this.renderImage(obj.pos, sprite.renderSettings, camera)
       } else {
+        if (obj.type === GameObjectType.ExperienceOrb) obj.update()
         this.renderObject(obj.pos, obj.renderSettings, camera)
       }
       this.renderEntityHealth(obj, camera)
@@ -90,7 +91,7 @@ export class Renderer {
     const { ctx } = this
     const { x, y } = pos
     const { x: xOffset, y: yOffset } = camera.offset
-    const { img, imgOffset, width, height } = settings
+    const { img, offset: imgOffset, width, height } = settings
     if (!img) throw new Error("img not set")
     if (!imgOffset) {
       throw new Error("imgOffset not set")
@@ -117,17 +118,45 @@ export class Renderer {
     const { ctx } = this
     const { x, y } = pos
     const { x: xOffset, y: yOffset } = camera.offset
-    const { shapeType, radius, width, height, lineWidth, fill, color } =
-      settings
+    const {
+      shapeType,
+      radius,
+      width,
+      height,
+      lineWidth,
+      fill,
+      color,
+      glow,
+      glowColor,
+      glowSize,
+      offset,
+    } = settings
+
+    const offsetVec = offset || { x: 0, y: 0 }
 
     ctx.save()
     ctx.beginPath()
     if (shapeType == ShapeType.Circle) {
       if (!radius) throw new Error("radius not set")
-      ctx.arc(x + xOffset, y + yOffset, radius, 0, 2 * Math.PI)
+      ctx.arc(
+        x + xOffset + offsetVec.x,
+        y + yOffset + offsetVec.y,
+        radius,
+        0,
+        2 * Math.PI
+      )
     } else {
       if (!width || !height) throw new Error("width or height not set")
-      ctx.rect(x + xOffset - width / 2, y + yOffset - height / 2, width, height)
+      ctx.rect(
+        x + xOffset - width / 2 + offsetVec.x,
+        y + yOffset - height / 2 + offsetVec.y,
+        width,
+        height
+      )
+    }
+    if (glow && glowSize && glowColor) {
+      ctx.shadowBlur = glowSize
+      ctx.shadowColor = glowColor
     }
     if (fill) {
       ctx.fillStyle = color
@@ -138,6 +167,7 @@ export class Renderer {
       ctx.strokeStyle = color
       ctx.stroke()
     }
+
     ctx.closePath()
     ctx.restore()
   }

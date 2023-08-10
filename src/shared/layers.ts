@@ -1,10 +1,10 @@
-import { GameObjectType } from "./gameObject"
-
 export enum CollisionLayer {
+  None,
   Background,
   Environment,
   PlayerBullet,
   EnemyBullet,
-  Player = GameObjectType.Player,
-  Enemy = GameObjectType.Enemy,
+  Player,
+  Enemy,
+  ExperienceOrb,
 }

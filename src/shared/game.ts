@@ -18,6 +18,7 @@ export abstract class Game {
           CollisionLayer.Player,
           CollisionLayer.Enemy,
           CollisionLayer.Environment,
+          CollisionLayer.EnemyBullet,
         ],
       ],
       [
@@ -33,6 +34,10 @@ export abstract class Game {
         GameObjectType.Bullet,
         [CollisionLayer.Enemy, CollisionLayer.Environment],
       ],
+      [
+        GameObjectType.ExperienceOrb,
+        [CollisionLayer.Player, CollisionLayer.Environment],
+      ],
     ])
 
   handleCollisions() {
@@ -47,8 +52,28 @@ export abstract class Game {
           )
         )
           continue
+
+        const dist = GameObject.getDistance(objA, objB)
+        if (dist > 200) continue
+
         const collision = Collider.checkCollision(objA, objB)
-        if (!collision) continue
+        if (!collision) {
+          if (
+            (objB.type === GameObjectType.Player &&
+              objA.type === GameObjectType.ExperienceOrb) ||
+            (objA.type === GameObjectType.Player &&
+              objB.type === GameObjectType.ExperienceOrb)
+          ) {
+            const dist = GameObject.getDistance(objA, objB)
+            if (dist < 200) {
+              const orb =
+                objA.type === GameObjectType.ExperienceOrb ? objA : objB
+              const dir = GameObject.getDirection(objA, objB)
+              orb.pos = orb.pos.add(dir.multiply(5))
+            }
+          }
+          continue
+        }
 
         objA.pos = objA.pos.add(collision.dir.multiply(collision.depth / 2))
         if (objA instanceof Bullet || objB instanceof Bullet) {

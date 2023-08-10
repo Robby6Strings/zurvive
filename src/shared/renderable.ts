@@ -11,7 +11,10 @@ export type RenderSettings = {
   height?: number
   imgRef?: string
   img?: HTMLImageElement
-  imgOffset?: { x: number; y: number }
+  offset?: { x: number; y: number }
+  glow?: boolean
+  glowColor?: string
+  glowSize?: number
 }
 
 export interface IRenderable {
