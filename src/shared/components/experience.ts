@@ -9,6 +9,9 @@ export class Experience extends Component {
   constructor() {
     super(ComponentType.Experience)
   }
+  get experienceToPrevLevel() {
+    return (this.currentLevel - 1) * 10
+  }
   get experienceToNextLevel() {
     return this.currentLevel * 10
   }
@@ -18,10 +21,16 @@ export class Experience extends Component {
   get experienceChanged(): boolean {
     return this._prevExperience !== this.currentExperience
   }
+
+  get levelPercentage(): number {
+    return this.currentExperience / this.experienceToNextLevel
+  }
+
   addExperience(amount: number): void {
     this.currentExperience += amount
     if (this.currentExperience >= this.experienceToNextLevel) {
       this.currentLevel++
+      this.currentExperience = 0
     }
   }
   setExperience(data: { level: number; experience: number }) {

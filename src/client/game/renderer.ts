@@ -1,3 +1,4 @@
+import { Experience } from "../../shared/components/experience"
 import { Health } from "../../shared/components/health"
 import { Sprite } from "../../shared/components/sprite"
 import { GameObject, GameObjectType } from "../../shared/gameObject"
@@ -34,8 +35,66 @@ export class Renderer {
     }
 
     this.renderCursor(game)
-    //this.renderEntityHealth(player, camera)
+    this.renderPlayerXpBar(player)
   }
+
+  renderPlayerXpBar(player: GameObject) {
+    const xp = player.getComponent(Experience)
+    if (!xp) return
+    const { ctx, canvas } = this
+    if (!ctx || !canvas) return
+
+    // render a large bar at the bottom of the screen to indicate level progress
+    const barWidth = 200
+    const barHeight = 20
+    const barX = canvas.width / 2 - barWidth / 2
+    const barY = canvas.height - barHeight - 10
+    const currentXp = xp.currentExperience
+    const maxXp = xp.experienceToNextLevel
+    const currentWidth = (currentXp / maxXp) * barWidth
+    ctx.save()
+    ctx.beginPath()
+    ctx.rect(barX, barY, barWidth, barHeight)
+    ctx.fillStyle = "#ffd70044"
+    ctx.fill()
+    ctx.closePath()
+    ctx.beginPath()
+    ctx.rect(barX, barY, currentWidth, barHeight)
+    ctx.fillStyle = "#dda500"
+    ctx.fill()
+    ctx.closePath()
+    ctx.restore()
+
+    const levelX = canvas.width / 2 - barWidth / 2 - 14
+    // render the current level
+    ctx.save()
+    ctx.beginPath()
+    ctx.shadowBlur = 3
+    ctx.shadowColor = "#000"
+    ctx.font = "11px Arial"
+    ctx.fillStyle = "#fffe"
+    ctx.textAlign = "center"
+    //ctx.textBaseline = "middle"
+    ctx.fillText(`${xp.currentLevel}`, levelX, barY + barHeight / 2 + 3)
+    ctx.closePath()
+    ctx.restore()
+
+    // draw a white circle outline around the level
+
+    const circleRadius = 8
+    ctx.save()
+    ctx.beginPath()
+    ctx.shadowBlur = 3
+    ctx.shadowColor = "#000"
+    ctx.arc(levelX, barY + barHeight / 2, circleRadius, 0, Math.PI * 2)
+
+    ctx.strokeStyle = "#fff"
+    ctx.lineWidth = 2
+    ctx.stroke()
+    ctx.closePath()
+    ctx.restore()
+  }
+
   renderEntityHealth(obj: GameObject, camera: Camera) {
     if (!this.ctx) return
     const health = obj.getComponent(Health)
