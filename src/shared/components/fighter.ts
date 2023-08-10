@@ -34,6 +34,7 @@ export class Fighter extends Component {
 
   update(obj: GameObject): void {
     if (!this.enabled) return
+    this.attackTimer += 1000 / 60
     if (this.target?.remove) this.target = null
     if (!this.target) return
 
@@ -48,8 +49,6 @@ export class Fighter extends Component {
       if (this.attackTimer >= this.attackCooldown) {
         this.attack(this.target.getComponent(Health)!)
         this.attackTimer = 0
-      } else {
-        this.attackTimer += 1000 / 60
       }
       return
     }
