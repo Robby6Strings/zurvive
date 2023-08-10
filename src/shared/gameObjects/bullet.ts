@@ -22,14 +22,16 @@ export class Bullet extends GameObject {
   }
   constructor() {
     super(GameObjectType.Bullet)
-    this.components.push(
-      Collider.circleCollider(this.config.size).withCollisionEffect((obj) => {
-        if (obj.type === GameObjectType.Bullet) return
-        if (this.remove) return
-        obj.getComponent(Health)?.takeDamage(this.config.damage)
-        this.remove = true
-      })
-    )
+    const collider = Collider.circleCollider(
+      this.config.size
+    ).withCollisionEffect((obj) => {
+      if (obj.type === GameObjectType.Bullet) return
+      if (this.remove) return
+      obj.getComponent(Health)?.takeDamage(this.config.damage)
+      this.remove = true
+    })
+
+    this.components.push(collider)
     this.collisionLayers.push(CollisionLayer.PlayerBullet)
     this.setRenderSettings({
       shapeType: ShapeType.Circle,

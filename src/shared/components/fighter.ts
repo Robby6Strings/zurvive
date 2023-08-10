@@ -1,13 +1,17 @@
 import { Component, ComponentType } from "../component"
 import { GameObject } from "../gameObject"
+import { DamageConfig } from "../types"
+import { calculateDamage } from "../utils"
 import { Collider } from "./collider"
 import { Health } from "./health"
 import { Mover } from "./mover"
 
 export class Fighter extends Component {
-  damage: number = 5
-  critChance: number = 0.1
-  critMultiplier: number = 2
+  damage: DamageConfig = {
+    damage: 5,
+    critChance: 0.1,
+    critMultiplier: 2,
+  }
   target: GameObject | null = null
   followRange: number = 500
   attackRange: number = 15
@@ -66,23 +70,18 @@ export class Fighter extends Component {
   }
 
   attack(target: Health): void {
-    const isCrit = Math.random() < this.critChance
-    target.takeDamage(isCrit ? this.damage * this.critMultiplier : this.damage)
+    target.takeDamage(calculateDamage(this.damage))
   }
 
   deserialize(data: any): void {
     this.enabled = data.enabled
     this.damage = data.damage
-    this.critChance = data.critChance
-    this.critMultiplier = data.critMultiplier
   }
   serialize(): Object {
     return {
       type: this.type,
       enabled: this.enabled,
       damage: this.damage,
-      critChance: this.critChance,
-      critMultiplier: this.critMultiplier,
     }
   }
 }

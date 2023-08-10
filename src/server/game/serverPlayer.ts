@@ -5,6 +5,7 @@ import { Shooter } from "../../shared/components/shooter"
 import { Bullet } from "../../shared/gameObjects/bullet"
 import { GameObject } from "../../shared/gameObject"
 import { Health } from "../../shared/components/health"
+import { calculateDamage } from "../../shared/utils"
 
 export class ServerPlayer extends Player {
   conn: SocketStream
@@ -29,8 +30,8 @@ export class ServerPlayer extends Player {
           config: {
             size: 3,
             speed: 10,
-            damage: 5,
-            range: 200,
+            damage: calculateDamage(this.damage),
+            range: 500,
             weight: this.bulletWeight,
           },
         })

@@ -43,7 +43,7 @@ export class GameObjectStore {
     return this.objects.find(idOrPredicate)
   }
 
-  findByObjectType<T extends GameObject>(objectType: GameObjectType) {
+  findByType<T extends GameObject>(objectType: GameObjectType) {
     return this.objects.filter((o) => o.type === objectType) as T[]
   }
 

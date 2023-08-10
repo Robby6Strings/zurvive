@@ -3,7 +3,7 @@ import { GameObject } from "../gameObject"
 
 export class Health extends Component {
   _maxHealth: number = 30
-  _currentHealth: number = 30
+  currentHealth: number = 30
   _lastHealth: number = 30
   maxHealthChanged: boolean = false
   renderTime: number = 0
@@ -26,15 +26,8 @@ export class Health extends Component {
     this._maxHealth = value
   }
 
-  get currentHealth(): number {
-    return this._currentHealth
-  }
-  set currentHealth(value: number) {
-    this._currentHealth = value
-  }
-
   get currentHealthChanged(): boolean {
-    return this._lastHealth !== this._currentHealth
+    return this._lastHealth !== this.currentHealth
   }
 
   get dead(): boolean {
@@ -55,7 +48,7 @@ export class Health extends Component {
       }
     }
 
-    this._lastHealth = this._currentHealth
+    this._lastHealth = this.currentHealth
     this.regenTick += 1000 / 60
     if (this.regenTick >= this.regenInterval) {
       this.regenTick = 0

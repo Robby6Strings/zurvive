@@ -29,8 +29,11 @@ export class LiveSocket {
   }
 
   private async connect() {
-    const { hostname, port } = window.location
-    this.socket = new WebSocket(`ws://${hostname}:${port}/ws`)
+    const { hostname, port, protocol } = window.location
+    console.log("connecting to", hostname, port, protocol)
+    this.socket = new WebSocket(
+      `${protocol === "https:" ? "wss" : "ws"}://${hostname}:${port}/ws`
+    )
     this.socket.onmessage = (msg: any) => {
       const data = JSON.parse(msg.data)
       if (!("type" in data)) throw new Error("received invalid message")

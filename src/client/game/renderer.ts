@@ -1,6 +1,6 @@
 import { Health } from "../../shared/components/health"
 import { Sprite } from "../../shared/components/sprite"
-import { Player } from "../../shared/gameObjects/entities"
+import { GameObject, GameObjectType } from "../../shared/gameObject"
 import { RenderSettings } from "../../shared/renderable"
 import { ShapeType } from "../../shared/types"
 import { IVec2 } from "../../shared/vec2"
@@ -26,27 +26,30 @@ export class Renderer {
       if (sprite) {
         sprite.setImageOffset(obj, player.pos)
         this.renderImage(obj.pos, sprite.renderSettings, camera)
-        continue
+      } else {
+        this.renderObject(obj.pos, obj.renderSettings, camera)
       }
-      this.renderObject(obj.pos, obj.renderSettings, camera)
+      this.renderEntityHealth(obj, camera)
     }
 
     this.renderCursor(game)
-    this.renderPlayerHealth(player, camera)
+    //this.renderEntityHealth(player, camera)
   }
-  renderPlayerHealth(player: Player, camera: Camera) {
+  renderEntityHealth(obj: GameObject, camera: Camera) {
     if (!this.ctx) return
-    const health = player.getComponent(Health)
-    if (!health) return
+    const health = obj.getComponent(Health)
+    if (!health) {
+      return
+    }
     health.renderTime -= 1000 / 60
     if (health.renderTime < 0) {
       health.renderTime = 0
       return
     }
     const { ctx } = this
-    const { x, y } = player.pos
+    const { x, y } = obj.pos
     const { x: xOffset, y: yOffset } = camera.offset
-    const { radius } = player.renderSettings
+    const { radius } = obj.renderSettings
     const { currentHealth, maxHealth } = health
     const healthBarWidth = 30
     const healthBarHeight = 5

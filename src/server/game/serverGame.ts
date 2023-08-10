@@ -14,10 +14,30 @@ export class ServerGame extends Game {
   constructor() {
     super()
 
+    const variance = 50
+    const spawner2Pos = new Vec2(0, 300)
     this.objectStore.add(
       new Spawner().configure(
-        (e: Enemy) => Object.assign(e, { pos: new Vec2(0, 0) }),
+        (e: Enemy) =>
+          Object.assign(e, {
+            pos: new Vec2(
+              -variance + Math.random() * (variance * 2),
+              -variance + Math.random() * (variance * 2)
+            ),
+          }),
         Enemy
+      ),
+      Object.assign(
+        new Spawner().configure(
+          (e: Enemy) =>
+            Object.assign(e, {
+              pos: new Vec2(
+                -variance + Math.random() * (variance * 2),
+                -variance + Math.random() * (variance * 2)
+              ).add(spawner2Pos),
+            }),
+          Enemy
+        )
       )
     )
 
@@ -36,21 +56,18 @@ export class ServerGame extends Game {
     if (this.objectStore.objects.length === 0) {
       return
     }
+
     const enemySpawners = this.objectStore
-      .findByObjectType<Spawner>(GameObjectType.Spawner)
+      .findByType<Spawner>(GameObjectType.Spawner)
       .filter((s) => s.spawnClass === Enemy)
 
-    const enemies = this.objectStore.findByObjectType<Enemy>(
-      GameObjectType.Enemy
-    )
-    const players = this.objectStore.findByObjectType<Player>(
-      GameObjectType.Player
-    )
+    const enemies = this.objectStore.findByType<Enemy>(GameObjectType.Enemy)
+    const players = this.objectStore.findByType<Player>(GameObjectType.Player)
 
     enemySpawners.forEach((spawner) => {
       if (
-        enemies.length < 20 &&
-        performance.now() - spawner.lastSpawnTime >= 1000
+        enemies.length < 250 &&
+        performance.now() - spawner.lastSpawnTime >= 100
       ) {
         this.objectStore.add(spawner.spawn())
       }
@@ -65,9 +82,10 @@ export class ServerGame extends Game {
         enemy.getComponent(Mover)?.setTargetPos(null)
       }
     }
-
+    this.objectStore.update()
     this.handleCollisions()
-    super.update()
+    this.onUpdated()
+    this.objectStore.removeFlagged()
   }
 
   onUpdated(): void {
@@ -77,7 +95,7 @@ export class ServerGame extends Game {
     if (changes.length > 0) {
       this.broadcast({ type: MessageType.update, changes }, this.players)
     }
-    super.onUpdated()
+    //super.onUpdated()
   }
 
   private broadcast(data: any, players: ServerPlayer[]) {

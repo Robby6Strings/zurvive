@@ -37,12 +37,16 @@ const restartServer = () => {
 
 const startServer = () => {
   serverProcess = exec("node dist/server")
+  serverProcess.on("error", (err) => {
+    log("FgRed", "serverProcess error: " + err)
+  })
   serverProcess.stdout.on("data", (data) => {
     process.stdout.write(data)
   })
   serverProcess.stderr.on("data", (data) => {
     process.stderr.write(data)
   })
+  // serverProcess.on("exit")
   serverProcess.on("close", (code) => {
     if (code && code === 96) {
       log("Bold", "serverProcess exited, awaiting changes...")

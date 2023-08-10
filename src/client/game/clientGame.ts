@@ -148,6 +148,13 @@ export class ClientGame extends Game {
       return
     }
 
+    // if (
+    //   action.payload.objectType === GameObjectType.Enemy &&
+    //   action.type === GameActionType.takeDamage
+    // ) {
+    //   debugger
+    // }
+
     switch (action.type) {
       case GameActionType.setTargetPos:
         let targetPos = (action as GameAction<GameActionType.setTargetPos>)

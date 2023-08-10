@@ -9,3 +9,9 @@ export enum ShapeType {
   Circle,
   Rectangle,
 }
+
+export type DamageConfig = {
+  damage: number
+  critChance: number
+  critMultiplier: number
+}

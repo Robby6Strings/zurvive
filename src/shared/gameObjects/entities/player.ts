@@ -4,14 +4,19 @@ import { Shooter } from "../../components/shooter"
 import { GameObject, GameObjectType } from "../../gameObject"
 import { IGunConfig } from "../../gunConfig"
 import { CollisionLayer } from "../../layers"
-import { ShapeType } from "../../types"
+import { DamageConfig, ShapeType } from "../../types"
 
 const playerRadius = 16
 
 export class Player extends GameObject implements IGunConfig {
-  numBullets: number = 3
-  bulletWeight: number = 3
-  bulletCooldown: number = 666
+  numBullets: number = 5
+  bulletWeight: number = 6
+  bulletCooldown: number = 200
+  damage: DamageConfig = {
+    damage: 7,
+    critChance: 0.1,
+    critMultiplier: 2,
+  }
 
   constructor() {
     super(GameObjectType.Player)
