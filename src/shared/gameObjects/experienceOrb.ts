@@ -6,6 +6,7 @@ import { ShapeType } from "../types"
 
 export class ExperienceOrb extends GameObject {
   value: number = 1
+  tick: number = 0
   constructor() {
     super(GameObjectType.ExperienceOrb)
     const collider = Collider.circleCollider(5).withCollisionEffect((obj) => {
@@ -30,9 +31,10 @@ export class ExperienceOrb extends GameObject {
   }
 
   public update(): void {
-    // this.renderSettings.offset = {
-    //   x: Math.sin(Date.now() / 100) * 2,
-    //   y: Math.cos(Date.now() / 100) * 2,
-    // }
+    this.renderSettings.offset = {
+      x: Math.sin(this.tick / 100) * 2,
+      y: Math.cos(this.tick / 100) * 2,
+    }
+    this.tick += 5
   }
 }
