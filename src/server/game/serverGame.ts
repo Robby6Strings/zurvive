@@ -41,7 +41,7 @@ export class ServerGame extends Game {
             variance
           )
         )
-      }, i * 1000)
+      }, i * 2000)
     }
 
     this.intervalRef = setInterval(() => {
@@ -122,23 +122,12 @@ export class ServerGame extends Game {
     if (changes.length > 0) {
       this.broadcast({ type: MessageType.update, changes }, this.players)
     }
-    //super.onUpdated()
   }
 
   private broadcast(data: any, players: ServerPlayer[]) {
     for (const player of players) {
       player.conn.socket.send(JSON.stringify(data))
     }
-  }
-
-  broadcastAction<T extends GameActionType>(action: GameAction<T>): void {
-    this.broadcast({ type: MessageType.action, action }, this.players)
-  }
-  broadcastPlayer(player: ServerPlayer) {
-    this.broadcast(
-      { type: MessageType.newObject, object: player.serialize() },
-      this.players
-    )
   }
 
   handleAction<T extends GameActionType>(action: GameAction<T>): void {
