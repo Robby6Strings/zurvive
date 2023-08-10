@@ -7,7 +7,7 @@ import { Mover } from "../../shared/components/mover"
 import { ServerPlayer } from "./serverPlayer"
 import { MessageType, TypedMessage } from "../../shared/message"
 import { Vec2 } from "../../shared/vec2"
-import { GameObjectType } from "../../shared/gameObject"
+import { GameObject, GameObjectType } from "../../shared/gameObject"
 import { Health } from "../../shared/components/health"
 import { ExperienceOrb } from "../../shared/gameObjects/experienceOrb"
 
@@ -18,66 +18,31 @@ export class ServerGame extends Game {
 
     const variance = 50
     const spawnerDist = 300
-    const spawnerPos = new Vec2(-spawnerDist, -spawnerDist)
-    const spawner2Pos = new Vec2(spawnerDist, -spawnerDist)
-    const spawner3Pos = new Vec2(spawnerDist, spawnerDist)
-    const spawner4Pos = new Vec2(-spawnerDist, spawnerDist)
-    this.objectStore.add(
-      new Spawner().configure((e: Enemy) => {
-        e.getComponent(Health)!.onKilled = () => {
-          this.spawnExperience(e.pos, 1)
-          return true
-        }
-        return Object.assign(e, {
-          pos: new Vec2(
-            -variance + Math.random() * (variance * 2),
-            -variance + Math.random() * (variance * 2)
-          ).add(spawnerPos),
-        })
-      }, Enemy),
-      Object.assign(
-        new Spawner().configure((e: Enemy) => {
-          e.getComponent(Health)!.onKilled = () => {
-            this.spawnExperience(e.pos, 1)
-            return true
-          }
-          return Object.assign(e, {
-            pos: new Vec2(
-              -variance + Math.random() * (variance * 2),
-              -variance + Math.random() * (variance * 2)
-            ).add(spawner2Pos),
-          })
-        }, Enemy)
-      ),
-      Object.assign(
-        new Spawner().configure((e: Enemy) => {
-          e.getComponent(Health)!.onKilled = () => {
-            this.spawnExperience(e.pos, 1)
-            return true
-          }
-          return Object.assign(e, {
-            pos: new Vec2(
-              -variance + Math.random() * (variance * 2),
-              -variance + Math.random() * (variance * 2)
-            ).add(spawner3Pos),
-          })
-        }, Enemy)
-      ),
-      Object.assign(
-        new Spawner().configure((e: Enemy) => {
-          e.getComponent(Health)!.onKilled = () => {
-            this.spawnExperience(e.pos, 1)
-            return true
-          }
-          return Object.assign(e, {
-            pos: new Vec2(
-              -variance + Math.random() * (variance * 2),
-              -variance + Math.random() * (variance * 2)
-            ).add(spawner4Pos),
-          })
-        }, Enemy)
-      )
-    )
+    const spawnerPositions = [
+      new Vec2(-spawnerDist, -spawnerDist),
+      new Vec2(spawnerDist, -spawnerDist),
+      new Vec2(spawnerDist, spawnerDist),
+      new Vec2(-spawnerDist, spawnerDist),
+    ]
+    for (let i = 0; i < spawnerPositions.length; i++) {
+      const pos = spawnerPositions[i]
+      setTimeout(() => {
+        this.addObject(
+          new Spawner().configure(
+            (e: Enemy) => {
+              e.getComponent(Health)!.onKilled = () => {
+                this.spawnExperience(e.pos, 1)
+                return true
+              }
+              return e
+            },
+            Enemy,
+            pos,
+            variance
+          )
+        )
+      }, i * 1000)
+    }
 
     this.intervalRef = setInterval(() => {
       this.update()
@@ -117,7 +82,20 @@ export class ServerGame extends Game {
         performance.now() - spawner.lastSpawnTime >= 3000
       ) {
         for (let i = 0; i < 3; i++) {
-          this.objectStore.add(spawner.spawn())
+          let closestPlayer
+          let closestDist = Infinity
+          for (const player of players) {
+            const dist = GameObject.getDistance(spawner, player)
+            if (dist < closestDist) {
+              closestDist = dist
+              closestPlayer = player
+            }
+          }
+          const enemy = spawner.spawn()
+          if (closestPlayer) {
+            enemy.getComponent(Mover)!.setTargetPos(closestPlayer.pos)
+          }
+          this.objectStore.add(enemy)
         }
       }
     })

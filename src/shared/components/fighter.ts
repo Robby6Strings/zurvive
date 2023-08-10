@@ -13,7 +13,7 @@ export class Fighter extends Component {
     critMultiplier: 2,
   }
   target: GameObject | null = null
-  followRange: number = 500
+  followRange: number = 1000
   attackRange: number = 15
   attackTimer: number = 0
   attackCooldown: number = 1000
