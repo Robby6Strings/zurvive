@@ -1,6 +1,6 @@
 import { Health } from "../../shared/components/health"
 import { Sprite } from "../../shared/components/sprite"
-import { GameObject, GameObjectType } from "../../shared/gameObject"
+import { GameObject } from "../../shared/gameObject"
 import { RenderSettings } from "../../shared/renderable"
 import { ShapeType } from "../../shared/types"
 import { IVec2 } from "../../shared/vec2"

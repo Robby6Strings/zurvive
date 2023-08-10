@@ -66,7 +66,7 @@ export class ServerGame extends Game {
 
     enemySpawners.forEach((spawner) => {
       if (
-        enemies.length < 250 &&
+        enemies.length < 200 &&
         performance.now() - spawner.lastSpawnTime >= 100
       ) {
         this.objectStore.add(spawner.spawn())
