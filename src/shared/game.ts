@@ -54,7 +54,7 @@ export abstract class Game {
           continue
 
         const dist = GameObject.getDistance(objA, objB)
-        if (dist > 200) continue
+        if (dist > 100) continue
 
         const collision = Collider.checkCollision(objA, objB)
         if (!collision) {
@@ -64,7 +64,7 @@ export abstract class Game {
             (objA.type === GameObjectType.Player &&
               objB.type === GameObjectType.ExperienceOrb)
           ) {
-            if (dist < 200) {
+            if (dist < 50) {
               const orb =
                 objA.type === GameObjectType.ExperienceOrb ? objA : objB
               const dir = GameObject.getDirection(objA, objB)
