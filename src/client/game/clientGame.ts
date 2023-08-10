@@ -171,7 +171,6 @@ export class ClientGame extends Game {
         break
       case GameActionType.takeDamage:
       case GameActionType.heal:
-        console.log(action.type, action.payload.data)
         const health = obj.getComponent(Health)
         health!.setHealth(
           (action as GameAction<GameActionType.takeDamage>).payload.data

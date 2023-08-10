@@ -1,6 +1,7 @@
 import { Experience } from "../../shared/components/experience"
 import { Health } from "../../shared/components/health"
 import { Sprite } from "../../shared/components/sprite"
+import { ObjectColors } from "../../shared/constants"
 import { GameObject, GameObjectType } from "../../shared/gameObject"
 import { RenderSettings } from "../../shared/renderable"
 import { ShapeType } from "../../shared/types"
@@ -35,14 +36,42 @@ export class Renderer {
     }
 
     this.renderCursor(game)
-    this.renderPlayerXpBar(player)
+    this.renderPlayerXp(player)
   }
 
-  renderPlayerXpBar(player: GameObject) {
+  renderPlayerXp(player: GameObject) {
     const xp = player.getComponent(Experience)
     if (!xp) return
     const { ctx, canvas } = this
     if (!ctx || !canvas) return
+
+    //render a green circle with num souls at top left
+    //ObjectColors[GameObjectType.ExperienceOrb]
+    const circleRad = 6
+    const circleX = circleRad + 10
+    const circleY = circleRad + 10
+    const numSouls = xp.souls
+    ctx.save()
+    ctx.beginPath()
+    ctx.shadowBlur = 3
+    ctx.shadowColor = ObjectColors[GameObjectType.ExperienceOrb]
+    ctx.arc(circleX, circleY, circleRad, 0, Math.PI * 2)
+    ctx.fillStyle = ObjectColors[GameObjectType.ExperienceOrb]
+    ctx.fill()
+    ctx.closePath()
+    ctx.restore()
+
+    ctx.save()
+    ctx.beginPath()
+    ctx.shadowBlur = 3
+    ctx.shadowColor = "#000"
+    ctx.font = "11px Arial"
+    ctx.fillStyle = "#fffe"
+    ctx.textAlign = "center"
+    //ctx.textBaseline = "middle"
+    ctx.fillText(`${numSouls}`, circleX + circleRad + 10, circleY + 4)
+    ctx.closePath()
+    ctx.restore()
 
     // render a large bar at the bottom of the screen to indicate level progress
     const barWidth = 200

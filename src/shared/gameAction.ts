@@ -28,6 +28,7 @@ type GameActionData<T extends GameActionType> =
     ? {
         level: number
         experience: number
+        souls: number
       }
     : never
 

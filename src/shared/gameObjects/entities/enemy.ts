@@ -3,6 +3,7 @@ import { Fighter } from "../../components/fighter"
 import { Health } from "../../components/health"
 import { Mover } from "../../components/mover"
 import { Sprite } from "../../components/sprite"
+import { ObjectColors } from "../../constants"
 import { GameObject, GameObjectType } from "../../gameObject"
 import { CollisionLayer } from "../../layers"
 import { ShapeType } from "../../types"
@@ -23,7 +24,7 @@ export class Enemy extends GameObject {
     this.setRenderSettings({
       shapeType: ShapeType.Circle,
       radius: enemyRadius,
-      color: "#E44",
+      color: ObjectColors[GameObjectType.Enemy],
     })
   }
 }

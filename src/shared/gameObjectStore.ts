@@ -77,6 +77,7 @@ export class GameObjectStore {
             id: obj.id,
           },
         })
+        continue
       } else if (obj.posChanged || obj.velChanged) {
         const deltas: any = {}
         if (obj.posChanged) {
@@ -97,6 +98,7 @@ export class GameObjectStore {
           },
         })
       }
+
       for (const component of obj.components) {
         switch (component.type) {
           case ComponentType.Mover:
@@ -138,7 +140,11 @@ export class GameObjectStore {
             break
           case ComponentType.Experience:
             const experience = component as Experience
-            if (experience.levelChanged || experience.experienceChanged) {
+            if (
+              experience.levelChanged ||
+              experience.experienceChanged ||
+              experience.soulsChanged
+            ) {
               changes.push({
                 type: MessageType.action,
                 action: {
@@ -149,6 +155,7 @@ export class GameObjectStore {
                     data: {
                       level: experience.currentLevel,
                       experience: experience.currentExperience,
+                      souls: experience.souls,
                     },
                   },
                 },

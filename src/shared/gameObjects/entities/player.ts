@@ -2,6 +2,7 @@ import { Collider } from "../../components/collider"
 import { Experience } from "../../components/experience"
 import { Health } from "../../components/health"
 import { Shooter } from "../../components/shooter"
+import { ObjectColors } from "../../constants"
 import { GameObject, GameObjectType } from "../../gameObject"
 import { IGunConfig } from "../../gunConfig"
 import { CollisionLayer } from "../../layers"
@@ -31,7 +32,7 @@ export class Player extends GameObject implements IGunConfig {
     this.setRenderSettings({
       shapeType: ShapeType.Circle,
       radius: playerRadius,
-      color: "#44E",
+      color: ObjectColors[GameObjectType.Player],
     })
   }
 }

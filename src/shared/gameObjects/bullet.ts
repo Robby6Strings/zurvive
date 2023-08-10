@@ -1,5 +1,6 @@
 import { Collider } from "../components/collider"
 import { Health } from "../components/health"
+import { ObjectColors } from "../constants"
 import { GameObject, GameObjectType } from "../gameObject"
 import { CollisionLayer } from "../layers"
 import { ShapeType } from "../types"
@@ -36,7 +37,7 @@ export class Bullet extends GameObject {
     this.setRenderSettings({
       shapeType: ShapeType.Circle,
       radius: this.config.size,
-      color: "#aaaa",
+      color: ObjectColors[GameObjectType.Bullet],
     })
     this.applyFriction = false
   }

@@ -1,5 +1,6 @@
 import { Collider } from "../components/collider"
 import { Experience } from "../components/experience"
+import { ObjectColors } from "../constants"
 import { GameObject, GameObjectType } from "../gameObject"
 import { CollisionLayer } from "../layers"
 import { ShapeType } from "../types"
@@ -20,9 +21,9 @@ export class ExperienceOrb extends GameObject {
     this.setRenderSettings({
       shapeType: ShapeType.Circle,
       radius: 2,
-      color: "#8c8",
+      color: ObjectColors[GameObjectType.ExperienceOrb],
       glow: true,
-      glowColor: "#8c8",
+      glowColor: ObjectColors[GameObjectType.ExperienceOrb],
       glowSize: 8,
       offset: { x: 0, y: 0 },
     })
