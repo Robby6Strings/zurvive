@@ -2,6 +2,7 @@ import * as Cinnabun from "cinnabun"
 import { Cinnabun as cb, createSignal } from "cinnabun"
 import { HtmlElements } from "./state"
 import { LiveSocket } from "./client/liveSocket"
+import { ClientPlayer } from "./client/game/clientPlayer"
 
 const loading = createSignal(true)
 if (cb.isClient) {
@@ -72,6 +73,51 @@ export const App = () => {
             </button>
           </div>
         </div>
+      </div>
+      <div
+        watch={clientGameState ?? createSignal(false)}
+        bind:visible={() => {
+          if (loading.value) return false
+          if (cb.isClient && clientGameState!.value !== null) {
+            const player = clientGameState?.value.getPlayer() as ClientPlayer
+            if (!player) return false
+            return player.unchosenBonuses.length > 0
+          }
+          return true
+        }}
+        id="game-overlay"
+        className="fullscreen"
+        bind:children
+      >
+        {() => {
+          console.log("rendering game overlay")
+          const player = clientGameState?.value?.getPlayer() as ClientPlayer
+          if (!player) return <></>
+          return () => (
+            <>
+              <div className="game-overlay__bonuses">
+                {player.unchosenBonuses.map((bonus) => {
+                  return (
+                    <div className="game-overlay__bonus_items">
+                      {bonus.items.map((item) => {
+                        return (
+                          <div className="game-overlay__bonus_item">
+                            <div className="game-overlay__bonus_item_name">
+                              {item.name}
+                            </div>
+                            <div className="game-overlay__bonus_item_description">
+                              {item.value}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          )
+        }}
       </div>
     </>
   )

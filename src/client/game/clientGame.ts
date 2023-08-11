@@ -74,6 +74,7 @@ export class ClientGame extends Game {
             })
           }
           set.chosen = bonus
+          this.liveSocket.gameState.notify()
           break
         }
       }

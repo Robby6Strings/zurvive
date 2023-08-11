@@ -21,6 +21,7 @@ export class Renderer {
     return HtmlElements.value?.ctx
   }
   public render(game: ClientGame, camera: Camera) {
+    //const start = performance.now()
     if (!this.canvas || !this.ctx) return
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     const player = game.getPlayer()
@@ -43,45 +44,7 @@ export class Renderer {
 
     this.renderCursor(game)
     this.renderPlayerXp(player)
-    this.renderPlayerBonuses(player)
-  }
-
-  renderPlayerBonuses(player: Player) {
-    const { ctx, canvas } = this
-    if (!ctx || !canvas) return
-
-    const sets = Array.from(player.bonusSets.values())
-
-    ctx.save()
-    ctx.fillStyle = "#fff"
-
-    let yOffset = 0
-    for (let i = 0; i < sets.length; ++i) {
-      const set = sets[i]
-      if (set.chosen) continue
-
-      const { items } = set
-      const { length } = items
-
-      const itemWidth = 50
-      const itemHeight = 50
-      const itemSpacing = 10
-      const itemX =
-        canvas.width / 2 - (itemWidth * length + itemSpacing * (length - 1)) / 2
-      const itemY = canvas.height / 2 - itemHeight / 2 + yOffset
-
-      for (let i = 0; i < length; i++) {
-        const item = items[i]
-        const { name } = item
-        if (!name) continue
-        ctx.fillText(
-          name,
-          itemX + itemWidth / 2 + itemWidth * i + itemSpacing * i,
-          itemY + itemHeight + 10
-        )
-        yOffset += itemHeight + 10
-      }
-    }
+    //console.debug(`render time: ${performance.now() - start}`)
   }
 
   renderPlayerXp(player: Player) {
