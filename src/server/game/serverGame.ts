@@ -11,6 +11,7 @@ import { GameObject, GameObjectType } from "../../shared/gameObject"
 import { Health } from "../../shared/components/health"
 import { ExperienceOrb } from "../../shared/gameObjects/experienceOrb"
 import { AttributeType, Attributes } from "../../shared/components/attributes"
+import { Bonus } from "../../shared/bonus"
 
 export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
@@ -121,7 +122,14 @@ export class ServerGame extends Game {
   addPlayer(player: ServerPlayer): void {
     this.addObject(player)
     player.onLevelUp = () => {
-      console.log("level up")
+      const items = Bonus.generateBonusSet()
+      player.bonusSets.set(items.id, items)
+      player.conn.socket.send(
+        JSON.stringify({
+          type: MessageType.bonusSet,
+          data: items,
+        })
+      )
     }
   }
 
@@ -178,6 +186,14 @@ export class ServerGame extends Game {
         player.vel = player.vel
           .add(vel.multiply(speed / 5))
           .clamp(-speed, speed)
+        break
+      case GameActionType.chooseBonus:
+        console.log("choose bonus", action)
+        const { id, bonusId } = (
+          action as GameAction<GameActionType.chooseBonus>
+        ).payload.data
+        player.setBonusSetSelection(id, bonusId)
+
         break
       default:
         throw new Error(`Unknown action type ${action.type}`)

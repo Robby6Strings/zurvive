@@ -27,7 +27,6 @@ export class ClientGame extends Game {
     this.liveSocket = liveSocket
     const { id, objects } = serializedGameState
     this.id = id
-    console.log("game id", this.id)
     this.objectStore.deserialize(objects)
     this.camera = new Camera()
     this.renderer = new Renderer()
@@ -50,6 +49,35 @@ export class ClientGame extends Game {
     window.addEventListener("mousemove", this.handleMouseMove.bind(this))
     window.addEventListener("mousedown", this.handleMouseDown.bind(this))
     window.addEventListener("mouseup", this.handleMouseUp.bind(this))
+    window.addEventListener("keypress", this.handleKeyPress.bind(this))
+  }
+
+  handleKeyPress(e: KeyboardEvent): void {
+    const player = this.getPlayer()
+    if (!player) return
+
+    if (["1", "2", "3"].includes(e.key)) {
+      for (const [id, set] of player.bonusSets) {
+        if (!set.chosen) {
+          const bonus = set.items[parseInt(e.key) - 1]
+          if (bonus) {
+            this.liveSocket.sendGameAction({
+              type: GameActionType.chooseBonus,
+              payload: {
+                objectId: player.id,
+                objectType: player.type,
+                data: {
+                  id,
+                  bonusId: bonus.id,
+                },
+              },
+            })
+          }
+          set.chosen = bonus
+          continue
+        }
+      }
+    }
   }
 
   handleKeyDown(e: KeyboardEvent): void {
@@ -104,9 +132,9 @@ export class ClientGame extends Game {
         },
       })
     }
-    const player = this.objectStore.find((o) => o.id === this.playerId)
+    const player = this.getPlayer()
     if (player && this.camera.fixed) {
-      this.camera.followPlayer(player as Player)
+      this.camera.followPlayer(player)
     }
   }
 

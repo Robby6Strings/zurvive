@@ -116,6 +116,10 @@ export class LiveSocket {
       case MessageType.items:
         console.log("items", message)
         break
+      case MessageType.bonusSet:
+        console.log("bonusSet", message)
+        this.game?.getPlayer()?.bonusSets.set(message.data.id, message.data)
+        break
       default:
         return
     }

@@ -1,3 +1,4 @@
+import { BonusSet } from "../../bonus"
 import { AttributeType, Attributes } from "../../components/attributes"
 import { Collider } from "../../components/collider"
 import { Experience } from "../../components/experience"
@@ -15,6 +16,7 @@ import { Bullet } from "../bullet"
 const playerRadius = 16
 
 export class Player extends GameObject {
+  bonusSets: Map<string, BonusSet> = new Map()
   constructor() {
     super(GameObjectType.Player)
     this.components.push(

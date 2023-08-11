@@ -11,6 +11,7 @@ export enum GameActionType {
   takeDamage = "take-damage",
   heal = "heal",
   exp = "exp",
+  chooseBonus = "choose-bonus",
 }
 
 type GameActionData<T extends GameActionType> =
@@ -29,6 +30,11 @@ type GameActionData<T extends GameActionType> =
         level: number
         experience: number
         souls: number
+      }
+    : T extends GameActionType.chooseBonus
+    ? {
+        id: string
+        bonusId: number
       }
     : never
 
