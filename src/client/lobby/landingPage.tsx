@@ -1,5 +1,5 @@
 import * as Cinnabun from "cinnabun"
-import { Cinnabun as cb, createSignal } from "cinnabun"
+import { Cinnabun as cb, createSignal, useComputed } from "cinnabun"
 import { HtmlElements } from "../../state"
 import { LiveSocket } from "../liveSocket"
 import { ClientPlayer } from "../game/clientPlayer"
@@ -28,13 +28,13 @@ export const LandingPage = () => {
 
   const gameId = createSignal("")
 
-  const pendingBonuses = Cinnabun.useComputed(() => {
+  const pendingBonuses = useComputed(() => {
     const player = clientGameState?.value?.getPlayer() as ClientPlayer
     if (!player) return []
     return player.unchosenBonuses as BonusSet[]
   }, [clientGameState ?? createSignal(false)])
 
-  const selectedBonuses = Cinnabun.useComputed(() => {
+  const selectedBonuses = useComputed(() => {
     const player = clientGameState?.value?.getPlayer() as ClientPlayer
     if (!player) return []
     const allSelected = Array.from(player.bonusSets.values())
@@ -163,24 +163,33 @@ export const LandingPage = () => {
 
             {pendingBonuses.value.length > 0 ? (
               <div className="game-overlay__pending_bonuses">
-                {pendingBonuses.value.map((bonus) => {
-                  return (
-                    <div className="game-overlay__pending_bonus_items">
-                      {bonus.items.map((item) => {
-                        return (
-                          <div className="game-overlay__pending_bonus_item">
-                            <div className="game-overlay__pending_bonus_item_name">
-                              {item.name}
-                            </div>
-                            <div className="game-overlay__pending_bonus_item_description">
-                              {item.value}
-                            </div>
-                          </div>
-                        )
-                      })}
+                <div className="game-overlay__pending_bonuses_keys">
+                  {[1, 2, 3].map((key) => (
+                    <div className="game-overlay__pending_bonuses_key_name">
+                      <span>{key}</span>
                     </div>
-                  )
-                })}
+                  ))}
+                </div>
+                <div className="game-overlay__pending_bonuses_list">
+                  {pendingBonuses.value.map((bonus) => {
+                    return (
+                      <div className="game-overlay__pending_bonus_items">
+                        {bonus.items.map((item) => {
+                          return (
+                            <div className="game-overlay__pending_bonus_item">
+                              <div className="game-overlay__pending_bonus_item_name">
+                                {item.name}
+                              </div>
+                              <div className="game-overlay__pending_bonus_item_description">
+                                <b>{item.value}</b>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             ) : (
               <></>
