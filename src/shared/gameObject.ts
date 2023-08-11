@@ -13,6 +13,7 @@ import { CollisionLayer } from "./layers"
 import { Sprite } from "./components/sprite"
 import { Experience } from "./components/experience"
 import { Inventory } from "./components/inventory"
+import { Attributes } from "./components/attributes"
 
 export enum GameObjectType {
   Unset = "unset",
@@ -165,6 +166,9 @@ export abstract class GameObject implements ISerializable, IRenderable {
           break
         case ComponentType.Inventory:
           classType = Inventory
+          break
+        case ComponentType.Attributes:
+          classType = Attributes
           break
         default:
           console.log(c)

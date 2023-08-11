@@ -5,6 +5,7 @@ import { Inventory } from "../../shared/components/inventory"
 import { Item, ItemType } from "../../shared/item"
 import { ItemData } from "../../shared/constants"
 import { Experience } from "../../shared/components/experience"
+import { AttributeType, Attributes } from "../../shared/components/attributes"
 
 export class ServerPlayer extends Player {
   conn: SocketStream
@@ -28,5 +29,7 @@ export class ServerPlayer extends Player {
     xp!.onLevelUp = () => {
       if (this.onLevelUp) this.onLevelUp()
     }
+    const attributes = this.getComponent(Attributes)
+    attributes!.bonuses.set(AttributeType.NumBullets, 2)
   }
 }

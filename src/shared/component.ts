@@ -10,6 +10,7 @@ export enum ComponentType {
   Sprite,
   Experience,
   Inventory,
+  Attributes,
 }
 
 export interface IComponent<T extends ComponentType> {
