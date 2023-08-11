@@ -33,7 +33,7 @@ export class ServerPlayer extends Player {
     }
     const attributes = this.getComponent(Attributes)
     attributes!.bonuses.set(AttributeType.MoveSpeed, 50)
-    attributes!.bonuses.set(AttributeType.BulletCooldown, -100)
+    attributes?.bonuses.set(AttributeType.BulletCooldown, -500)
   }
 
   setBonusSetSelection(setId: string, bonusId: number): void {
@@ -56,7 +56,10 @@ export class ServerPlayer extends Player {
     }
     if (bonusData.type === BonusType.Ability) {
     } else {
-      attributes!.bonuses.set(bonusData.attribute, bonus.value)
+      attributes!.bonuses.set(
+        bonusData.attribute,
+        (attributes!.getBonus(bonusData.attribute) ?? 0) + bonus.value
+      )
     }
   }
 }
