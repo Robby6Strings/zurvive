@@ -11,9 +11,8 @@ export enum AttributeType {
   CritChance,
   CritMultiplier,
   NumBullets,
-  Health,
-  Speed,
-  Experience,
+  LifeOnHit,
+  MoveSpeed,
 }
 
 export class Attributes extends Component {

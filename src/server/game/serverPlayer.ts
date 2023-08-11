@@ -30,6 +30,6 @@ export class ServerPlayer extends Player {
       if (this.onLevelUp) this.onLevelUp()
     }
     const attributes = this.getComponent(Attributes)
-    attributes!.bonuses.set(AttributeType.NumBullets, 2)
+    attributes!.bonuses.set(AttributeType.MoveSpeed, 50)
   }
 }

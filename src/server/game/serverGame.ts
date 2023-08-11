@@ -10,6 +10,7 @@ import { Vec2 } from "../../shared/vec2"
 import { GameObject, GameObjectType } from "../../shared/gameObject"
 import { Health } from "../../shared/components/health"
 import { ExperienceOrb } from "../../shared/gameObjects/experienceOrb"
+import { AttributeType, Attributes } from "../../shared/components/attributes"
 
 export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
@@ -131,18 +132,18 @@ export class ServerGame extends Game {
   }
 
   handleAction<T extends GameActionType>(action: GameAction<T>): void {
-    const obj = this.objectStore.find(
+    const player = this.objectStore.find(
       (o) =>
         o.id === action.payload.objectId && o.type === action.payload.objectType
     ) as ServerPlayer | undefined
-    if (!obj) {
+    if (!player) {
       throw new Error(
         `Object ${action.payload.objectId} not found in pool ${action.payload.objectType}`
       )
     }
     switch (action.type) {
       case GameActionType.setTargetPos:
-        obj
+        player
           .getComponent(Mover)!
           .setTargetPos(
             (action as GameAction<GameActionType.setTargetPos>).payload.data
@@ -153,12 +154,15 @@ export class ServerGame extends Game {
       case GameActionType.attack:
         const attackPos = (action as GameAction<GameActionType.attack>).payload
           .data
-        const bullets = obj.handleAttack(attackPos)
+        const bullets = player.handleAttack(attackPos)
         if (bullets) this.objectStore.add(...bullets)
         break
       case GameActionType.interact:
         break
       case GameActionType.move:
+        const attributes = player.getComponent(Attributes)!
+        const speed = attributes.getBonus(AttributeType.MoveSpeed) / 10
+
         const inputVel = (action as GameAction<GameActionType.move>).payload
           .data
         const vel = new Vec2()
@@ -171,7 +175,9 @@ export class ServerGame extends Game {
             vel.y = Math.max(-1, Math.min(1, inputVel.y))
           }
         }
-        obj.vel = obj.vel.add(vel).clamp(-15, 15)
+        player.vel = player.vel
+          .add(vel.multiply(speed / 5))
+          .clamp(-speed, speed)
         break
       default:
         throw new Error(`Unknown action type ${action.type}`)
