@@ -1,4 +1,5 @@
 import { Experience } from "../../shared/components/experience"
+import { Fighter } from "../../shared/components/fighter"
 import { Health } from "../../shared/components/health"
 import { Sprite } from "../../shared/components/sprite"
 import { ObjectColors } from "../../shared/constants"
@@ -28,8 +29,9 @@ export class Renderer {
 
     for (const obj of game.objectStore.objects) {
       const sprite = obj.getComponent(Sprite)
+      const fighter = obj.getComponent(Fighter)
       if (sprite) {
-        sprite.setImageOffset(obj, player.pos)
+        sprite.setImageOffset(obj, fighter?.target?.pos ?? player.pos)
         this.renderImage(obj.pos, sprite.renderSettings, camera)
       } else {
         if (obj.type === GameObjectType.ExperienceOrb) obj.update()

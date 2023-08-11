@@ -9,6 +9,7 @@ import { LiveSocket } from "../liveSocket"
 import { Enemy, Player } from "../../shared/gameObjects/entities"
 import { Health } from "../../shared/components/health"
 import { Experience } from "../../shared/components/experience"
+import { Fighter } from "../../shared/components/fighter"
 
 export class ClientGame extends Game {
   playerId: string = ""
@@ -164,6 +165,14 @@ export class ClientGame extends Game {
           targetPos = Vec2.fromObject(JSON.parse(targetPos))
 
         obj.getComponent(Mover)!.setTargetPos(targetPos)
+        break
+      case GameActionType.setTargetObj:
+        const tgtId = (action as GameAction<GameActionType.setTargetObj>)
+          .payload.data
+        const tgt = this.objectStore.find(
+          (o) => o.id === tgtId && o.type === GameObjectType.Player
+        )
+        if (tgt) obj.getComponent(Fighter)!.setTarget(tgt)
         break
       case GameActionType.attack:
         break

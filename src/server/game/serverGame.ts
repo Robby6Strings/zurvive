@@ -79,9 +79,9 @@ export class ServerGame extends Game {
     enemySpawners.forEach((spawner) => {
       if (
         enemies.length < 100 &&
-        performance.now() - spawner.lastSpawnTime >= 3000
+        performance.now() - spawner.lastSpawnTime >= 4000
       ) {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 5; i++) {
           let closestPlayer
           let closestDist = Infinity
           for (const player of players) {

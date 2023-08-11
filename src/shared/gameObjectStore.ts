@@ -1,5 +1,6 @@
 import { ComponentType } from "./component"
 import { Experience } from "./components/experience"
+import { Fighter } from "./components/fighter"
 import { Health } from "./components/health"
 import { Mover } from "./components/mover"
 import { GameActionType } from "./gameAction"
@@ -101,6 +102,22 @@ export class GameObjectStore {
 
       for (const component of obj.components) {
         switch (component.type) {
+          case ComponentType.Fighter:
+            const fighter = component as Fighter
+            if (fighter.targetChanged) {
+              changes.push({
+                type: MessageType.action,
+                action: {
+                  type: GameActionType.setTargetObj,
+                  payload: {
+                    objectType: obj.type,
+                    objectId: obj.id,
+                    data: fighter.target ? fighter.target.id : null,
+                  },
+                },
+              })
+            }
+            break
           case ComponentType.Mover:
             const mover = component as Mover
             if (mover.targetPosChanged) {

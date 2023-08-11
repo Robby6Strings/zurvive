@@ -12,11 +12,16 @@ export class Fighter extends Component {
     critChance: 0.1,
     critMultiplier: 2,
   }
+  _prevTarget: GameObject | null = null
   target: GameObject | null = null
   followRange: number = 1000
   attackRange: number = 15
   attackTimer: number = 0
   attackCooldown: number = 1000
+
+  get targetChanged(): boolean {
+    return this.target !== this._prevTarget
+  }
 
   constructor() {
     super(ComponentType.Fighter, true)
