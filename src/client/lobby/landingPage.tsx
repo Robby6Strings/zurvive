@@ -39,7 +39,11 @@ export const LandingPage = () => {
     if (!player) return []
     const allSelected = Array.from(player.bonusSets.values())
       .filter((set) => !!set.chosen)
-      .map((set) => set.chosen!) as Bonus[]
+      .map((set) => {
+        return {
+          ...set.chosen!,
+        }
+      }) as Bonus[]
     const aggregated: Bonus[] = []
     allSelected.forEach((bonus) => {
       const existing = aggregated.find((b) => b.name === bonus.name)
