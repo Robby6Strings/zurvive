@@ -9,6 +9,7 @@ export enum ComponentType {
   Shooter,
   Sprite,
   Experience,
+  Inventory,
 }
 
 export interface IComponent<T extends ComponentType> {

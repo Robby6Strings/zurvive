@@ -5,8 +5,6 @@ import { IVec2, Vec2 } from "../vec2"
 
 export class Shooter extends Component {
   lastShotTime: number = 0
-  shootCooldown: number = 100
-  bulletSpeed: number = 30
 
   constructor() {
     super(ComponentType.Shooter, true)
@@ -14,10 +12,12 @@ export class Shooter extends Component {
 
   shoot(
     obj: GameObject,
+    bulletSpeed: number,
+    shootCooldown: number,
     pos: IVec2,
     ...bullets: GameObject[]
   ): GameObject[] | void {
-    if (performance.now() - this.lastShotTime < this.shootCooldown) {
+    if (performance.now() - this.lastShotTime < shootCooldown) {
       return
     }
     this.lastShotTime = performance.now()
@@ -33,7 +33,7 @@ export class Shooter extends Component {
       bullet.vel = Vec2.fromObject(pos)
         .subtract(obj.pos)
         .normalize()
-        .multiply(this.bulletSpeed)
+        .multiply(bulletSpeed)
       return [bullet]
     }
 
@@ -48,7 +48,7 @@ export class Shooter extends Component {
       bullet.vel = Vec2.fromObject(pos)
         .subtract(obj.pos)
         .normalize()
-        .multiply(this.bulletSpeed)
+        .multiply(bulletSpeed)
         .rotate(startAngle + i * angleStep)
     }
     return bullets
@@ -60,22 +60,12 @@ export class Shooter extends Component {
   deserialize(data: any): void {
     this.enabled = data.enabled
     this.lastShotTime = data.lastShotTime
-    this.shootCooldown = data.shootCooldown
-    this.bulletSpeed = data.bulletSpeed
-    // this.bulletDamage = data.bulletDamage
-    // this.bulletRange = data.bulletRange
-    // this.bulletSize = data.bulletSize
   }
   serialize(): Object {
     return {
       type: this.type,
       enabled: this.enabled,
       lastShotTime: this.lastShotTime,
-      shootCooldown: this.shootCooldown,
-      bulletSpeed: this.bulletSpeed,
-      // bulletDamage: this.bulletDamage,
-      // bulletRange: this.bulletRange,
-      // bulletSize: this.bulletSize,
     }
   }
 }
