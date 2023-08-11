@@ -76,6 +76,10 @@ const sharedSettings = {
   sourcemap: "linked",
   splitting: true,
   define: { ...envVars },
+  loader: {
+    ".otf": "file",
+    ".ttf": "file",
+  },
 }
 
 const clientCfg = {
