@@ -15,7 +15,7 @@ export class Fighter extends Component {
   _prevTarget: GameObject | null = null
   target: GameObject | null = null
   followRange: number = 1000
-  attackRange: number = 15
+  attackRange: number = 8
   attackTimer: number = 0
   attackCooldown: number = 1000
 
