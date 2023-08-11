@@ -24,7 +24,7 @@ export class ServerPlayer extends Player {
     const inventory = this.getComponent(Inventory)
     inventory!.addItem(
       Object.assign(new Item(ItemType.Weapon), {
-        itemData: ItemData.weapons[4],
+        itemData: ItemData.weapons[0],
       })
     )
     const xp = this.getComponent(Experience)
@@ -33,7 +33,7 @@ export class ServerPlayer extends Player {
     }
     const attributes = this.getComponent(Attributes)
     attributes!.bonuses.set(AttributeType.MoveSpeed, 50)
-    attributes?.bonuses.set(AttributeType.BulletCooldown, -500)
+    //attributes?.bonuses.set(AttributeType.BulletCooldown, -500)
   }
 
   setBonusSetSelection(setId: string, bonusId: number): void {

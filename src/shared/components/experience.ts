@@ -29,7 +29,7 @@ export class Experience extends Component {
     return (this.currentLevel - 1) * 10
   }
   get experienceToNextLevel() {
-    return this.currentLevel * 10
+    return this.currentLevel * 6
   }
   get levelPercentage(): number {
     return this.currentExperience / this.experienceToNextLevel
