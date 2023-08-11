@@ -23,6 +23,9 @@ export class Renderer {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     const player = game.getPlayer()
     if (!player) return
+
+    game.objectStore.objects.sort((a, b) => a.pos.y - b.pos.y)
+
     for (const obj of game.objectStore.objects) {
       const sprite = obj.getComponent(Sprite)
       if (sprite) {
