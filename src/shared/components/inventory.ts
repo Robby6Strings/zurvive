@@ -1,12 +1,15 @@
 import { Component, ComponentType } from "../component"
 import { GameObject } from "../gameObject"
-import { Item } from "../item"
+import { Item, ItemType } from "../item"
 
 export class Inventory extends Component {
   items: Item[] = []
   equippedItems: string[] = []
   constructor() {
     super(ComponentType.Inventory, true)
+  }
+  getWeapon(): Item | undefined {
+    return this.items.find((i) => i.type === ItemType.Weapon)
   }
   update(_obj: GameObject): void {
     return

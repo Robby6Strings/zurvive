@@ -5,32 +5,20 @@ import { Inventory } from "../../components/inventory"
 import { Shooter } from "../../components/shooter"
 import { ObjectColors } from "../../constants"
 import { GameObject, GameObjectType } from "../../gameObject"
-import { IGunConfig } from "../../gunConfig"
 import { CollisionLayer } from "../../layers"
-import { DamageConfig, ShapeType } from "../../types"
+import { ShapeType } from "../../types"
 import { calculateDamage } from "../../utils"
 import { IVec2 } from "../../vec2"
 import { Bullet } from "../bullet"
 
 const playerRadius = 16
 
-export class Player extends GameObject implements IGunConfig {
-  numBullets: number = 1
-  bulletWeight: number = 3
-  bulletCooldown: number = 500
-  bulletSpeed: number = 10
-  bulletRange: number = 300
-  damage: DamageConfig = {
-    damage: 10,
-    critChance: 0.1,
-    critMultiplier: 2,
-  }
-
+export class Player extends GameObject {
   constructor() {
     super(GameObjectType.Player)
     this.components.push(
-      Object.assign(new Health()),
-      Object.assign(new Shooter(), { shootCooldown: this.bulletCooldown }),
+      new Health(),
+      new Shooter(),
       Collider.circleCollider(playerRadius),
       new Experience(),
       new Inventory()
@@ -45,21 +33,29 @@ export class Player extends GameObject implements IGunConfig {
 
   handleAttack(pos: IVec2): void | GameObject[] {
     const shooter = this.getComponent(Shooter)!
+    const weapon = this.getComponent(Inventory)!.getWeapon()
+    if (!weapon) {
+      console.log("no weapon equipped")
+      return
+    }
+    const config = {
+      size: weapon.itemData.bulletSize,
+      speed: weapon.itemData.bulletSpeed,
+      damage: calculateDamage({
+        damage: weapon.itemData.damage,
+        critChance: weapon.itemData.critChance,
+        critMultiplier: weapon.itemData.critMultiplier,
+      }),
+      range: weapon.itemData.bulletRange,
+      weight: weapon.itemData.bulletWeight,
+    }
     const bullets = shooter.shoot(
       this,
-      this.bulletSpeed,
-      this.bulletCooldown,
+      weapon.itemData.bulletSpeed,
+      weapon.itemData.bulletCooldown,
       pos,
-      ...Array.from({ length: this.numBullets }).map(() =>
-        Object.assign(new Bullet(), {
-          config: {
-            size: 3,
-            speed: this.bulletSpeed,
-            damage: calculateDamage(this.damage),
-            range: this.bulletRange,
-            weight: this.bulletWeight,
-          },
-        })
+      ...Array.from({ length: weapon.itemData.numBullets }).map(() =>
+        new Bullet().withConfig(config)
       )
     )
     return bullets

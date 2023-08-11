@@ -42,6 +42,16 @@ export class Bullet extends GameObject {
     this.applyFriction = false
   }
 
+  withConfig(config: Partial<BulletConfig>): Bullet {
+    this.config = { ...this.config, ...config }
+    this.getComponent(Collider)!.radius = this.config.size
+    this.setRenderSettings({
+      radius: this.config.size,
+    })
+
+    return this
+  }
+
   update(): void {
     super.update()
     if (this.vel.length() > 0) {
@@ -49,6 +59,22 @@ export class Bullet extends GameObject {
     }
     if (this.config.range <= 0) {
       this.remove = true
+    }
+  }
+  public deserialize(data: any): GameObject {
+    super.deserialize(data)
+    this.config = data.config
+    this.getComponent(Collider)!.radius = this.config.size
+    this.setRenderSettings({
+      radius: this.config.size,
+    })
+    return this
+  }
+
+  public serialize(): Object {
+    return {
+      ...super.serialize(),
+      config: this.config,
     }
   }
 }

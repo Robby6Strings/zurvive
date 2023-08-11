@@ -13,14 +13,15 @@ export const ItemData = {
       name: "Pistol",
       description: "A pistol",
       type: "Weapon",
-      damage: 10,
+      damage: 8,
       critChance: 0.1,
       critMultiplier: 2,
       bulletSpeed: 10,
       bulletRange: 500,
       bulletWeight: 6,
-      bulletCooldown: 200,
+      bulletCooldown: 500,
       numBullets: 1,
+      bulletSize: 3,
     },
     {
       name: "Shotgun",
@@ -30,10 +31,11 @@ export const ItemData = {
       critChance: 0.1,
       critMultiplier: 2,
       bulletSpeed: 10,
-      bulletRange: 500,
+      bulletRange: 200,
       bulletWeight: 6,
-      bulletCooldown: 200,
+      bulletCooldown: 1000,
       numBullets: 5,
+      bulletSize: 3,
     },
     {
       name: "Rifle",
@@ -47,6 +49,7 @@ export const ItemData = {
       bulletWeight: 6,
       bulletCooldown: 200,
       numBullets: 1,
+      bulletSize: 5,
     },
     {
       name: "Sniper",
@@ -60,6 +63,7 @@ export const ItemData = {
       bulletWeight: 6,
       bulletCooldown: 200,
       numBullets: 1,
+      bulletSize: 5,
     },
     {
       name: "Machine Gun",
@@ -73,6 +77,7 @@ export const ItemData = {
       bulletWeight: 6,
       bulletCooldown: 200,
       numBullets: 1,
+      bulletSize: 3,
     },
     {
       name: "Minigun",
@@ -86,6 +91,7 @@ export const ItemData = {
       bulletWeight: 6,
       bulletCooldown: 200,
       numBullets: 1,
+      bulletSize: 2,
     },
     {
       name: "Rocket Launcher",
@@ -99,6 +105,7 @@ export const ItemData = {
       bulletWeight: 6,
       bulletCooldown: 200,
       numBullets: 1,
+      bulletSize: 15,
     },
     {
       name: "Grenade Launcher",
@@ -112,6 +119,7 @@ export const ItemData = {
       bulletWeight: 6,
       bulletCooldown: 200,
       numBullets: 1,
+      bulletSize: 15,
     },
     {
       name: "Flamethrower",
@@ -124,7 +132,8 @@ export const ItemData = {
       bulletRange: 500,
       bulletWeight: 6,
       bulletCooldown: 200,
-      numBullets: 1,
+      numBullets: 8,
+      bulletSize: 15,
     },
   ],
 } as const
