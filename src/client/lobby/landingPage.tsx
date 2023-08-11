@@ -3,6 +3,7 @@ import { Cinnabun as cb, createSignal } from "cinnabun"
 import { HtmlElements } from "../../state"
 import { LiveSocket } from "../liveSocket"
 import { ClientPlayer } from "../game/clientPlayer"
+import { Bonus, BonusSet } from "../../shared/bonus"
 
 export const LandingPage = () => {
   const showInput = createSignal(false)
@@ -26,6 +27,30 @@ export const LandingPage = () => {
   const clientGameState = cb.isClient ? liveSocket!.gameState : null
 
   const gameId = createSignal("")
+
+  const pendingBonuses = Cinnabun.useComputed(() => {
+    const player = clientGameState?.value?.getPlayer() as ClientPlayer
+    if (!player) return []
+    return player.unchosenBonuses as BonusSet[]
+  }, [clientGameState ?? createSignal(false)])
+
+  const selectedBonuses = Cinnabun.useComputed(() => {
+    const player = clientGameState?.value?.getPlayer() as ClientPlayer
+    if (!player) return []
+    const allSelected = Array.from(player.bonusSets.values())
+      .filter((set) => !!set.chosen)
+      .map((set) => set.chosen!) as Bonus[]
+    const aggregated: Bonus[] = []
+    allSelected.forEach((bonus) => {
+      const existing = aggregated.find((b) => b.name === bonus.name)
+      if (existing) {
+        existing.value += bonus.value
+      } else {
+        aggregated.push(bonus)
+      }
+    })
+    return aggregated
+  }, [clientGameState ?? createSignal(false)])
 
   return (
     <>
@@ -100,37 +125,50 @@ export const LandingPage = () => {
         </div>
       </div>
       <div
-        watch={clientGameState ?? createSignal(false)}
+        watch={[pendingBonuses, selectedBonuses, loading]}
         bind:visible={() => {
           if (loading.value) return false
-          if (cb.isClient && clientGameState!.value !== null) {
-            const player = clientGameState?.value.getPlayer() as ClientPlayer
-            if (!player) return false
-            return player.unchosenBonuses.length > 0
-          }
-          return true
+          return (
+            pendingBonuses.value.length > 0 || selectedBonuses.value.length > 0
+          )
         }}
         id="game-overlay"
         className="fullscreen"
         bind:children
       >
-        {() => {
-          console.log("rendering game overlay")
-          const player = clientGameState?.value?.getPlayer() as ClientPlayer
-          if (!player) return <></>
-          return () => (
-            <>
-              <div className="game-overlay__bonuses">
-                {player.unchosenBonuses.map((bonus) => {
+        {() => (
+          <>
+            {selectedBonuses.value.length > 0 ? (
+              <div className="game-overlay__selected_bonuses">
+                {selectedBonuses.value.map((bonus) => {
                   return (
-                    <div className="game-overlay__bonus_items">
+                    <div className="game-overlay__selected_bonus_item">
+                      <div className="game-overlay__selected_bonus_item_name">
+                        {bonus.name}
+                      </div>
+                      <div className="game-overlay__selected_bonus_item_description">
+                        {bonus.value}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <></>
+            )}
+
+            {pendingBonuses.value.length > 0 ? (
+              <div className="game-overlay__pending_bonuses">
+                {pendingBonuses.value.map((bonus) => {
+                  return (
+                    <div className="game-overlay__pending_bonus_items">
                       {bonus.items.map((item) => {
                         return (
-                          <div className="game-overlay__bonus_item">
-                            <div className="game-overlay__bonus_item_name">
+                          <div className="game-overlay__pending_bonus_item">
+                            <div className="game-overlay__pending_bonus_item_name">
                               {item.name}
                             </div>
-                            <div className="game-overlay__bonus_item_description">
+                            <div className="game-overlay__pending_bonus_item_description">
                               {item.value}
                             </div>
                           </div>
@@ -140,14 +178,12 @@ export const LandingPage = () => {
                   )
                 })}
               </div>
-            </>
-          )
-        }}
+            ) : (
+              <></>
+            )}
+          </>
+        )}
       </div>
     </>
   )
-}
-
-function useState(second: any): [any, any] {
-  throw new Error("Function not implemented.")
 }

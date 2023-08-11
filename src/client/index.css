@@ -228,7 +228,33 @@ footer {
   cursor: none;
 }
 
-.game-overlay__bonuses {
+#game-overlay {
+  cursor: none;
+}
+
+#game-overlay * {
+  user-select: none;
+  cursor: none;
+  pointer-events: none;
+}
+
+.game-overlay__selected_bonuses {
+  margin-left: auto;
+  margin-bottom: auto;
+  font-size: 80%;
+  white-space: nowrap;
+  padding: 1rem;
+  color: #ccc;
+  background: rgba(0, 0, 0, .15);
+}
+
+.game-overlay__selected_bonus_item {
+  display: flex;
+  justify-content: space-between;
+  gap:1rem;
+}
+
+.game-overlay__pending_bonuses {
   margin-top: auto;
   margin-right: auto;
   margin-bottom: 30px;
@@ -237,26 +263,30 @@ footer {
   padding: 1rem;
   max-height: 50px;
   overflow: hidden;
-  pointer-events: none;
-  cursor: none;
+  width: 320px;
 }
-.game-overlay__bonuses * {
+.game-overlay__pending_bonuses * {
   user-select: none;
 }
 
-.game-overlay__bonus_items {
+.game-overlay__pending_bonus_items {
   display: flex;
   gap: 1rem;
-  opacity: .5;
+  opacity: .15;
 }
-.game-overlay__bonus_items:first-child {
+.game-overlay__pending_bonus_items:first-child {
   opacity: 1;
 }
 
-.game-overlay__bonus_item {
+.game-overlay__pending_bonus_item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: .5rem;
+  width:100%;
+}
+
+.game-overlay__pending_bonus_item_name {
+  font-size: 80%;
 }
