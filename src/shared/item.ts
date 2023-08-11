@@ -1,19 +1,18 @@
 import { ISerializable } from "./serializable"
 
 export enum ItemType {
+  Unset,
   Weapon,
-  // Helmet,
-  // Gloves,
-  // Armor,
-  // Boots,
-  // Belt,
-  // Ring,
+  Helmet,
+  Gloves,
+  Armor,
+  Boots,
+  Belt,
+  Ring,
 }
 
 export class Item implements ISerializable {
   id: string
-  name?: string
-  description?: string
   itemData: any
   constructor(public type: ItemType) {
     this.id = Math.random().toString(36).substring(2, 9)
@@ -28,7 +27,8 @@ export class Item implements ISerializable {
   }
   deserialize(data: any): Item {
     this.id = data.id
-    this.itemData
+    this.type = data.type
+    this.itemData = data.itemData
     return this
   }
 }

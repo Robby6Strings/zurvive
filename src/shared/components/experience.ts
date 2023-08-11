@@ -8,6 +8,8 @@ export class Experience extends Component {
   currentLevel: number = 1
   currentExperience: number = 0
   souls: number = 0
+  onLevelUp: { (lvl: Number): void } | undefined
+  onXpChange: { (xp: Number): void } | undefined
 
   constructor() {
     super(ComponentType.Experience)
@@ -39,7 +41,9 @@ export class Experience extends Component {
     if (this.currentExperience >= this.experienceToNextLevel) {
       this.currentLevel++
       this.currentExperience = 0
+      if (this.onLevelUp) this.onLevelUp(this.currentLevel)
     }
+    if (this.onXpChange) this.onXpChange(this.currentExperience)
   }
   setExperience(data: { level: number; experience: number; souls: number }) {
     this.currentLevel = data.level

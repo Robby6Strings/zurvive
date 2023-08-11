@@ -11,8 +11,7 @@ export const socketHandler = (conn: SocketStream, _req: FastifyRequest) => {
   conn.setEncoding("utf8")
   let game: ServerGame | undefined = undefined
   const player = PlayerService.newPlayer(conn)
-  player.pos = player.pos.add({ x: 100, y: 100 })
-  //player.getComponent(Mover)!.setTargetPos(player.pos)
+
   conn.socket.send(
     JSON.stringify({ type: MessageType.auth, playerId: player.id })
   )
@@ -33,7 +32,7 @@ export const socketHandler = (conn: SocketStream, _req: FastifyRequest) => {
             gameState: game.serialize(),
           })
         )
-        game.addObject(player)
+        game.addPlayer(player)
 
         break
 
@@ -49,7 +48,7 @@ export const socketHandler = (conn: SocketStream, _req: FastifyRequest) => {
           )
           return
         }
-        game.addObject(player)
+        game.addPlayer(player)
         conn.socket.send(
           JSON.stringify({
             type: MessageType.gameState,

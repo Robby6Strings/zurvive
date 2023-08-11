@@ -113,6 +113,9 @@ export class LiveSocket {
       case MessageType.error:
         console.error(message.error)
         break
+      case MessageType.items:
+        console.log("items", message)
+        break
       default:
         return
     }

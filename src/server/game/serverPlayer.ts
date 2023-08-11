@@ -4,9 +4,11 @@ import { Health } from "../../shared/components/health"
 import { Inventory } from "../../shared/components/inventory"
 import { Item, ItemType } from "../../shared/item"
 import { ItemData } from "../../shared/constants"
+import { Experience } from "../../shared/components/experience"
 
 export class ServerPlayer extends Player {
   conn: SocketStream
+  onLevelUp: { (): void } | undefined
   constructor(conn: SocketStream) {
     super()
     this.conn = conn
@@ -19,8 +21,12 @@ export class ServerPlayer extends Player {
     const inventory = this.getComponent(Inventory)
     inventory!.addItem(
       Object.assign(new Item(ItemType.Weapon), {
-        itemData: ItemData.weapons[0],
+        itemData: ItemData.weapons[4],
       })
     )
+    const xp = this.getComponent(Experience)
+    xp!.onLevelUp = () => {
+      if (this.onLevelUp) this.onLevelUp()
+    }
   }
 }

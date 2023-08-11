@@ -16,6 +16,7 @@ export enum MessageType {
   removeObject = "remove-object",
   update = "update",
   updateObject = "update-object",
+  items = "items",
 }
 export type TypedMessage<T extends GameActionType | undefined> = {
   type: MessageType
@@ -25,4 +26,5 @@ export type TypedMessage<T extends GameActionType | undefined> = {
   object?: any
   playerId?: string
   changes?: TypedMessage<GameActionType>[]
+  items?: any[]
 }

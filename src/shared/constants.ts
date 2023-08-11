@@ -12,7 +12,6 @@ export const ItemData = {
     {
       name: "Pistol",
       description: "A pistol",
-      type: "Weapon",
       damage: 8,
       critChance: 0.1,
       critMultiplier: 2,
@@ -26,7 +25,6 @@ export const ItemData = {
     {
       name: "Shotgun",
       description: "A shotgun",
-      type: "Weapon",
       damage: 5,
       critChance: 0.1,
       critMultiplier: 2,
@@ -40,7 +38,6 @@ export const ItemData = {
     {
       name: "Rifle",
       description: "A rifle",
-      type: "Weapon",
       damage: 15,
       critChance: 0.1,
       critMultiplier: 2,
@@ -54,7 +51,6 @@ export const ItemData = {
     {
       name: "Sniper",
       description: "A sniper",
-      type: "Weapon",
       damage: 20,
       critChance: 0.1,
       critMultiplier: 2,
@@ -68,21 +64,19 @@ export const ItemData = {
     {
       name: "Machine Gun",
       description: "A machine gun",
-      type: "Weapon",
-      damage: 5,
+      damage: 4,
       critChance: 0.1,
       critMultiplier: 2,
       bulletSpeed: 10,
       bulletRange: 500,
       bulletWeight: 6,
-      bulletCooldown: 200,
+      bulletCooldown: 100,
       numBullets: 1,
       bulletSize: 3,
     },
     {
       name: "Minigun",
       description: "A minigun",
-      type: "Weapon",
       damage: 5,
       critChance: 0.1,
       critMultiplier: 2,
@@ -96,7 +90,6 @@ export const ItemData = {
     {
       name: "Rocket Launcher",
       description: "A rocket launcher",
-      type: "Weapon",
       damage: 5,
       critChance: 0.1,
       critMultiplier: 2,
@@ -110,7 +103,6 @@ export const ItemData = {
     {
       name: "Grenade Launcher",
       description: "A grenade launcher",
-      type: "Weapon",
       damage: 5,
       critChance: 0.1,
       critMultiplier: 2,
@@ -124,7 +116,6 @@ export const ItemData = {
     {
       name: "Flamethrower",
       description: "A flamethrower",
-      type: "Weapon",
       damage: 5,
       critChance: 0.1,
       critMultiplier: 2,
@@ -136,4 +127,65 @@ export const ItemData = {
       bulletSize: 15,
     },
   ],
+  helmets: [
+    {
+      name: "Raggedy Helmet",
+      description: "A pretty shit helmet",
+      armor: 2,
+    },
+    {
+      name: "Leather Helmet",
+      description: "An average helmet",
+      armor: 5,
+    },
+  ],
+  gloves: [
+    {
+      name: "Raggedy Gloves",
+      description: "Some pretty shite gloves",
+      armor: 1,
+    },
+    {
+      name: "Leather Gloves",
+      description: "An average pair of gloves",
+      armor: 3,
+    },
+  ],
+  armor: [
+    {
+      name: "Raggedy Armor",
+      description: "A pretty shite armor",
+      armor: 1,
+    },
+    {
+      name: "Leather Armor",
+      description: "An average armor",
+      armor: 3,
+    },
+  ],
+  boots: [
+    {
+      name: "Raggedy Boots",
+      description: "Some pretty shite boots",
+      armor: 1,
+    },
+    {
+      name: "Leather Boots",
+      description: "An average pair of boots",
+      armor: 3,
+    },
+  ],
+  belt: [
+    {
+      name: "Raggedy Belt",
+      description: "A pretty shite belt",
+      armor: 1,
+    },
+    {
+      name: "Leather Belt",
+      description: "An average belt",
+      armor: 3,
+    },
+  ],
+  ring: [],
 } as const

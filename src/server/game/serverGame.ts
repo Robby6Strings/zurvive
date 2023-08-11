@@ -78,20 +78,13 @@ export class ServerGame extends Game {
 
     enemySpawners.forEach((spawner) => {
       if (
-        enemies.length < 100 &&
-        performance.now() - spawner.lastSpawnTime >= 10_000
+        (enemies.length < 100 &&
+          performance.now() - spawner.lastSpawnTime >= 10_000) ||
+        spawner.new
       ) {
         for (let i = 0; i < 3; i++) {
-          let closestPlayer
-          let closestDist = Infinity
-          for (const player of players) {
-            const dist = GameObject.getDistance(spawner, player)
-            if (dist < closestDist) {
-              closestDist = dist
-              closestPlayer = player
-            }
-          }
           const enemy = spawner.spawn()
+          const [closestPlayer] = GameObject.getClosest(enemy, players)
           if (closestPlayer) {
             enemy.getComponent(Mover)!.setTargetPos(closestPlayer.pos)
           }
@@ -121,6 +114,13 @@ export class ServerGame extends Game {
 
     if (changes.length > 0) {
       this.broadcast({ type: MessageType.update, changes }, this.players)
+    }
+  }
+
+  addPlayer(player: ServerPlayer): void {
+    this.addObject(player)
+    player.onLevelUp = () => {
+      console.log("level up")
     }
   }
 

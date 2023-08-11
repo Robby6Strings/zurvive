@@ -99,6 +99,25 @@ export abstract class GameObject implements ISerializable, IRenderable {
       Collider.getSize(objB)
     )
   }
+
+  static getClosest(
+    objA: GameObject,
+    objs: GameObject[]
+  ): [GameObject, number] | [] {
+    let closest: GameObject | undefined = undefined
+    let closestDist = Number.MAX_VALUE
+    for (const objB of objs) {
+      if (objA === objB) continue
+      const dist = GameObject.getDistance(objA, objB)
+      if (dist < closestDist) {
+        closest = objB
+        closestDist = dist
+      }
+    }
+    if (!closest) return []
+    return [closest, closestDist]
+  }
+
   static getDirection(objA: GameObject, objB: GameObject) {
     return objB.pos.subtract(objA.pos).normalize()
   }
