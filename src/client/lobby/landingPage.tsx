@@ -114,6 +114,10 @@ export const LandingPage = () => {
               className="lobby-input"
               watch={gameId}
               bind:value={() => gameId.value}
+              onMounted={(self: Cinnabun.Component) => {
+                const input = self.element as HTMLInputElement
+                input.focus()
+              }}
               oninput={(e: Event) => {
                 const target = e.target as HTMLInputElement
                 gameId.value = target.value
