@@ -74,7 +74,7 @@ export class ClientGame extends Game {
             })
           }
           set.chosen = bonus
-          continue
+          break
         }
       }
     }
