@@ -10,8 +10,8 @@ import { SSR } from "cinnabun/ssr"
 import { Cinnabun } from "cinnabun"
 import { log } from "../../.cb/logger.js"
 
-import { App } from "../App"
-import { Template } from "../Template"
+import { App } from "../client/App"
+import { Template } from "../client/Template"
 import { socketHandler } from "./socket.js"
 
 const isDev = process.env.NODE_ENV === "development"

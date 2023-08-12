@@ -1,9 +1,9 @@
 import "./index.css"
-import { Hydration } from "cinnabun/hydration"
-import { Template } from "../Template"
-import { SSRProps } from "cinnabun/src/types"
-import { App } from "../App"
 import { Cinnabun } from "cinnabun"
+import { Hydration } from "cinnabun/hydration"
+import { SSRProps } from "cinnabun/src/types"
+import { App } from "./App"
+import { Template } from "./Template"
 import { LiveSocket } from "./liveSocket"
 
 const env = process.env.NODE_ENV ?? "development"

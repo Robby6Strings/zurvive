@@ -188,7 +188,6 @@ export class ServerGame extends Game {
           .clamp(-speed, speed)
         break
       case GameActionType.chooseBonus:
-        console.log("choose bonus", action)
         const { id, bonusId } = (
           action as GameAction<GameActionType.chooseBonus>
         ).payload.data

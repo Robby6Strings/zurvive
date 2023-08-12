@@ -47,7 +47,6 @@ export class ServerPlayer extends Player {
     }
   }
   applyBonus(bonus: Bonus) {
-    console.log("applying bonus", bonus)
     const attributes = this.getComponent(Attributes)
     const bonusData = BonusData.find((b) => b.id === bonus.id)
     if (!bonusData) {
