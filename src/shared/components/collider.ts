@@ -3,6 +3,17 @@ import { GameObject } from "../gameObject"
 import { ShapeType } from "../types"
 import { IVec2, Vec2 } from "../vec2"
 
+export enum CollisionLayer {
+  None,
+  Background,
+  Environment,
+  PlayerBullet,
+  EnemyBullet,
+  Player,
+  Enemy,
+  ExperienceOrb,
+}
+
 type CollisionCheckResult = {
   objA: GameObject
   objB: GameObject

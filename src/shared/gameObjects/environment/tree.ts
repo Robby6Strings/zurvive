@@ -1,6 +1,5 @@
-import { Collider } from "../../components/collider"
+import { Collider, CollisionLayer } from "../../components/collider"
 import { GameObject, GameObjectType } from "../../gameObject"
-import { CollisionLayer } from "../../layers"
 import { ShapeType } from "../../types"
 
 export class Tree extends GameObject {

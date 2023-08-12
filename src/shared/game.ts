@@ -1,8 +1,7 @@
 import { GameObjectStore } from "./gameObjectStore"
 import { GameActionType, GameAction } from "./gameAction"
 import { GameObject, GameObjectType } from "./gameObject"
-import { CollisionLayer } from "./layers"
-import { Collider } from "./components/collider"
+import { Collider, CollisionLayer } from "./components/collider"
 import { Bullet } from "./gameObjects/bullet"
 
 export abstract class Game {

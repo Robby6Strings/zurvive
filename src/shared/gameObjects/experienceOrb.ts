@@ -1,8 +1,7 @@
-import { Collider } from "../components/collider"
+import { Collider, CollisionLayer } from "../components/collider"
 import { Experience } from "../components/experience"
 import { ObjectColors } from "../constants"
 import { GameObject, GameObjectType } from "../gameObject"
-import { CollisionLayer } from "../layers"
 import { ShapeType } from "../types"
 
 export class ExperienceOrb extends GameObject {
