@@ -17,6 +17,10 @@ const playerRadius = 16
 
 export class Player extends GameObject {
   bonusSets: Map<string, BonusSet> = new Map()
+  get unchosenBonuses() {
+    return Array.from(this.bonusSets.values()).filter((set) => !set.chosen)
+  }
+
   constructor() {
     super(GameObjectType.Player)
     this.components.push(

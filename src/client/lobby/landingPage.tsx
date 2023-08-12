@@ -2,8 +2,8 @@ import * as Cinnabun from "cinnabun"
 import { Cinnabun as cb, createSignal, useComputed } from "cinnabun"
 import { HtmlElements } from "../../state"
 import { LiveSocket } from "../liveSocket"
-import { ClientPlayer } from "../game/clientPlayer"
-import { Bonus, BonusSet } from "../../shared/bonus"
+import { Bonus } from "../../shared/bonus"
+import { Player } from "../../shared/gameObjects/entities"
 
 export const LandingPage = () => {
   const showInput = createSignal(false)
@@ -29,13 +29,14 @@ export const LandingPage = () => {
   const gameId = createSignal("")
 
   const pendingBonuses = useComputed(() => {
-    const player = clientGameState?.value?.getPlayer() as ClientPlayer
+    const player = clientGameState?.value?.getPlayer() as Player
     if (!player) return []
-    return player.unchosenBonuses as BonusSet[]
+    return player.unchosenBonuses
   }, [clientGameState ?? createSignal(false)])
 
   const selectedBonuses = useComputed(() => {
-    const player = clientGameState?.value?.getPlayer() as ClientPlayer
+    const player = clientGameState?.value?.getPlayer() as Player
+
     if (!player) return []
     const allSelected = Array.from(player.bonusSets.values())
       .filter((set) => !!set.chosen)
@@ -136,9 +137,16 @@ export const LandingPage = () => {
         watch={[pendingBonuses, selectedBonuses, loading]}
         bind:visible={() => {
           if (loading.value) return false
-          return (
-            pendingBonuses.value.length > 0 || selectedBonuses.value.length > 0
-          )
+          try {
+            return (
+              pendingBonuses.value.length > 0 ||
+              selectedBonuses.value.length > 0 ||
+              !!clientGameState?.value
+            )
+          } catch (error) {
+            debugger
+            return false
+          }
         }}
         id="game-overlay"
         className="fullscreen"
@@ -165,39 +173,45 @@ export const LandingPage = () => {
               <></>
             )}
 
-            {pendingBonuses.value.length > 0 ? (
-              <div className="game-overlay__pending_bonuses">
-                <div className="game-overlay__pending_bonuses_keys">
-                  {[1, 2, 3].map((key) => (
-                    <div className="game-overlay__pending_bonuses_key_name">
-                      <span>{key}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="game-overlay__pending_bonuses_list">
-                  {pendingBonuses.value.map((bonus) => {
-                    return (
-                      <div className="game-overlay__pending_bonus_items">
-                        {bonus.items.map((item) => {
-                          return (
-                            <div className="game-overlay__pending_bonus_item">
-                              <div className="game-overlay__pending_bonus_item_name">
-                                {item.name}
-                              </div>
-                              <div className="game-overlay__pending_bonus_item_description">
-                                <b>{item.value}</b>
-                              </div>
-                            </div>
-                          )
-                        })}
+            <div style="width:100%;height:100%;display:flex;">
+              {pendingBonuses.value.length > 0 ? (
+                <div className="game-overlay__pending_bonuses">
+                  <div className="game-overlay__pending_bonuses_keys">
+                    {[1, 2, 3].map((key) => (
+                      <div className="game-overlay__pending_bonuses_key_name">
+                        <span>{key}</span>
                       </div>
-                    )
-                  })}
+                    ))}
+                  </div>
+                  <div className="game-overlay__pending_bonuses_list">
+                    {pendingBonuses.value.map((bonus) => {
+                      return (
+                        <div className="game-overlay__pending_bonus_items">
+                          {bonus.items.map((item) => {
+                            return (
+                              <div className="game-overlay__pending_bonus_item">
+                                <div className="game-overlay__pending_bonus_item_name">
+                                  {item.name}
+                                </div>
+                                <div className="game-overlay__pending_bonus_item_description">
+                                  <b>{item.value}</b>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
+              ) : (
+                <></>
+              )}
+
+              <div className="game-overlay__game_id">
+                {clientGameState?.value?.id}
               </div>
-            ) : (
-              <></>
-            )}
+            </div>
           </>
         )}
       </div>
