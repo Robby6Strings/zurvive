@@ -1,5 +1,5 @@
 import { GameObject } from "./gameObject"
-import { ISerializable } from "./serializable"
+import { ISerializable } from "./traits/serializable"
 
 export enum ComponentType {
   Mover,

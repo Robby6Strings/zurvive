@@ -1,4 +1,4 @@
-import { ShapeType } from "./types"
+import { ShapeType } from "../types"
 
 export type RenderSettings = {
   render: boolean

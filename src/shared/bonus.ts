@@ -1,5 +1,5 @@
 import { BonusData } from "./constants"
-import { ISerializable } from "./serializable"
+import { ISerializable } from "./traits/serializable"
 
 export enum BonusType {
   Ability,

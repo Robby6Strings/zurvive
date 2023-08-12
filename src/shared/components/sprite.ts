@@ -1,7 +1,7 @@
 import { images } from "../../client/state"
 import { Component, ComponentType } from "../component"
 import { GameObject } from "../gameObject"
-import { IRenderable, RenderSettings } from "../renderable"
+import { IRenderable, RenderSettings } from "../traits/renderable"
 import { ShapeType } from "../types"
 import { IVec2, Vec2 } from "../vec2"
 
