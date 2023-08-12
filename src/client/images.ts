@@ -1,4 +1,4 @@
-import { images } from "../state"
+import { images } from "./state"
 
 export const imageRefs = [
   {

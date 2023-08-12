@@ -1,6 +1,6 @@
 import * as Cinnabun from "cinnabun"
 import { Cinnabun as cb, createSignal, useComputed } from "cinnabun"
-import { HtmlElements } from "../../state"
+import { HtmlElements } from "../state"
 import { LiveSocket } from "../liveSocket"
 import { Bonus } from "../../shared/bonus"
 import { Player } from "../../shared/gameObjects/entities"

@@ -8,7 +8,7 @@ import { Player } from "../../shared/gameObjects/entities"
 import { RenderSettings } from "../../shared/renderable"
 import { ShapeType } from "../../shared/types"
 import { IVec2 } from "../../shared/vec2"
-import { HtmlElements } from "../../state"
+import { HtmlElements } from "../state"
 import { Camera } from "./camera"
 import { ClientGame } from "./clientGame"
 

@@ -1,4 +1,4 @@
-import { images } from "../../state"
+import { images } from "../../client/state"
 import { Component, ComponentType } from "../component"
 import { GameObject } from "../gameObject"
 import { IRenderable, RenderSettings } from "../renderable"
