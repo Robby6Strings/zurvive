@@ -1,5 +1,5 @@
 import { GameObjectStore } from "./gameObjectStore"
-import { GameActionType, GameAction } from "./gameAction"
+import { GameActionType, GameAction } from "./message"
 import { GameObject, GameObjectType } from "./gameObject"
 import { Collider, CollisionLayer } from "./components/collider"
 import { Bullet } from "./gameObjects/bullet"

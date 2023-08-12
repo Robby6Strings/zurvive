@@ -1,6 +1,6 @@
 import { Game } from "../../shared/game"
 import { GameObject, GameObjectType } from "../../shared/gameObject"
-import { GameActionType, GameAction } from "../../shared/gameAction"
+import { GameActionType, GameAction } from "../../shared/message"
 import { Mover } from "../../shared/components/mover"
 import { Renderer } from "./renderer"
 import { Camera } from "./camera"

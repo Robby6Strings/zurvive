@@ -1,7 +1,7 @@
 import { Game } from "../../shared/game"
 import { Enemy, Player } from "../../shared/gameObjects/entities"
 import { Spawner } from "../../shared/gameObjects/spawner"
-import { GameActionType, GameAction } from "../../shared/gameAction"
+import { GameActionType, GameAction } from "../../shared/message"
 import { Fighter } from "../../shared/components/fighter"
 import { Mover } from "../../shared/components/mover"
 import { ServerPlayer } from "./serverPlayer"

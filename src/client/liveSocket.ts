@@ -1,7 +1,11 @@
 import { Signal, createSignal } from "cinnabun"
 import { ClientGame } from "./game/clientGame"
-import { MessageType, TypedMessage } from "../shared/message"
-import { GameAction, GameActionType } from "../shared/gameAction"
+import {
+  MessageType,
+  TypedMessage,
+  GameAction,
+  GameActionType,
+} from "../shared/message"
 import { newInstanceOfType } from "../shared/gameObjects"
 import { loadImages } from "./images"
 
