@@ -4,8 +4,6 @@ import { MessageType, TypedMessage } from "../shared/message"
 import { GameAction, GameActionType } from "../shared/gameAction"
 import { newInstanceOfType } from "../shared/gameObjects"
 import { loadImages } from "./images"
-import { ClientPlayer } from "./game/clientPlayer"
-import { GameObjectType } from "../shared/gameObject"
 
 export class LiveSocket {
   socket: any
@@ -89,13 +87,6 @@ export class LiveSocket {
 
       case MessageType.newObject:
         try {
-          if (
-            message.object.type === GameObjectType.Player &&
-            message.object.id === this.authId
-          ) {
-            this.game?.addObject(new ClientPlayer().deserialize(message.object))
-            return
-          }
           this.game?.addObject(
             newInstanceOfType(message.object.type).deserialize(message.object)
           )
