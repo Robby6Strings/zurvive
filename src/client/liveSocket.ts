@@ -8,10 +8,11 @@ import {
 } from "../shared/message"
 import { newInstanceOfType } from "../shared/gameObjects"
 import { loadImages } from "./images"
+import { auth, characters } from "./state"
+import { Player } from "../shared/gameObjects/entities"
 
 export class LiveSocket {
   socket: any
-  authId: string = ""
   _connected: Signal<boolean> = createSignal<boolean>(false)
   get connected() {
     return this._connected.value
@@ -40,6 +41,9 @@ export class LiveSocket {
     )
     this.socket.onmessage = (msg: any) => {
       const data = JSON.parse(msg.data)
+      if (!data) return console.error("received invalid message")
+      if (typeof data !== "object")
+        return console.error("received invalid message", data)
       if (!("type" in data)) throw new Error("received invalid message")
       this.handleMessage(data)
     }
@@ -67,28 +71,55 @@ export class LiveSocket {
     this.socket.send(JSON.stringify({ type: MessageType.joinGame, gameId }))
   }
 
+  public authenticate(name: string) {
+    this.socket.send(JSON.stringify({ type: MessageType.selectUser, name }))
+  }
+
+  public newCharacter(name: string) {
+    this.socket.send(JSON.stringify({ type: MessageType.newCharacter, name }))
+  }
+
+  public selectCharacter(id: string) {
+    const character = characters.value.find((c) => c.id === id)
+    if (!character) return
+    character.selected = true
+    this.socket.send(JSON.stringify({ type: MessageType.selectCharacter, id }))
+  }
+
   private handleMessage<T extends GameActionType>(message: TypedMessage<T>) {
     switch (message.type) {
       case MessageType.auth:
-        this.authId = message.playerId ?? ""
-        if (this.authId && this.game) {
-          this.game.playerId = this.authId
-          this.gameState.notify()
+        auth.value = {
+          id: message.userId!,
+          name: message.name!,
         }
+        console.log("auth", auth.value)
         break
-
+      case MessageType.selectCharacter:
+        console.log("selectCharacter", message.object)
+        const character = characters.value.find(
+          (c) => c.id === message.object.id
+        )
+        if (!character) {
+          characters.value.push(
+            Object.assign(new Player().deserialize(message.object), {
+              selected: true,
+              name: message.object.name,
+            })
+          )
+        } else {
+          character.selected = true
+        }
+        characters.notify()
+        this.gameState.notify()
+        break
       case MessageType.gameState:
+        console.log("gameState", message.gameState)
         this.gameState.value = new ClientGame(message.gameState as any, this)
-        if (this.authId) {
-          this.gameState.value.playerId = this.authId
-          this.gameState.notify()
-        }
         break
-
       case MessageType.action:
         this.game?.handleAction(message.action as GameAction<T>)
         break
-
       case MessageType.newObject:
         try {
           this.game?.addObject(
@@ -104,7 +135,6 @@ export class LiveSocket {
       case MessageType.updateObject:
         this.game?.updateObject(message.object)
         break
-
       case MessageType.update:
         const changes = message.changes as TypedMessage<
           GameActionType | undefined
@@ -113,7 +143,6 @@ export class LiveSocket {
           this.handleMessage(change as TypedMessage<GameActionType>)
         }
         break
-
       case MessageType.error:
         console.error(message.error)
         break
@@ -124,6 +153,18 @@ export class LiveSocket {
         console.log("bonusSet", message)
         this.game?.getPlayer()?.bonusSets.set(message.data.id, message.data)
         this.gameState.notify()
+        break
+      case MessageType.players:
+        for (const player of message.players ?? []) {
+          characters.value.push(
+            Object.assign(new Player().deserialize(player), {
+              name: player.name,
+            })
+          )
+        }
+        characters.notify()
+        //characters.value = message.players!
+        console.log("players", characters.value)
         break
       default:
         return

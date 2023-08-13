@@ -10,9 +10,9 @@ import { Enemy, Player } from "../../shared/gameObjects/entities"
 import { Health } from "../../shared/components/health"
 import { Experience } from "../../shared/components/experience"
 import { Fighter } from "../../shared/components/fighter"
+import { selectedCharacter } from "../state"
 
 export class ClientGame extends Game {
-  playerId: string = ""
   liveSocket: LiveSocket
   camera: Camera
   renderer: Renderer
@@ -39,7 +39,8 @@ export class ClientGame extends Game {
 
   getPlayer(): Player | undefined {
     return this.objectStore.find(
-      (o) => o.id === this.playerId && o.type === GameObjectType.Player
+      (o) =>
+        o.id === selectedCharacter.value?.id && o.type === GameObjectType.Player
     ) as Player
   }
 
@@ -98,12 +99,14 @@ export class ClientGame extends Game {
   }
 
   update(): void {
+    const playerId = selectedCharacter.value?.id
+    if (!playerId) return
     if (this.mouseDown) {
       this.liveSocket.sendGameAction({
         type: GameActionType.attack,
         payload: {
           objectType: GameObjectType.Player,
-          objectId: this.playerId,
+          objectId: playerId,
           data: this.mousePos.subtract(this.camera.offset),
         },
       })
@@ -128,7 +131,7 @@ export class ClientGame extends Game {
         type: GameActionType.move,
         payload: {
           objectType: GameObjectType.Player,
-          objectId: this.playerId,
+          objectId: playerId,
           data: inputVelocity,
         },
       })

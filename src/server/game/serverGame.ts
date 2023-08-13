@@ -12,6 +12,7 @@ import { Health } from "../../shared/components/health"
 import { ExperienceOrb } from "../../shared/gameObjects/experienceOrb"
 import { AttributeType, Attributes } from "../../shared/components/attributes"
 import { Bonus } from "../../shared/bonus"
+import { AccountService } from "../services/userService"
 
 export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
@@ -124,18 +125,16 @@ export class ServerGame extends Game {
     player.onLevelUp = () => {
       const items = Bonus.generateBonusSet()
       player.bonusSets.set(items.id, items)
-      player.conn.socket.send(
-        JSON.stringify({
-          type: MessageType.bonusSet,
-          data: items,
-        })
-      )
+      AccountService.get(player.userId)?.send({
+        type: MessageType.bonusSet,
+        data: items,
+      })
     }
   }
 
   private broadcast(data: any, players: ServerPlayer[]) {
     for (const player of players) {
-      player.conn.socket.send(JSON.stringify(data))
+      AccountService.get(player.userId)?.send(data)
     }
   }
 
@@ -145,9 +144,10 @@ export class ServerGame extends Game {
         o.id === action.payload.objectId && o.type === action.payload.objectType
     ) as ServerPlayer | undefined
     if (!player) {
-      throw new Error(
+      console.error(
         `Object ${action.payload.objectId} not found in pool ${action.payload.objectType}`
       )
+      return
     }
     switch (action.type) {
       case GameActionType.setTargetPos:

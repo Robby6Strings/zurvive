@@ -318,3 +318,36 @@ footer {
   cursor: unset !important;
   user-select: all !important;
 }
+
+.character-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  margin-bottom: 1rem;
+}
+.character-list li button {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  background: rgba(0, 0, 0, .3);
+  color: #fff;
+  border: 0;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+  cursor: pointer;
+}
+.character-list li button:hover {
+  background: rgba(0, 0, 0, .5);
+}
+.character-list li button:last-child {
+  border-bottom: 0;
+}
+
+.character-list li button .character-level {
+  font-size: 70%;
+  color: #ccc;
+  font-weight: 600;
+  padding: 0.125rem .4rem;
+  border: 1px solid #aaa;
+  border-radius: 0.25rem;
+}

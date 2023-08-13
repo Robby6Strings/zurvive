@@ -1,4 +1,3 @@
-import { SocketStream } from "@fastify/websocket"
 import { Player } from "../../shared/gameObjects/entities"
 import { Health } from "../../shared/components/health"
 import { Inventory } from "../../shared/components/inventory"
@@ -9,12 +8,14 @@ import { AttributeType, Attributes } from "../../shared/components/attributes"
 import { Bonus, BonusType } from "../../shared/bonus"
 
 export class ServerPlayer extends Player {
-  conn: SocketStream
+  userId: string
+  name: string
 
   onLevelUp: { (): void } | undefined
-  constructor(conn: SocketStream) {
+  constructor(userId: string, name: string) {
     super()
-    this.conn = conn
+    this.userId = userId
+    this.name = name
     const health = this.getComponent(Health)
     health!.onKilled = (health) => {
       health.currentHealth = health.maxHealth
@@ -60,5 +61,19 @@ export class ServerPlayer extends Player {
         (attributes!.getBonus(bonusData.attribute) ?? 0) + bonus.value
       )
     }
+  }
+  public serialize(): Object {
+    return {
+      ...super.serialize(),
+      userId: this.userId,
+      name: this.name,
+    }
+  }
+
+  public deserialize(data: any): ServerPlayer {
+    super.deserialize(data)
+    this.userId = data.userId
+    this.name = data.name
+    return this
   }
 }

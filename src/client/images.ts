@@ -5,6 +5,10 @@ export const imageRefs = [
     image: "ZombieSheet.png",
     name: "zombie",
   },
+  {
+    image: "PlayerSheet.png",
+    name: "player",
+  },
 ] as const
 let imagesLoaded = 0
 

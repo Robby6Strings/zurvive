@@ -85,4 +85,23 @@ export class Player extends GameObject {
     )
     return bullets
   }
+
+  public serialize(): Object {
+    const bonusSets = Array.from(this.bonusSets.values()).map((set) => ({
+      ...set,
+      items: Array.from(set.items.values()),
+    }))
+    console.log("serialize", bonusSets)
+    return {
+      ...super.serialize(),
+      bonusSets,
+    }
+  }
+
+  public deserialize(data: any): Player {
+    super.deserialize(data)
+    this.bonusSets = new Map(data.bonusSets.map((set: any) => [set.id, set]))
+    console.log("deserialize", this.bonusSets)
+    return this
+  }
 }

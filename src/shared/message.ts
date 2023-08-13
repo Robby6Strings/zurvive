@@ -3,11 +3,17 @@ import { IVec2 } from "./vec2"
 
 export enum ErrorMessage {
   gameNotFound = "game not found",
+  characterNotFound = "character not found",
+  forbidden = "forbidden",
 }
 
 export enum MessageType {
   ping = "ping",
   auth = "auth",
+  newUser = "new-user",
+  selectUser = "select-user",
+  newCharacter = "new-character",
+  selectCharacter = "select-character",
   newGame = "new-game",
   joinGame = "join-game",
   action = "action",
@@ -19,6 +25,7 @@ export enum MessageType {
   updateObject = "update-object",
   items = "items",
   bonusSet = "bonus-set",
+  players = "players",
 }
 export type TypedMessage<T extends GameActionType | undefined> = {
   type: MessageType
@@ -26,10 +33,12 @@ export type TypedMessage<T extends GameActionType | undefined> = {
   gameState?: string
   error?: ErrorMessage
   object?: any
-  playerId?: string
+  userId?: string
+  name?: string
   changes?: TypedMessage<GameActionType>[]
   items?: any[]
   data?: any
+  players?: any[]
 }
 
 export enum GameActionType {

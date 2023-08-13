@@ -1,4 +1,5 @@
-import { Cinnabun, createSignal } from "cinnabun"
+import { Cinnabun, computed, createSignal } from "cinnabun"
+import { Player } from "../shared/gameObjects/entities"
 
 export const pathStore = createSignal(
   Cinnabun.isClient ? window.location.pathname : "/"
@@ -23,3 +24,12 @@ export type GameImage = {
   name: string
 }
 export const images = createSignal<GameImage[]>([])
+
+export const auth = createSignal<{ id: string; name: string } | null>(null)
+
+export const characters = createSignal<
+  (Player & { selected?: boolean; name: string })[]
+>([])
+export const selectedCharacter = computed(characters, () => {
+  return characters.value.find((c) => c.selected)
+})
