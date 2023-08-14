@@ -19,7 +19,8 @@ export class Bonus implements ISerializable {
     public type: BonusType,
     public value: number,
     public name: string,
-    public id: number
+    public id: number,
+    public rarity: number
   ) {
     this.type = type
     this.value = value
@@ -43,8 +44,7 @@ export class Bonus implements ISerializable {
     let tries = 100
 
     while (tries > 0 && items.length < 3) {
-      const newItemIndex = getRandomIndexByWeight(BonusData)
-      const newItem = BonusData[newItemIndex]
+      const newItem = BonusData[getRandomIndexByWeight(BonusData)]
 
       if (!items.some((r) => r.id === newItem.id)) {
         let rarity = 0
@@ -53,7 +53,9 @@ export class Bonus implements ISerializable {
           rarity = getRandomWeightMapIndex(map)
         }
         const value = newItem.modifiers ? newItem.modifiers[rarity] : 0
-        items.push(new Bonus(newItem.type, value, newItem.name, newItem.id))
+        items.push(
+          new Bonus(newItem.type, value, newItem.name, newItem.id, rarity)
+        )
       }
     }
     return {

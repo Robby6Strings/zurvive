@@ -311,6 +311,16 @@ footer {
   font-size: 70%;
 }
 
+.game-overlay__pending_bonus_item[data-rarity="1"] {
+  background-color: rgba(120,160,255, .3);
+}
+.game-overlay__pending_bonus_item[data-rarity="2"] {
+  background-color: rgba(175, 80, 230, .3);
+}
+.game-overlay__pending_bonus_item[data-rarity="3"] {
+  background-color: rgba(255, 165, 0, .5);
+}
+
 .game-overlay__game_id {
   margin-top: auto;
   margin-left: auto;

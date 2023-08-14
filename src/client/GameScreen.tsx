@@ -19,7 +19,6 @@ export const GameScreen = () => {
 
   const selectedBonuses = useComputed(() => {
     const player = clientGameState?.value?.getPlayer() as Player
-    console.log("selectedBonuses", player)
 
     if (!player) return []
     const allSelected = Array.from(player.bonusSets.values())
@@ -103,20 +102,10 @@ export const GameScreen = () => {
                   </div>
                   <div className="game-overlay__pending_bonuses_list">
                     {pendingBonuses.value.map((bonus) => {
-                      console.log("bonus", bonus)
                       return (
                         <div className="game-overlay__pending_bonus_items">
                           {bonus.items.map((item) => {
-                            return (
-                              <div className="game-overlay__pending_bonus_item">
-                                <div className="game-overlay__pending_bonus_item_name">
-                                  {item.name}
-                                </div>
-                                <div className="game-overlay__pending_bonus_item_description">
-                                  <b>{item.value}</b>
-                                </div>
-                              </div>
-                            )
+                            return <BonusItem bonus={item} />
                           })}
                         </div>
                       )
@@ -131,5 +120,19 @@ export const GameScreen = () => {
         )}
       </div>
     </>
+  )
+}
+
+const BonusItem = ({ bonus }: { bonus: Bonus }) => {
+  return (
+    <div
+      data-rarity={bonus.rarity}
+      className="game-overlay__pending_bonus_item"
+    >
+      <div className="game-overlay__pending_bonus_item_name">{bonus.name}</div>
+      <div className="game-overlay__pending_bonus_item_description">
+        <b>{bonus.value}</b>
+      </div>
+    </div>
   )
 }
