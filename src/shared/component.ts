@@ -8,6 +8,7 @@ export enum ComponentType {
   Collider,
   Shooter,
   Sprite,
+  PlayerSprite,
   Experience,
   Inventory,
   Attributes,

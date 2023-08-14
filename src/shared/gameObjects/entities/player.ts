@@ -4,6 +4,7 @@ import { Collider, CollisionLayer } from "../../components/collider"
 import { Experience } from "../../components/experience"
 import { Health } from "../../components/health"
 import { Inventory } from "../../components/inventory"
+import { PlayerSprite } from "../../components/playerSprite"
 import { Shooter } from "../../components/shooter"
 import { ObjectColors } from "../../constants"
 import { GameObject, GameObjectType } from "../../gameObject"
@@ -28,7 +29,8 @@ export class Player extends GameObject {
       Collider.circleCollider(playerRadius),
       new Experience(),
       new Inventory(),
-      new Attributes()
+      new Attributes(),
+      new PlayerSprite()
     )
     this.collisionLayers.push(CollisionLayer.Player)
     this.setRenderSettings({

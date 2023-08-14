@@ -22,6 +22,7 @@ if (Cinnabun.isClient) {
 export type GameImage = {
   image: HTMLImageElement
   name: string
+  reverse?: boolean
 }
 export const images = createSignal<GameImage[]>([])
 

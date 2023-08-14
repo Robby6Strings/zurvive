@@ -13,6 +13,7 @@ import { Sprite } from "./components/sprite"
 import { Experience } from "./components/experience"
 import { Inventory } from "./components/inventory"
 import { Attributes } from "./components/attributes"
+import { PlayerSprite } from "./components/playerSprite"
 
 export enum GameObjectType {
   Unset = "unset",
@@ -159,6 +160,9 @@ export abstract class GameObject implements ISerializable, IRenderable {
           break
         case ComponentType.Sprite:
           classType = Sprite
+          break
+        case ComponentType.PlayerSprite:
+          classType = PlayerSprite
           break
         case ComponentType.Experience:
           classType = Experience

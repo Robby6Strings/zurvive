@@ -33,7 +33,11 @@ export class Renderer {
       const sprite = obj.getComponent(Sprite)
       const fighter = obj.getComponent(Fighter)
       if (sprite) {
-        sprite.setImageOffset(obj, fighter?.target?.pos ?? player.pos)
+        if (obj.type === GameObjectType.Player) {
+          sprite.setImageOffset(obj, game.mousePos.subtract(game.camera.offset))
+        } else {
+          sprite.setImageOffset(obj, fighter?.target?.pos ?? player.pos)
+        }
         this.renderImage(obj.pos, sprite.renderSettings, camera)
       } else {
         if (obj.type === GameObjectType.ExperienceOrb) obj.update()
