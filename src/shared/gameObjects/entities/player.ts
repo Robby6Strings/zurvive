@@ -6,14 +6,10 @@ import { Health } from "../../components/health"
 import { Inventory } from "../../components/inventory"
 import { PlayerSprite } from "../../components/playerSprite"
 import { Shooter } from "../../components/shooter"
-import { ObjectColors } from "../../constants"
 import { GameObject, GameObjectType } from "../../gameObject"
-import { ShapeType } from "../../types"
 import { calculateDamage } from "../../utils"
 import { IVec2 } from "../../vec2"
 import { Bullet } from "../bullet"
-
-const playerRadius = 16
 
 export class Player extends GameObject {
   bonusSets: Map<string, BonusSet> = new Map()
@@ -26,18 +22,13 @@ export class Player extends GameObject {
     this.components.push(
       new Health(),
       new Shooter(),
-      Collider.circleCollider(playerRadius),
+      Collider.rectangleCollider(24, 36),
       new Experience(),
       new Inventory(),
       new Attributes(),
       new PlayerSprite()
     )
     this.collisionLayers.push(CollisionLayer.Player)
-    this.setRenderSettings({
-      shapeType: ShapeType.Circle,
-      radius: playerRadius,
-      color: ObjectColors[GameObjectType.Player],
-    })
   }
 
   handleAttack(pos: IVec2): void | GameObject[] {

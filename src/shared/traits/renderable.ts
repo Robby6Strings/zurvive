@@ -12,6 +12,7 @@ export type RenderSettings = {
   imgRef?: string
   img?: HTMLImageElement
   offset?: { x: number; y: number }
+  pos?: { x: number; y: number }
   glow?: boolean
   glowColor?: string
   glowSize?: number

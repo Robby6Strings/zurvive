@@ -75,7 +75,7 @@ export class PlayerSprite extends Sprite {
           : dir === "downright"
           ? yOffset_DownRight
           : yOffset_Down
-      const w = 55
+      const w = 55.5
 
       for (let i = 0; i < 8; i++) {
         this.imgOffsets.push({
@@ -165,8 +165,12 @@ export class PlayerSprite extends Sprite {
     if (!imgOffset)
       throw new Error("imgOffset not found: " + dir + ": " + this.imgIdx)
     this.renderSettings.offset = {
-      x: this.imgSetOffset.x + imgOffset.x,
-      y: this.imgSetOffset.y + imgOffset.y,
+      x: imgOffset.x,
+      y: imgOffset.y,
+    }
+    this.renderSettings.pos = {
+      x: 1,
+      y: 12,
     }
   }
   deserialize(): void {
