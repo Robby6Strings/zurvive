@@ -44,6 +44,7 @@ const DebugOptions = () => {
         <input
           id="debug__renderColliders"
           type="checkbox"
+          watch={debug}
           bind:checked={() => debug.value.renderColliders}
           onchange={(e: Event) => {
             debug.value.renderColliders = (e.target as HTMLInputElement).checked
@@ -55,6 +56,7 @@ const DebugOptions = () => {
         <input
           id="debug__renderSpriteBoxes"
           type="checkbox"
+          watch={debug}
           bind:checked={() => debug.value.renderSpriteBoxes}
           onchange={(e: Event) => {
             debug.value.renderSpriteBoxes = (

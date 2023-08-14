@@ -41,6 +41,6 @@ export const debug = createSignal<{
   renderSpriteBoxes: boolean
 }>({
   show: true,
-  renderColliders: false,
+  renderColliders: true,
   renderSpriteBoxes: false,
 })
