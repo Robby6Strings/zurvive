@@ -80,7 +80,11 @@ export const GameScreen = () => {
                         {bonus.name}
                       </div>
                       <div className="game-overlay__selected_bonus_item_description">
-                        {bonus.value}
+                        {bonus.value.toString().includes(".") ? (
+                          <b>{bonus.value.toFixed(2)}</b>
+                        ) : (
+                          <b>{bonus.value}</b>
+                        )}
                       </div>
                     </div>
                   )
