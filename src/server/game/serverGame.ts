@@ -13,6 +13,9 @@ import { ExperienceOrb } from "../../shared/gameObjects/experienceOrb"
 import { AttributeType, Attributes } from "../../shared/components/attributes"
 import { Bonus } from "../../shared/bonus"
 import { AccountService } from "../services/userService"
+import { Tree } from "../../shared/gameObjects/environment/tree"
+import { CollisionLayer, Collider } from "../../shared/components/collider"
+import { Bullet } from "../../shared/gameObjects/bullet"
 
 export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
@@ -47,6 +50,11 @@ export class ServerGame extends Game {
       }, i * 2000)
     }
 
+    const tree = new Tree()
+    tree.pos = new Vec2(-100, -100)
+    //tree.rotation = Math.PI / 4 // 45 degrees
+    this.addObject(tree)
+
     this.intervalRef = setInterval(() => {
       this.update()
     }, this.frameDuration)
@@ -56,6 +64,82 @@ export class ServerGame extends Game {
     return this.objectStore.objects.filter(
       (o) => o instanceof ServerPlayer
     ) as ServerPlayer[]
+  }
+
+  objectToCollisionLayerMap: Map<GameObjectType, CollisionLayer[]> = new Map([
+    [
+      GameObjectType.Player,
+      [
+        CollisionLayer.Player,
+        CollisionLayer.Enemy,
+        CollisionLayer.Environment,
+        CollisionLayer.EnemyBullet,
+      ],
+    ],
+    [
+      GameObjectType.Enemy,
+      [
+        CollisionLayer.Player,
+        CollisionLayer.Enemy,
+        CollisionLayer.Environment,
+        CollisionLayer.PlayerBullet,
+      ],
+    ],
+    [GameObjectType.Bullet, [CollisionLayer.Enemy, CollisionLayer.Environment]],
+    [
+      GameObjectType.ExperienceOrb,
+      [CollisionLayer.Player, CollisionLayer.Environment],
+    ],
+  ])
+
+  handleCollisions() {
+    for (const objA of this.objectStore.objects) {
+      const collidableLayers = this.objectToCollisionLayerMap.get(objA.type)
+      if (!collidableLayers) continue
+      for (const objB of this.objectStore.objects) {
+        if (objA === objB) continue
+        if (
+          !collidableLayers.find((layer) =>
+            objB.collisionLayers.includes(layer)
+          )
+        )
+          continue
+
+        const dist = GameObject.getDistance(objA, objB)
+        if (dist > 100) continue
+
+        const collision = Collider.checkCollision(objA, objB)
+        if (!collision) {
+          if (
+            (objB.type === GameObjectType.Player &&
+              objA.type === GameObjectType.ExperienceOrb) ||
+            (objA.type === GameObjectType.Player &&
+              objB.type === GameObjectType.ExperienceOrb)
+          ) {
+            if (dist < 50) {
+              const orb =
+                objA.type === GameObjectType.ExperienceOrb ? objA : objB
+              const dir = GameObject.getDirection(objA, objB)
+              orb.pos = orb.pos.add(dir.multiply(5))
+            }
+          }
+          continue
+        }
+
+        objA.pos = objA.pos.add(collision.dir.multiply(collision.depth / 2))
+        if (objA instanceof Bullet || objB instanceof Bullet) {
+          const other = objA instanceof Bullet ? objB : objA
+          const bullet = (objA instanceof Bullet ? objA : objB) as Bullet
+          if (other && !(other instanceof Bullet)) {
+            other.vel = other.vel.add(
+              bullet.vel.multiply(
+                ((collision.depth / 2) * bullet.config.weight) / 100
+              )
+            )
+          }
+        }
+      }
+    }
   }
 
   spawnExperience(pos: Vec2, value: number): void {
