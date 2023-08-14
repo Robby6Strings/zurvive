@@ -9,12 +9,9 @@ import { Player } from "../../shared/gameObjects/entities"
 import { RenderSettings } from "../../shared/traits/renderable"
 import { ShapeType } from "../../shared/types"
 import { IVec2 } from "../../shared/vec2"
-import { HtmlElements } from "../state"
+import { HtmlElements, debug } from "../state"
 import { Camera } from "./camera"
 import { ClientGame } from "./clientGame"
-
-const renderColliders = false as const
-const renderSpriteBoxes = false as const
 
 export class Renderer {
   constructor() {}
@@ -48,7 +45,7 @@ export class Renderer {
         this.renderObject(obj, camera)
       }
       this.renderEntityHealth(obj, camera)
-      if (renderColliders) {
+      if (debug.value.renderColliders) {
         const collider = obj.getComponent(Collider)
         if (collider) {
           this.renderCollider(obj, camera)
@@ -230,7 +227,7 @@ export class Renderer {
       throw new Error("imgOffset not set")
     }
     if (!width || !height) throw new Error("width or height not set")
-    if (renderSpriteBoxes) {
+    if (debug.value.renderSpriteBoxes) {
       ctx.strokeRect(
         x + xOffset - width / 2 - (imgPos?.x ?? 0),
         y + yOffset - height / 2 - (imgPos?.y ?? 0),

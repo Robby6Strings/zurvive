@@ -34,3 +34,13 @@ export const characters = createSignal<
 export const selectedCharacter = computed(characters, () => {
   return characters.value.find((c) => c.selected)
 })
+
+export const debug = createSignal<{
+  show: boolean
+  renderColliders: boolean
+  renderSpriteBoxes: boolean
+}>({
+  show: true,
+  renderColliders: false,
+  renderSpriteBoxes: false,
+})
