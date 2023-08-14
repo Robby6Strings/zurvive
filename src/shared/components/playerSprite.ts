@@ -155,6 +155,11 @@ export class PlayerSprite extends Sprite {
     } else if (this.imgIdx >= imgOffsets.length) {
       this.imgIdx = 0
     }
+
+    if (obj.vel.magnitude() < 1) {
+      this.imgIdx = 0
+    }
+
     const imgOffset = imgOffsets[this.imgIdx]
 
     if (!imgOffset)
