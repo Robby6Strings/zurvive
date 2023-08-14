@@ -163,13 +163,16 @@ export class ServerGame extends Game {
     if (this.objectStore.objects.length === 0) {
       return
     }
+    const players = this.objectStore.findByType<Player>(GameObjectType.Player)
+    if (players.length === 0) {
+      return
+    }
 
     const enemySpawners = this.objectStore
       .findByType<Spawner>(GameObjectType.Spawner)
       .filter((s) => s.spawnClass === Enemy)
 
     const enemies = this.objectStore.findByType<Enemy>(GameObjectType.Enemy)
-    const players = this.objectStore.findByType<Player>(GameObjectType.Player)
 
     enemySpawners.forEach((spawner) => {
       if (
