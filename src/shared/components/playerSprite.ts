@@ -42,9 +42,9 @@ export class PlayerSprite extends Sprite {
     this.type = ComponentType.PlayerSprite
     const yOffset_UpLeft = 0
     const yOffset_Up = 64
-    const yOffset_UpRight = 128
-    const yOffset_Right = 192
-    const yOffset_Left = 257
+    const yOffset_UpRight = 129
+    const yOffset_Right = 193
+    const yOffset_Left = 258
     const yOffset_Down = 390
     const yOffset_DownLeft = 326
     const yOffset_DownRight = 454
