@@ -17,6 +17,8 @@ import { Tree } from "../../shared/gameObjects/environment/tree"
 import { CollisionLayer, Collider } from "../../shared/components/collider"
 import { Bullet } from "../../shared/gameObjects/bullet"
 
+const spawnEnemies = true
+
 export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
   constructor() {
@@ -31,6 +33,7 @@ export class ServerGame extends Game {
       new Vec2(-spawnerDist, spawnerDist),
     ]
     for (let i = 0; i < spawnerPositions.length; i++) {
+      if (!spawnEnemies) break
       const pos = spawnerPositions[i]
       setTimeout(() => {
         this.addObject(
@@ -125,12 +128,17 @@ export class ServerGame extends Game {
           }
           continue
         }
-
-        objA.pos = objA.pos.add(collision.dir.multiply(collision.depth / 2))
+        if (!objA.getComponent(Collider)?.static) {
+          objA.pos = objA.pos.add(collision.dir.multiply(collision.depth / 2))
+        }
         if (objA instanceof Bullet || objB instanceof Bullet) {
           const other = objA instanceof Bullet ? objB : objA
           const bullet = (objA instanceof Bullet ? objA : objB) as Bullet
-          if (other && !(other instanceof Bullet)) {
+          if (
+            other &&
+            !(other instanceof Bullet) &&
+            !other.getComponent(Collider)?.static
+          ) {
             other.vel = other.vel.add(
               bullet.vel.multiply(
                 ((collision.depth / 2) * bullet.config.weight) / 100

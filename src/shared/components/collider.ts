@@ -46,7 +46,12 @@ export class Collider extends Component {
 
   getPoints(): Vec2[] {
     if (this.shape === ShapeType.Circle) {
-      return []
+      return [
+        new Vec2(this.radius, this.radius),
+        new Vec2(-this.radius, this.radius),
+        new Vec2(-this.radius, -this.radius),
+        new Vec2(this.radius, -this.radius),
+      ]
     }
     return [
       new Vec2(this.width / 2, this.height / 2),
@@ -209,35 +214,12 @@ export class Collider extends Component {
       }
     }
 
-    const collided = rectPointsRotated.some((p) =>
-      Collider.pointInRectangle(p, [
-        new Vec2(circleCenter.x + circleRadius, circleCenter.y),
-        new Vec2(circleCenter.x, circleCenter.y + circleRadius),
-        new Vec2(circleCenter.x - circleRadius, circleCenter.y),
-        new Vec2(circleCenter.x, circleCenter.y - circleRadius),
-      ])
+    return Collider.rectangleRectangleCollision(
+      circleObj,
+      rectObj,
+      circleObjPos,
+      rectObjPos
     )
-
-    if (!collided) return
-
-    const overlap = rectPointsRotated.reduce(
-      (acc, p) => {
-        const dist = p.distance(circleCenter)
-        if (dist < acc.dist) return { dist, point: p }
-        return acc
-      },
-      { dist: Infinity, point: new Vec2(0, 0) }
-    )
-    const dir = circleObjPos.subtract(overlap.point).normalize()
-    const depth = circleObjPos.distance(overlap.point)
-    return {
-      dir,
-      depth,
-      objA: circleObj,
-      objB: rectObj,
-      aStatic: circleCollider.static,
-      bStatic: rectCollider.static,
-    }
   }
 
   static rectangleRectangleCollision(

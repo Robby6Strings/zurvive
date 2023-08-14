@@ -22,7 +22,8 @@ export class Player extends GameObject {
     this.components.push(
       new Health(),
       new Shooter(),
-      Collider.rectangleCollider(24, 36),
+      //Collider.rectangleCollider(24, 36),
+      Collider.circleCollider(12),
       new Experience(),
       new Inventory(),
       new Attributes(),

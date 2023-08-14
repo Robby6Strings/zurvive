@@ -76,6 +76,10 @@ export class Renderer {
       ctx.rect(x + xOffset - width / 2, y + yOffset - height / 2, width, height)
     }
     ctx.strokeStyle = "#f00"
+    const pts = collider.getPoints()
+    for (const pt of pts) {
+      ctx.rect(x + xOffset + pt.x - 1, y + yOffset + pt.y - 1, 2, 2)
+    }
     ctx.stroke()
     ctx.closePath()
     ctx.restore()
