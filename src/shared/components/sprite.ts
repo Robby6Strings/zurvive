@@ -21,7 +21,17 @@ export class Sprite extends Component implements IRenderable {
     imgRef: "zombie",
     offset: { x: 0, y: 0 },
   }
-  imgOffsets: (IVec2 & { dir: "up" | "right" | "down" | "left" })[] = [
+  imgOffsets: (IVec2 & {
+    dir:
+      | "up"
+      | "upleft"
+      | "upright"
+      | "down"
+      | "downleft"
+      | "downright"
+      | "left"
+      | "right"
+  })[] = [
     { x: 0, y: 0, dir: "down" },
     { x: 32, y: 0, dir: "down" },
     { x: 64, y: 0, dir: "down" },

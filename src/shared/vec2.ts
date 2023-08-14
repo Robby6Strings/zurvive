@@ -73,6 +73,10 @@ export class Vec2 implements IVec2 {
     return new Vec2(Math.round(this.x), Math.round(this.y))
   }
 
+  angleTo(other: IVec2): number {
+    return Math.atan2(other.y - this.y, other.x - this.x)
+  }
+
   static fromAngle(angle: number): Vec2 {
     return new Vec2(Math.cos(angle), Math.sin(angle))
   }

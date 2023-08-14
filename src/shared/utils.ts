@@ -8,6 +8,11 @@ export const calculateDamage = (damage: DamageConfig) => {
   return dmg
 }
 
+export const radiansToDeg = (radians: number) => {
+  var pi = Math.PI
+  return radians * (180 / pi)
+}
+
 export const generateUUID = () => {
   // Public Domain/MIT
   var d = new Date().getTime() //Timestamp

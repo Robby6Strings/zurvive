@@ -126,10 +126,6 @@ export const GameScreen = () => {
               ) : (
                 <></>
               )}
-
-              <div className="game-overlay__game_id">
-                {clientGameState?.value?.id}
-              </div>
             </div>
           </>
         )}

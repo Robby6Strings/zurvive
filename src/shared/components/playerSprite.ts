@@ -3,6 +3,7 @@ import { ComponentType } from "../component"
 import { GameObject } from "../gameObject"
 import { RenderSettings } from "../traits/renderable"
 import { ShapeType } from "../types"
+import { radiansToDeg } from "../utils"
 import { IVec2, Vec2 } from "../vec2"
 import { Sprite } from "./sprite"
 
@@ -25,23 +26,54 @@ export class PlayerSprite extends Sprite {
     imgRef: "player",
     offset: { x: 0, y: 0 },
   }
-  imgOffsets: (IVec2 & { dir: "up" | "right" | "down" | "left" })[] = []
+  imgOffsets: (IVec2 & {
+    dir:
+      | "up"
+      | "upleft"
+      | "upright"
+      | "down"
+      | "downleft"
+      | "downright"
+      | "left"
+      | "right"
+  })[] = []
   constructor() {
     super()
     this.type = ComponentType.PlayerSprite
+    const yOffset_UpLeft = 0
     const yOffset_Up = 64
+    const yOffset_UpRight = 128
     const yOffset_Right = 192
     const yOffset_Left = 257
     const yOffset_Down = 390
+    const yOffset_DownLeft = 326
+    const yOffset_DownRight = 454
 
-    ;["up", "right", "left", "down"].forEach((dir) => {
+    ;[
+      "up",
+      "upleft",
+      "upright",
+      "right",
+      "left",
+      "down",
+      "downleft",
+      "downright",
+    ].forEach((dir) => {
       const yOffset =
         dir === "up"
           ? yOffset_Up
+          : dir === "upleft"
+          ? yOffset_UpLeft
+          : dir === "upright"
+          ? yOffset_UpRight
           : dir === "right"
           ? yOffset_Right
           : dir === "left"
           ? yOffset_Left
+          : dir === "downleft"
+          ? yOffset_DownLeft
+          : dir === "downright"
+          ? yOffset_DownRight
           : yOffset_Down
       const w = 55
 
@@ -84,21 +116,36 @@ export class PlayerSprite extends Sprite {
 
     this.imgUpdateCooldown = 5
 
-    let dir: "down" | "up" | "right" | "left" = "down"
+    let dir:
+      | "up"
+      | "upleft"
+      | "upright"
+      | "down"
+      | "downleft"
+      | "downright"
+      | "right"
+      | "left" = "down"
 
-    const diff = lookAt.subtract(obj.pos)
-    if (diff.x > 0) {
+    const angle = obj.pos.angleTo(lookAt)
+    let deg = radiansToDeg(angle) + 90
+    if (deg < 0) deg = 360 - Math.abs(deg)
+
+    if (deg > 337.5 || deg < 22.5) {
+      dir = "up"
+    } else if (deg > 22.5 && deg < 67.5) {
+      dir = "upright"
+    } else if (deg > 67.5 && deg < 112.5) {
       dir = "right"
-    } else if (diff.x < 0) {
+    } else if (deg > 112.5 && deg < 157.5) {
+      dir = "downright"
+    } else if (deg > 157.5 && deg < 202.5) {
+      dir = "down"
+    } else if (deg > 202.5 && deg < 247.5) {
+      dir = "downleft"
+    } else if (deg > 247.5 && deg < 292.5) {
       dir = "left"
-    }
-
-    if (Math.abs(diff.x) < Math.abs(diff.y)) {
-      if (diff.y > 0) {
-        dir = "down"
-      } else if (diff.y < 0) {
-        dir = "up"
-      }
+    } else if (deg > 292.5 && deg < 337.5) {
+      dir = "upleft"
     }
 
     const imgOffsets = this.imgOffsets.filter((offset) => offset.dir === dir)
@@ -117,7 +164,7 @@ export class PlayerSprite extends Sprite {
       y: this.imgSetOffset.y + imgOffset.y,
     }
   }
-  deserialize(data: any): void {
+  deserialize(): void {
     this.imgSetIdx = 0
 
     this.setImage()
