@@ -1,3 +1,4 @@
+import { Collider } from "../../shared/components/collider"
 import { Experience } from "../../shared/components/experience"
 import { Fighter } from "../../shared/components/fighter"
 import { Health } from "../../shared/components/health"
@@ -11,6 +12,9 @@ import { IVec2 } from "../../shared/vec2"
 import { HtmlElements } from "../state"
 import { Camera } from "./camera"
 import { ClientGame } from "./clientGame"
+
+const renderColliders = false as const
+const renderSpriteBoxes = false as const
 
 export class Renderer {
   constructor() {}
@@ -44,11 +48,40 @@ export class Renderer {
         this.renderObject(obj, camera)
       }
       this.renderEntityHealth(obj, camera)
+      if (renderColliders) {
+        const collider = obj.getComponent(Collider)
+        if (collider) {
+          this.renderCollider(obj, camera)
+        }
+      }
     }
 
     this.renderCursor(game)
     this.renderPlayerXp(player)
     //console.debug(`render time: ${performance.now() - start}`)
+  }
+
+  renderCollider(obj: GameObject, camera: Camera) {
+    if (!this.ctx) return
+    const collider = obj.getComponent(Collider)
+    if (!collider) return
+    const { ctx } = this
+    const { x, y } = obj.pos
+    const { x: xOffset, y: yOffset } = camera.offset
+    const { radius, width, height } = collider
+    ctx.save()
+    ctx.beginPath()
+    if (collider.shape === ShapeType.Circle) {
+      if (!radius) throw new Error("radius not set")
+      ctx.arc(x + xOffset, y + yOffset, radius, 0, 2 * Math.PI)
+    } else {
+      if (!width || !height) throw new Error("width or height not set")
+      ctx.rect(x + xOffset - width / 2, y + yOffset - height / 2, width, height)
+    }
+    ctx.strokeStyle = "#f00"
+    ctx.stroke()
+    ctx.closePath()
+    ctx.restore()
   }
 
   renderPlayerXp(player: Player) {
@@ -191,21 +224,28 @@ export class Renderer {
     const { ctx } = this
     const { x, y } = pos
     const { x: xOffset, y: yOffset } = camera.offset
-    const { img, offset: imgOffset, width, height } = settings
+    const { img, offset: imgOffset, width, height, pos: imgPos } = settings
     if (!img) throw new Error("img not set")
     if (!imgOffset) {
       throw new Error("imgOffset not set")
     }
     if (!width || !height) throw new Error("width or height not set")
-
+    if (renderSpriteBoxes) {
+      ctx.strokeRect(
+        x + xOffset - width / 2 - (imgPos?.x ?? 0),
+        y + yOffset - height / 2 - (imgPos?.y ?? 0),
+        width,
+        height
+      )
+    }
     ctx.drawImage(
       img,
       imgOffset.x,
       imgOffset.y,
       width,
       height,
-      x + xOffset - width / 2,
-      y + yOffset - height / 2,
+      x + xOffset - width / 2 - (imgPos?.x ?? 0),
+      y + yOffset - height / 2 - (imgPos?.y ?? 0),
       width,
       height
     )
