@@ -17,7 +17,7 @@ import { Tree } from "../../shared/gameObjects/environment/tree"
 import { CollisionLayer, Collider } from "../../shared/components/collider"
 import { Bullet } from "../../shared/gameObjects/bullet"
 
-const spawnEnemies = true
+const spawnEnemies = false
 
 export class ServerGame extends Game {
   intervalRef: NodeJS.Timer
@@ -233,17 +233,10 @@ export class ServerGame extends Game {
     }
   }
 
-  handleAction<T extends GameActionType>(action: GameAction<T>): void {
-    const player = this.objectStore.find(
-      (o) =>
-        o.id === action.payload.objectId && o.type === action.payload.objectType
-    ) as ServerPlayer | undefined
-    if (!player) {
-      console.error(
-        `Object ${action.payload.objectId} not found in pool ${action.payload.objectType}`
-      )
-      return
-    }
+  handleAction<T extends GameActionType>(
+    player: ServerPlayer,
+    action: GameAction<T>
+  ): void {
     switch (action.type) {
       case GameActionType.setTargetPos:
         player

@@ -120,7 +120,7 @@ export const socketHandler = (conn: SocketStream, _req: FastifyRequest) => {
         if (!user) return forbidden(conn)
         if (!player) return noCharacter(conn)
         if (!game) return gameNotFound(conn)
-        game.handleAction(data.action)
+        game.handleAction(player, data.action)
         break
 
       default:
