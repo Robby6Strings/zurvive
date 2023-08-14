@@ -41,7 +41,7 @@ export class Renderer {
         this.renderImage(obj.pos, sprite.renderSettings, camera)
       } else {
         if (obj.type === GameObjectType.ExperienceOrb) obj.update()
-        this.renderObject(obj.pos, obj.renderSettings, camera)
+        this.renderObject(obj, camera)
       }
       this.renderEntityHealth(obj, camera)
     }
@@ -211,8 +211,9 @@ export class Renderer {
     )
   }
 
-  private renderObject(pos: IVec2, settings: RenderSettings, camera: Camera) {
+  private renderObject(obj: GameObject, camera: Camera) {
     if (!this.ctx) return
+    const { renderSettings: settings, pos, rotation } = obj
     if (settings.render === false) return
 
     const { ctx } = this
@@ -247,12 +248,12 @@ export class Renderer {
       )
     } else {
       if (!width || !height) throw new Error("width or height not set")
-      ctx.rect(
-        x + xOffset - width / 2 + offsetVec.x,
-        y + yOffset - height / 2 + offsetVec.y,
-        width,
-        height
-      )
+      ctx.translate(x + xOffset + offsetVec.x, y + yOffset + offsetVec.y)
+      ctx.rotate(rotation)
+      ctx.rect(-width / 2, -height / 2, width, height)
+
+      ctx.rotate(-rotation)
+      ctx.translate(-x - xOffset, -y - yOffset)
     }
     if (glow && glowSize && glowColor) {
       ctx.shadowBlur = glowSize
